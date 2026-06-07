@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hasil Analisis Risiko - SiCegah Stunting</title>
+  <meta name="description" content="Contoh hasil analisis risiko stunting lengkap dengan badge status, faktor yang memengaruhi, dan rekomendasi awal." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>body{font-family:Inter,sans-serif}.material-symbols-rounded{font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24}</style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+  <header class="navbar bg-white border-b border-slate-200 sticky top-0 z-50 px-4 lg:px-8">
+    <div class="navbar-start"><a href="index.html" class="flex items-center gap-3"><div class="w-11 h-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center"><span class="material-symbols-rounded">health_and_safety</span></div><div><div class="font-extrabold text-emerald-700">SiCegah Stunting</div><div class="text-xs text-slate-500">Edukasi dan Skrining Awal</div></div></a></div>
+    <div class="navbar-center hidden lg:flex"><ul class="menu menu-horizontal gap-1"><li><a href="index.html">Beranda</a></li><li><a href="kalkulator.html">Kalkulator</a></li><li><a href="edukasi.html">Edukasi</a></li><li><a href="tentang.html">Tentang</a></li><li><a href="faq.html">FAQ</a></li><li><a href="kontak.html">Kontak</a></li></ul></div>
+    <div class="navbar-end"><a href="kalkulator.html" class="btn btn-primary rounded-full">Hitung Ulang</a></div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 lg:px-8 py-10">
+    <section class="mb-8">
+      <div class="badge badge-warning badge-outline mb-3">Contoh Hasil Analisis</div>
+      <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900">Ringkasan hasil skrining awal</h1>
+      <p class="text-slate-600 mt-3 max-w-3xl">Halaman ini menampilkan contoh hasil dengan status risiko sedang agar mudah dipresentasikan dalam konteks edukasi masyarakat dan pengabdian masyarakat.</p>
+    </section>
+
+    <div class="grid lg:grid-cols-3 gap-6">
+      <section class="lg:col-span-2 space-y-6">
+        <div class="card bg-white shadow-lg border border-slate-200">
+          <div class="card-body">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h2 class="card-title text-2xl">Status Analisis</h2>
+                <p class="text-slate-500">Nama anak: Aulia Rahma, usia 24 bulan</p>
+              </div>
+              <div class="badge badge-warning badge-lg py-4 px-4">Risiko Sedang</div>
+            </div>
+            <p class="text-slate-600">Data contoh menunjukkan bahwa tinggi badan anak berada di bawah harapan untuk usianya, disertai beberapa faktor yang dapat meningkatkan risiko gangguan pertumbuhan. Penilaian tinggi badan menurut usia merupakan indikator utama untuk identifikasi stunting pada balita.[web:15][web:20][web:23]</p>
+            <progress class="progress progress-warning w-full" value="62" max="100"></progress>
+            <div class="flex justify-between text-sm text-slate-500"><span>Risiko rendah</span><span>Posisi hasil: 62/100</span><span>Risiko tinggi</span></div>
+          </div>
+        </div>
+
+        <div class="card bg-white shadow-md border border-slate-200">
+          <div class="card-body">
+            <h2 class="card-title">Faktor yang memengaruhi</h2>
+            <ul class="timeline timeline-vertical">
+              <li>
+                <div class="timeline-start timeline-box">Tinggi badan anak relatif rendah untuk usia 24 bulan.</div>
+                <div class="timeline-middle text-emerald-600"><span class="material-symbols-rounded">straighten</span></div>
+                <hr class="bg-emerald-500" />
+              </li>
+              <li>
+                <hr class="bg-emerald-500" />
+                <div class="timeline-start timeline-box">Berat badan perlu dipantau agar sesuai dengan pertumbuhan usia.</div>
+                <div class="timeline-middle text-cyan-600"><span class="material-symbols-rounded">monitor_weight</span></div>
+                <hr class="bg-cyan-500" />
+              </li>
+              <li>
+                <hr class="bg-cyan-500" />
+                <div class="timeline-start timeline-box">Tinggi ibu di bawah 150 cm dan riwayat KEK dapat menjadi faktor risiko tambahan dalam skrining.[web:25]</div>
+                <div class="timeline-middle text-amber-600"><span class="material-symbols-rounded">family_home</span></div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="card bg-white shadow-md border border-slate-200">
+          <div class="card-body">
+            <h2 class="card-title">Rekomendasi awal</h2>
+            <div class="space-y-4">
+              <div class="alert bg-emerald-50 border border-emerald-100"><span class="material-symbols-rounded text-emerald-700">check_circle</span><span>Tinjau kembali pola makan anak dan utamakan protein hewani harian setelah usia 6 bulan.[web:28]</span></div>
+              <div class="alert bg-cyan-50 border border-cyan-100"><span class="material-symbols-rounded text-cyan-700">check_circle</span><span>Lakukan pemantauan berat badan dan tinggi badan secara rutin di Posyandu atau Puskesmas.[web:23][web:28]</span></div>
+              <div class="alert bg-amber-50 border border-amber-100"><span class="material-symbols-rounded text-amber-700">check_circle</span><span>Konsultasikan dengan tenaga kesehatan bila ada penurunan nafsu makan, infeksi berulang, atau pertumbuhan anak tidak sesuai.[web:23]</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert alert-warning">
+          <span class="material-symbols-rounded">warning</span>
+          <span>Disclaimer: hasil ini hanya contoh skrining awal untuk edukasi dan tidak menggantikan diagnosis atau konsultasi medis profesional.[web:23]</span>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3">
+          <a href="edukasi.html" class="btn btn-primary rounded-full">Lanjut ke Edukasi</a>
+          <a href="kalkulator.html" class="btn btn-outline btn-secondary rounded-full">Hitung Ulang</a>
+        </div>
+      </section>
+
+      <aside class="space-y-6">
+        <div class="card bg-emerald-50 border border-emerald-100 shadow-sm">
+          <div class="card-body">
+            <h3 class="card-title text-emerald-800">Ringkasan data</h3>
+            <div class="overflow-x-auto">
+              <table class="table table-sm">
+                <tbody>
+                  <tr><td>Usia</td><td>24 bulan</td></tr>
+                  <tr><td>Jenis kelamin</td><td>Perempuan</td></tr>
+                  <tr><td>Tinggi badan</td><td>80 cm</td></tr>
+                  <tr><td>Berat badan</td><td>9,2 kg</td></tr>
+                  <tr><td>Tinggi ibu</td><td>149 cm</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="card bg-cyan-50 border border-cyan-100 shadow-sm">
+          <div class="card-body">
+            <h3 class="card-title text-cyan-800">Catatan edukasi</h3>
+            <p class="text-sm text-cyan-900">WHO menyediakan alat dan standar pertumbuhan untuk mendukung implementasi pemantauan fisik anak, termasuk indikator tinggi badan menurut usia.[web:15][web:16]</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="footer p-10 bg-slate-900 text-slate-200 mt-10"><nav><h6 class="footer-title">Navigasi</h6><a class="link link-hover" href="index.html">Beranda</a><a class="link link-hover" href="kalkulator.html">Kalkulator</a><a class="link link-hover" href="hasil.html">Hasil</a></nav><nav><h6 class="footer-title">Informasi</h6><a class="link link-hover" href="edukasi.html">Edukasi</a><a class="link link-hover" href="faq.html">FAQ</a><a class="link link-hover" href="kontak.html">Kontak</a></nav><aside><p>Pengurus Wilayah Aisyiyah Kalimantan Timur</p></aside></footer>
+</body>
+</html>

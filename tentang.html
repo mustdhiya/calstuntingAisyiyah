@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tentang Program - SiCegah Stunting</title>
+  <meta name="description" content="Halaman tentang program SiCegah Stunting, latar belakang, tujuan, sasaran pengguna, peran Aisyiyah Kalimantan Timur, dan tim pengembang." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>body{font-family:Inter,sans-serif}.material-symbols-rounded{font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24}</style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+  <header class="navbar bg-white border-b border-slate-200 sticky top-0 z-50 px-4 lg:px-8">
+    <div class="navbar-start"><a href="index.html" class="flex items-center gap-3"><div class="w-11 h-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center"><span class="material-symbols-rounded">health_and_safety</span></div><div><div class="font-extrabold text-emerald-700">SiCegah Stunting</div><div class="text-xs text-slate-500">Edukasi dan Skrining Awal</div></div></a></div>
+    <div class="navbar-center hidden lg:flex"><ul class="menu menu-horizontal gap-1"><li><a href="index.html">Beranda</a></li><li><a href="kalkulator.html">Kalkulator</a></li><li><a href="edukasi.html">Edukasi</a></li><li><a class="text-emerald-700 font-medium" href="tentang.html">Tentang</a></li><li><a href="faq.html">FAQ</a></li><li><a href="kontak.html">Kontak</a></li></ul></div>
+    <div class="navbar-end"><a href="kontak.html" class="btn btn-primary rounded-full">Hubungi Kami</a></div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 lg:px-8 py-10 space-y-10">
+    <section>
+      <div class="badge badge-primary badge-outline mb-3">Tentang Program</div>
+      <h1 class="text-3xl md:text-4xl font-extrabold">Website edukasi dan skrining awal untuk dukungan kesehatan masyarakat</h1>
+      <p class="text-slate-600 mt-3 max-w-4xl">SiCegah Stunting dikembangkan sebagai prototipe website statis yang siap dipresentasikan untuk penelitian dan pengabdian masyarakat, dengan fokus pada kemudahan penggunaan bagi ibu-ibu dan kader kesehatan.</p>
+    </section>
+
+    <section class="stats stats-vertical lg:stats-horizontal w-full shadow bg-white border border-slate-200">
+      <div class="stat"><div class="stat-title">Target Pengguna</div><div class="stat-value text-emerald-700 text-3xl">3</div><div class="stat-desc">orang tua, kader, masyarakat umum</div></div>
+      <div class="stat"><div class="stat-title">Fokus Utama</div><div class="stat-value text-cyan-700 text-3xl">UI</div><div class="stat-desc">bersih, cepat, mudah dipakai</div></div>
+      <div class="stat"><div class="stat-title">Arah Pengembangan</div><div class="stat-value text-amber-700 text-3xl">Django</div><div class="stat-desc">siap diintegrasikan ke backend</div></div>
+    </section>
+
+    <section class="grid lg:grid-cols-2 gap-6">
+      <div class="card bg-white shadow-md border border-slate-200"><div class="card-body"><h2 class="card-title">Latar Belakang</h2><p class="text-slate-600">Stunting masih menjadi isu penting kesehatan masyarakat. WHO menyediakan standar pertumbuhan anak untuk membantu pemantauan, sementara edukasi Kementerian Kesehatan menekankan pentingnya gizi, ASI eksklusif, sanitasi, dan pemantauan rutin.[web:15][web:23][web:28]</p></div></div>
+      <div class="card bg-white shadow-md border border-slate-200"><div class="card-body"><h2 class="card-title">Tujuan</h2><p class="text-slate-600">Website ini bertujuan menjadi media edukasi digital, alat skrining awal sederhana, dan sarana literasi kesehatan yang mudah dipahami dalam kegiatan penelitian dan pengabdian masyarakat.</p></div></div>
+      <div class="card bg-white shadow-md border border-slate-200"><div class="card-body"><h2 class="card-title">Sasaran Pengguna</h2><p class="text-slate-600">Sasaran utama adalah ibu, calon ibu, keluarga, kader kesehatan, dan masyarakat umum yang membutuhkan informasi stunting yang ringkas namun terstruktur.</p></div></div>
+      <div class="card bg-white shadow-md border border-slate-200"><div class="card-body"><h2 class="card-title">Peran Aisyiyah Kalimantan Timur</h2><p class="text-slate-600">Aisyiyah Kalimantan Timur dapat memanfaatkan website ini sebagai media kampanye edukasi kesehatan, pendampingan kader, dan komunikasi publik berbasis literasi digital.</p></div></div>
+    </section>
+
+    <section class="card bg-white border border-slate-200 shadow-md">
+      <div class="card-body">
+        <h2 class="card-title text-2xl">Alur pengembangan program</h2>
+        <ul class="timeline timeline-vertical lg:timeline-horizontal">
+          <li><div class="timeline-start timeline-box">Identifikasi kebutuhan edukasi masyarakat</div><div class="timeline-middle text-emerald-600"><span class="material-symbols-rounded">search</span></div><hr class="bg-emerald-500"></li>
+          <li><hr class="bg-emerald-500"><div class="timeline-start timeline-box">Perancangan UI/UX mobile first</div><div class="timeline-middle text-cyan-600"><span class="material-symbols-rounded">design_services</span></div><hr class="bg-cyan-500"></li>
+          <li><hr class="bg-cyan-500"><div class="timeline-start timeline-box">Penyusunan kalkulator dan konten edukasi</div><div class="timeline-middle text-amber-600"><span class="material-symbols-rounded">calculate</span></div><hr class="bg-amber-500"></li>
+          <li><hr class="bg-amber-500"><div class="timeline-start timeline-box">Integrasi ke sistem production di tahap berikutnya</div><div class="timeline-middle text-emerald-600"><span class="material-symbols-rounded">rocket_launch</span></div></li>
+        </ul>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="text-2xl font-bold mb-6">Tim Pengembang</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="card bg-white border border-slate-200 shadow-sm"><div class="card-body items-center text-center"><div class="avatar placeholder"><div class="bg-emerald-100 text-emerald-700 rounded-full w-20"><span class="text-2xl font-bold">UI</span></div></div><h3 class="font-bold text-lg mt-3">UI/UX Designer</h3><p class="text-sm text-slate-500">Fokus pada pengalaman pengguna, mobile first, dan sistem desain.</p></div></div>
+        <div class="card bg-white border border-slate-200 shadow-sm"><div class="card-body items-center text-center"><div class="avatar placeholder"><div class="bg-cyan-100 text-cyan-700 rounded-full w-20"><span class="text-2xl font-bold">FE</span></div></div><h3 class="font-bold text-lg mt-3">Frontend Developer</h3><p class="text-sm text-slate-500">Membangun struktur HTML, komponen DaisyUI, dan responsivitas.</p></div></div>
+        <div class="card bg-white border border-slate-200 shadow-sm"><div class="card-body items-center text-center"><div class="avatar placeholder"><div class="bg-amber-100 text-amber-700 rounded-full w-20"><span class="text-2xl font-bold">RS</span></div></div><h3 class="font-bold text-lg mt-3">Research Support</h3><p class="text-sm text-slate-500">Menyiapkan konten edukasi dan kebutuhan presentasi akademik.</p></div></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer p-10 bg-slate-900 text-slate-200 mt-10"><nav><h6 class="footer-title">Navigasi</h6><a class="link link-hover" href="index.html">Beranda</a><a class="link link-hover" href="edukasi.html">Edukasi</a><a class="link link-hover" href="faq.html">FAQ</a></nav><aside><p>SiCegah Stunting untuk penelitian dan pengabdian masyarakat.</p></aside></footer>
+</body>
+</html>

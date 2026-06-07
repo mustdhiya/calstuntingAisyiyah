@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kontak - SiCegah Stunting</title>
+  <meta name="description" content="Halaman kontak SiCegah Stunting berisi informasi institusi, email, telepon, lokasi, dan form kontak visual." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>body{font-family:Inter,sans-serif}.material-symbols-rounded{font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24}</style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+  <header class="navbar bg-white border-b border-slate-200 sticky top-0 z-50 px-4 lg:px-8">
+    <div class="navbar-start"><a href="index.html" class="flex items-center gap-3"><div class="w-11 h-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center"><span class="material-symbols-rounded">health_and_safety</span></div><div><div class="font-extrabold text-emerald-700">SiCegah Stunting</div><div class="text-xs text-slate-500">Edukasi dan Skrining Awal</div></div></a></div>
+    <div class="navbar-center hidden lg:flex"><ul class="menu menu-horizontal gap-1"><li><a href="index.html">Beranda</a></li><li><a href="kalkulator.html">Kalkulator</a></li><li><a href="edukasi.html">Edukasi</a></li><li><a href="tentang.html">Tentang</a></li><li><a href="faq.html">FAQ</a></li><li><a class="text-emerald-700 font-medium" href="kontak.html">Kontak</a></li></ul></div>
+    <div class="navbar-end"><a href="faq.html" class="btn btn-outline btn-primary rounded-full">Lihat FAQ</a></div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 lg:px-8 py-10">
+    <section class="mb-8">
+      <div class="badge badge-primary badge-outline mb-3">Kontak</div>
+      <h1 class="text-3xl md:text-4xl font-extrabold">Hubungi tim pengelola program</h1>
+      <p class="text-slate-600 mt-3 max-w-3xl">Halaman ini menampilkan informasi institusi dan form kontak visual untuk kebutuhan presentasi atau integrasi lanjutan.</p>
+    </section>
+
+    <div class="grid lg:grid-cols-2 gap-6">
+      <section class="space-y-6">
+        <div class="card bg-white border border-slate-200 shadow-md">
+          <div class="card-body">
+            <h2 class="card-title">Informasi institusi</h2>
+            <div class="space-y-4 text-slate-600">
+              <div class="flex gap-3"><span class="material-symbols-rounded text-emerald-700">apartment</span><span>Pengurus Wilayah Aisyiyah Kalimantan Timur</span></div>
+              <div class="flex gap-3"><span class="material-symbols-rounded text-cyan-700">mail</span><span>info@sicegahstunting.id</span></div>
+              <div class="flex gap-3"><span class="material-symbols-rounded text-amber-700">call</span><span>(0541) 555123</span></div>
+              <div class="flex gap-3"><span class="material-symbols-rounded text-emerald-700">location_on</span><span>Samarinda, Kalimantan Timur</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="alert alert-info"><span class="material-symbols-rounded">info</span><span>Untuk kebutuhan program kesehatan masyarakat, pertanyaan dapat diarahkan melalui kontak institusi atau formulir berikut.</span></div>
+        <div class="card bg-white border border-slate-200 shadow-md">
+          <div class="card-body">
+            <h2 class="card-title">Lokasi</h2>
+            <div class="rounded-[2rem] h-72 bg-slate-100 border border-dashed border-slate-300 flex items-center justify-center text-center p-6">
+              <div>
+                <span class="material-symbols-rounded text-6xl text-slate-400">map</span>
+                <p class="mt-3 text-slate-500">Placeholder peta lokasi institusi untuk integrasi Google Maps pada tahap production.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <form class="card bg-white border border-slate-200 shadow-lg">
+          <div class="card-body gap-4">
+            <h2 class="card-title text-2xl">Form kontak visual</h2>
+            <label class="form-control w-full"><div class="label"><span class="label-text font-medium">Nama Lengkap</span></div><input type="text" class="input input-bordered w-full" placeholder="Masukkan nama lengkap" /></label>
+            <label class="form-control w-full"><div class="label"><span class="label-text font-medium">Email</span></div><input type="email" class="input input-bordered w-full" placeholder="Masukkan alamat email" /></label>
+            <label class="form-control w-full"><div class="label"><span class="label-text font-medium">Subjek</span></div><input type="text" class="input input-bordered w-full" placeholder="Masukkan subjek pesan" /></label>
+            <label class="form-control w-full"><div class="label"><span class="label-text font-medium">Pesan</span></div><textarea class="textarea textarea-bordered h-36" placeholder="Tuliskan pesan Anda"></textarea></label>
+            <div class="card-actions justify-end"><button type="button" class="btn btn-primary rounded-full">Kirim Pesan</button></div>
+          </div>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer p-10 bg-slate-900 text-slate-200 mt-10"><nav><h6 class="footer-title">Navigasi</h6><a class="link link-hover" href="index.html">Beranda</a><a class="link link-hover" href="tentang.html">Tentang</a><a class="link link-hover" href="kontak.html">Kontak</a></nav><aside><p>Kontak SiCegah Stunting.</p></aside></footer>
+</body>
+</html>
