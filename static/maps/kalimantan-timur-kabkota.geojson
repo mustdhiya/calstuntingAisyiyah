@@ -1,0 +1,142 @@
+{
+  "type": "FeatureCollection",
+  "name": "kalimantan-timur-kabkota",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "NAME_1": "Kalimantan Timur",
+        "NAME_2": "KOTA SAMARINDA",
+        "ID_2": 1
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [116.9, -0.6],
+            [117.1, -0.6],
+            [117.1, -0.4],
+            [116.9, -0.4],
+            [116.9, -0.6]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NAME_1": "Kalimantan Timur",
+        "NAME_2": "KOTA BALIKPAPAN",
+        "ID_2": 2
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [116.7, -1.4],
+            [116.9, -1.4],
+            [116.9, -1.2],
+            [116.7, -1.2],
+            [116.7, -1.4]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NAME_1": "Kalimantan Timur",
+        "NAME_2": "KOTA BONTANG",
+        "ID_2": 3
+      },
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [[[ /* ... koordinat Bontang ... */ ]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NAME_1": "Kalimantan Timur",
+        "NAME_2": "KUTAI KARTANEGARA",
+        "ID_2": 4
+      },
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [[[ /* ... koordinat Kukar ... */ ]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NAME_1": "Kalimantan Timur",
+        "NAME_2": "KUTAI TIMUR",
+        "ID_2": 5
+      },
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [[[ /* ... */ ]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NAME_1": "Kalimantan Timur",
+        "NAME_2": "KUTAI BARAT",
+        "ID_2": 6
+      },
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [[[ /* ... */ ]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NAME_1": "Kalimantan Timur",
+        "NAME_2": "BERAU",
+        "ID_2": 7
+      },
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [[[ /* ... */ ]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NAME_1": "Kalimantan Timur",
+        "NAME_2": "PASER",
+        "ID_2": 8
+      },
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [[[ /* ... */ ]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NAME_1": "Kalimantan Timur",
+        "NAME_2": "PENAJAM PASER UTARA",
+        "ID_2": 9
+      },
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [[[ /* ... */ ]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "NAME_1": "Kalimantan Timur",
+        "NAME_2": "MAHAKAM ULU",
+        "ID_2": 10
+      },
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [[[ /* ... */ ]]]
+      }
+    }
+  ]
+}
