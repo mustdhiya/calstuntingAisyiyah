@@ -468,9 +468,9 @@
   <!-- Script Chart.js & ECharts (dashboard) -->
   <script>
     // === DATA DASHBOARD (SAMAKAN DENGAN DATA LAIN DI DASHBOARD) ===
-    // Nanti isi dari Django / backend, contoh:
-    // const totalNormal   = {{ total_normal }};
-    // const totalRisiko   = {{ total_risiko }};
+    // Nanti isi dari backend, contoh:
+    // const totalNormal   = total_normal;
+    // const totalRisiko   = total_risiko;
     // dst.
     const totalNormal   = 74;
     const totalRisiko   = 32;

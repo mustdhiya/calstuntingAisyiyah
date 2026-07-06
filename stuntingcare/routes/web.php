@@ -1,7 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ArticleController;
+use App\Http\Controllers\Admin\UserController;
 
+// ── Public Routes ──────────────────────────────────────────────
 Route::get('/', function () {
     return view('index');
 })->name('home');
@@ -34,25 +38,29 @@ Route::get('/artikel-detail', function () {
     return view('artikel-detail');
 })->name('artikel.detail');
 
+// ── Admin Routes ───────────────────────────────────────────────
 Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', function () {
-        return view('admin.dashboard');
-    })->name('dashboard');
 
+    // Dashboard
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Analisis (static view for now)
     Route::get('/analisis', function () {
         return view('admin.analisis');
     })->name('analisis');
 
-    Route::get('/artikel', function () {
-        return view('admin.artikel-list');
-    })->name('artikel.list');
+    // Artikel CRUD
+    Route::get('/artikel',                    [ArticleController::class, 'index'])->name('artikel.list');
+    Route::get('/artikel/create',             [ArticleController::class, 'create'])->name('artikel.create');
+    Route::post('/artikel',                   [ArticleController::class, 'store'])->name('artikel.store');
+    Route::get('/artikel/{article}/edit',     [ArticleController::class, 'edit'])->name('artikel.edit');
+    Route::put('/artikel/{article}',          [ArticleController::class, 'update'])->name('artikel.update');
+    Route::patch('/artikel/{article}/archive',[ArticleController::class, 'archive'])->name('artikel.archive');
+    Route::delete('/artikel/{article}',       [ArticleController::class, 'destroy'])->name('artikel.destroy');
 
-    Route::get('/artikel/edit', function () {
-        return view('admin.artikel-edit');
-    })->name('artikel.edit');
-
-    Route::get('/pengguna', function () {
-        return view('admin.pengguna');
-    })->name('pengguna');
+    // Pengguna CRUD
+    Route::get('/pengguna',              [UserController::class, 'index'])->name('pengguna');
+    Route::post('/pengguna',             [UserController::class, 'store'])->name('pengguna.store');
+    Route::put('/pengguna/{user}',       [UserController::class, 'update'])->name('pengguna.update');
+    Route::delete('/pengguna/{user}',    [UserController::class, 'destroy'])->name('pengguna.destroy');
 });
-
