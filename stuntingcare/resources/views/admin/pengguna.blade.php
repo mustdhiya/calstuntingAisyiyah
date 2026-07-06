@@ -126,64 +126,74 @@
 
         <!-- Filter + summary -->
         <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-4">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <!-- Search -->
-            <div class="form-control md:col-span-2">
-              <label class="label pb-1">
-                <span class="label-text text-xs font-medium text-slate-600">Cari pengguna</span>
-              </label>
-              <div class="relative">
-                <span class="material-symbols-rounded absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-base">search</span>
-                <input
-                  type="text"
-                  placeholder="Nama, email, atau nomor HP"
-                  class="input input-bordered w-full pl-9 text-sm"
-                />
+          <form method="GET" action="{{ route('admin.pengguna') }}">
+            @if(request()->has('per_page'))
+              <input type="hidden" name="per_page" value="{{ request('per_page') }}">
+            @endif
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <!-- Search -->
+              <div class="form-control md:col-span-2">
+                <label class="label pb-1">
+                  <span class="label-text text-xs font-medium text-slate-600">Cari pengguna</span>
+                </label>
+                <div class="relative">
+                  <span class="material-symbols-rounded absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-base">search</span>
+                  <input
+                    type="text"
+                    name="search"
+                    value="{{ request('search') }}"
+                    placeholder="Nama, email, atau nomor HP"
+                    class="input input-bordered w-full pl-9 text-sm"
+                  />
+                </div>
+              </div>
+
+              <!-- Role filter -->
+              <div class="form-control">
+                <label class="label pb-1">
+                  <span class="label-text text-xs font-medium text-slate-600">Filter peran</span>
+                </label>
+                <select name="role" class="select select-bordered w-full text-sm" onchange="this.form.submit()">
+                  <option value="" {{ request('role') == '' ? 'selected' : '' }}>Semua peran</option>
+                  <option value="Admin Wilayah" {{ request('role') == 'Admin Wilayah' ? 'selected' : '' }}>Admin Wilayah</option>
+                  <option value="Koordinator Cabang" {{ request('role') == 'Koordinator Cabang' ? 'selected' : '' }}>Koordinator Cabang</option>
+                  <option value="Kader Lapangan" {{ request('role') == 'Kader Lapangan' ? 'selected' : '' }}>Kader Lapangan</option>
+                  <option value="Pengguna Umum" {{ request('role') == 'Pengguna Umum' ? 'selected' : '' }}>Pengguna Umum</option>
+                </select>
               </div>
             </div>
+          </form>
+        </div>
 
-            <!-- Role filter -->
-            <div class="form-control">
-              <label class="label pb-1">
-                <span class="label-text text-xs font-medium text-slate-600">Filter peran</span>
-              </label>
-              <select class="select select-bordered w-full text-sm">
-                <option selected>Semua peran</option>
-                <option>Admin Wilayah</option>
-                <option>Koordinator Cabang</option>
-                <option>Kader Lapangan</option>
-                <option>Pengguna Umum</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Ringkasan kecil -->
+        <!-- Ringkasan kecil -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4">
           <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
             <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 flex items-center justify-between">
               <div>
                 <p class="text-slate-500">Total pengguna</p>
-                <p class="text-base font-semibold text-slate-900">128</p>
+                <p class="text-base font-semibold text-slate-900">{{ $totalUsers }}</p>
               </div>
               <span class="material-symbols-rounded text-emerald-500 text-2xl">groups</span>
             </div>
             <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 flex items-center justify-between">
               <div>
                 <p class="text-slate-500">Admin & koordinator</p>
-                <p class="text-base font-semibold text-slate-900">18</p>
+                <p class="text-base font-semibold text-slate-900">{{ $totalAdminKoordinator }}</p>
               </div>
               <span class="material-symbols-rounded text-indigo-500 text-2xl">supervisor_account</span>
             </div>
             <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 flex items-center justify-between">
               <div>
                 <p class="text-slate-500">Kader aktif</p>
-                <p class="text-base font-semibold text-slate-900">64</p>
+                <p class="text-base font-semibold text-slate-900">{{ $totalKader }}</p>
               </div>
               <span class="material-symbols-rounded text-sky-500 text-2xl">volunteer_activism</span>
             </div>
             <div class="bg-slate-50 border border-slate-100 rounded-xl p-3 flex items-center justify-between">
               <div>
                 <p class="text-slate-500">Baru 30 hari ini</p>
-                <p class="text-base font-semibold text-slate-900">12</p>
+                <p class="text-base font-semibold text-slate-900">{{ $newUsers30d }}</p>
               </div>
               <span class="material-symbols-rounded text-amber-500 text-2xl">trending_up</span>
             </div>
@@ -194,14 +204,14 @@
         <div class="bg-white border border-slate-200 rounded-2xl p-4 overflow-x-auto">
           <div class="flex items-center justify-between mb-3">
             <p class="text-xs text-slate-500">
-              Menampilkan <span class="font-semibold text-slate-700">1–10</span> dari 128 pengguna
+              Menampilkan <span class="font-semibold text-slate-700">{{ $users->firstItem() }}–{{ $users->lastItem() }}</span> dari <span class="font-semibold text-slate-700">{{ $users->total() }}</span> pengguna
             </p>
             <div class="flex items-center gap-2 text-xs">
               <span class="text-slate-500">Tampilkan</span>
-              <select class="select select-bordered select-xs">
-                <option selected>10</option>
-                <option>25</option>
-                <option>50</option>
+              <select class="select select-bordered select-xs" onchange="const url = new URL(window.location.href); url.searchParams.set('per_page', this.value); url.searchParams.set('page', 1); window.location.href = url.href;">
+                <option value="10" {{ request('per_page') == '10' ? 'selected' : '' }}>10</option>
+                <option value="25" {{ request('per_page') == '25' ? 'selected' : '' }}>25</option>
+                <option value="50" {{ request('per_page') == '50' ? 'selected' : '' }}>50</option>
               </select>
               <span class="text-slate-500">per halaman</span>
             </div>
@@ -221,7 +231,16 @@
               </tr>
             </thead>
             <tbody>
-              <!-- Row contoh 1 -->
+              @forelse ($users as $user)
+              @php
+                $avatarColor = match($user->role) {
+                    'admin_wilayah'      => 'bg-emerald-100 text-emerald-700',
+                    'koordinator_cabang' => 'bg-indigo-100 text-indigo-700',
+                    'kader_lapangan'     => 'bg-sky-100 text-sky-700',
+                    'pengguna_umum'      => 'bg-slate-100 text-slate-600',
+                    default              => 'bg-slate-100 text-slate-600',
+                };
+              @endphp
               <tr>
                 <td>
                   <input type="checkbox" class="checkbox checkbox-xs" />
@@ -229,140 +248,93 @@
                 <td>
                   <div class="flex items-center gap-3">
                     <div class="avatar placeholder">
-                      <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 text-xs flex items-center justify-center">
-                        KA
+                      <div class="w-8 h-8 rounded-full {{ $avatarColor }} text-xs flex items-center justify-center">
+                        {{ strtoupper(substr($user->name, 0, 2)) }}
                       </div>
                     </div>
                     <div>
-                      <p class="font-medium text-slate-800 text-sm">Khalida Aisyah</p>
-                      <p class="text-xs text-slate-500">khalida.aisyah@example.com · 0812-3456-7890</p>
+                      <p class="font-medium text-slate-800 text-sm">{{ $user->name }}</p>
+                      <p class="text-xs text-slate-500">{{ $user->email }}{{ $user->phone_number ? ' · ' . $user->phone_number : '' }}</p>
                     </div>
                   </div>
                 </td>
                 <td>
-                  <span class="badge badge-sm badge-ghost">Admin Wilayah</span>
+                  <span class="badge badge-sm badge-ghost">{{ ucwords(str_replace('_', ' ', $user->role)) }}</span>
                 </td>
                 <td>
-                  <p class="text-xs text-slate-600">Kaltim · Samarinda</p>
+                  <p class="text-xs text-slate-600">{{ $user->city ?? '-' }}</p>
                 </td>
                 <td>
-                  <span class="badge badge-sm badge-success gap-1">
-                    <span class="material-symbols-rounded text-xs">check_circle</span>
-                    Aktif
-                  </span>
+                  @if ($user->is_active)
+                    <span class="badge badge-sm badge-success gap-1">
+                      <span class="material-symbols-rounded text-xs">check_circle</span>
+                      Aktif
+                    </span>
+                  @else
+                    <span class="badge badge-sm badge-outline gap-1">
+                      <span class="material-symbols-rounded text-xs">pause_circle</span>
+                      Nonaktif
+                    </span>
+                  @endif
                 </td>
                 <td class="text-right">
                   <div class="flex justify-end gap-1">
                     <button class="btn btn-ghost btn-xs rounded-full">
                       <span class="material-symbols-rounded text-sm">edit</span>
                     </button>
-                    <button class="btn btn-ghost btn-xs rounded-full text-red-500">
+                    <button type="button" class="btn btn-ghost btn-xs rounded-full text-red-500"
+                      onclick="if(confirm('Yakin hapus pengguna ini?')) document.getElementById('del-{{ $user->id }}').submit()">
                       <span class="material-symbols-rounded text-sm">delete</span>
                     </button>
                   </div>
                 </td>
               </tr>
-
-              <!-- Row contoh 2 -->
+              @empty
               <tr>
-                <td>
-                  <input type="checkbox" class="checkbox checkbox-xs" />
-                </td>
-                <td>
-                  <div class="flex items-center gap-3">
-                    <div class="avatar placeholder">
-                      <div class="w-8 h-8 rounded-full bg-sky-100 text-sky-700 text-xs flex items-center justify-center">
-                        RN
-                      </div>
-                    </div>
-                    <div>
-                      <p class="font-medium text-slate-800 text-sm">Rina Nurul</p>
-                      <p class="text-xs text-slate-500">rina.nurul@example.com · 0821-1234-5678</p>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <span class="badge badge-sm badge-ghost">Kader Lapangan</span>
-                </td>
-                <td>
-                  <p class="text-xs text-slate-600">Kaltim · Balikpapan</p>
-                </td>
-                <td>
-                  <span class="badge badge-sm badge-success gap-1">
-                    <span class="material-symbols-rounded text-xs">check_circle</span>
-                    Aktif
-                  </span>
-                </td>
-                <td class="text-right">
-                  <div class="flex justify-end gap-1">
-                    <button class="btn btn-ghost btn-xs rounded-full">
-                      <span class="material-symbols-rounded text-sm">edit</span>
-                    </button>
-                    <button class="btn btn-ghost btn-xs rounded-full text-red-500">
-                      <span class="material-symbols-rounded text-sm">delete</span>
-                    </button>
-                  </div>
-                </td>
+                <td colspan="6" class="text-center py-8 text-slate-400 text-sm">Belum ada pengguna.</td>
               </tr>
-
-              <!-- Row contoh 3 -->
-              <tr>
-                <td>
-                  <input type="checkbox" class="checkbox checkbox-xs" />
-                </td>
-                <td>
-                  <div class="flex items-center gap-3">
-                    <div class="avatar placeholder">
-                      <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 text-xs flex items-center justify-center">
-                        AU
-                      </div>
-                    </div>
-                    <div>
-                      <p class="font-medium text-slate-800 text-sm">Ahmad Umar</p>
-                      <p class="text-xs text-slate-500">ahmad.umar@example.com · 0851-9876-5432</p>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <span class="badge badge-sm badge-ghost">Pengguna Umum</span>
-                </td>
-                <td>
-                  <p class="text-xs text-slate-600">Kaltim · Kutai Kartanegara</p>
-                </td>
-                <td>
-                  <span class="badge badge-sm badge-outline gap-1">
-                    <span class="material-symbols-rounded text-xs">pause_circle</span>
-                    Nonaktif
-                  </span>
-                </td>
-                <td class="text-right">
-                  <div class="flex justify-end gap-1">
-                    <button class="btn btn-ghost btn-xs rounded-full">
-                      <span class="material-symbols-rounded text-sm">edit</span>
-                    </button>
-                    <button class="btn btn-ghost btn-xs rounded-full text-red-500">
-                      <span class="material-symbols-rounded text-sm">delete</span>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-
+              @endforelse
             </tbody>
           </table>
 
+          {{-- Hidden delete forms (luar tabel agar tidak merusak layout) --}}
+          @foreach ($users as $user)
+          <form id="del-{{ $user->id }}" method="POST" action="{{ route('admin.pengguna.destroy', $user) }}" class="hidden">
+            @csrf @method('DELETE')
+          </form>
+          @endforeach
+
           <!-- Pagination sederhana -->
           <div class="flex items-center justify-between mt-4 text-xs text-slate-600">
-            <p>Halaman 1 dari 13</p>
+            <p>Halaman {{ $users->currentPage() }} dari {{ $users->lastPage() }}</p>
             <div class="join">
-              <button class="btn btn-ghost btn-xs join-item">
-                <span class="material-symbols-rounded text-sm">chevron_left</span>
-              </button>
-              <button class="btn btn-primary btn-xs join-item">1</button>
-              <button class="btn btn-ghost btn-xs join-item">2</button>
-              <button class="btn btn-ghost btn-xs join-item">3</button>
-              <button class="btn btn-ghost btn-xs join-item">
-                <span class="material-symbols-rounded text-sm">chevron_right</span>
-              </button>
+              @if ($users->onFirstPage())
+                <button class="btn btn-ghost btn-xs join-item text-slate-400" disabled>
+                  <span class="material-symbols-rounded text-sm">chevron_left</span>
+                </button>
+              @else
+                <a href="{{ $users->previousPageUrl() }}" class="btn btn-ghost btn-xs join-item">
+                  <span class="material-symbols-rounded text-sm">chevron_left</span>
+                </a>
+              @endif
+
+              @for ($i = 1; $i <= $users->lastPage(); $i++)
+                @if ($i == $users->currentPage())
+                  <button class="btn btn-primary btn-xs join-item">{{ $i }}</button>
+                @else
+                  <a href="{{ $users->url($i) }}" class="btn btn-ghost btn-xs join-item">{{ $i }}</a>
+                @endif
+              @endfor
+
+              @if ($users->hasMorePages())
+                <a href="{{ $users->nextPageUrl() }}" class="btn btn-ghost btn-xs join-item">
+                  <span class="material-symbols-rounded text-sm">chevron_right</span>
+                </a>
+              @else
+                <button class="btn btn-ghost btn-xs join-item text-slate-400" disabled>
+                  <span class="material-symbols-rounded text-sm">chevron_right</span>
+                </button>
+              @endif
             </div>
           </div>
         </div>
@@ -373,7 +345,8 @@
             <span class="material-symbols-rounded text-sm text-slate-600">person_add</span>
             Tambah / edit pengguna (ringkas)
           </h2>
-          <form class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <form class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm" method="POST" action="{{ route('admin.pengguna.store') }}">
+            @csrf
             <div class="form-control">
               <label class="label pb-1">
                 <span class="label-text text-xs font-medium">Nama lengkap</span>

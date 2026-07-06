@@ -126,51 +126,51 @@
 
         <!-- Statistik ringkas -->
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-          <!-- Card 1 -->
+          <!-- Card 1: Artikel terbit -->
           <div class="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col gap-2">
             <div class="flex items-center justify-between">
               <span class="text-xs font-medium text-slate-500">Artikel terbit</span>
               <span class="material-symbols-rounded text-emerald-500 text-base">article</span>
             </div>
-            <p class="text-2xl font-bold text-slate-900">24</p>
+            <p class="text-2xl font-bold text-slate-900">{{ $publishedArticles }}</p>
             <p class="text-xs text-slate-500">
-              +3 artikel dalam 7 hari terakhir
+              {{ $totalArticles }} total artikel
             </p>
           </div>
 
-          <!-- Card 2 -->
+          <!-- Card 2: Total pengukuran -->
           <div class="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col gap-2">
             <div class="flex items-center justify-between">
               <span class="text-xs font-medium text-slate-500">Analisis kalkulator</span>
               <span class="material-symbols-rounded text-indigo-500 text-base">calculate</span>
             </div>
-            <p class="text-2xl font-bold text-slate-900">128</p>
+            <p class="text-2xl font-bold text-slate-900">{{ $totalMeasurements }}</p>
             <p class="text-xs text-slate-500">
-              32 analisis minggu ini
+              Total skrining tercatat
             </p>
           </div>
 
-          <!-- Card 3 -->
+          <!-- Card 3: Risiko stunting -->
           <div class="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col gap-2">
             <div class="flex items-center justify-between">
               <span class="text-xs font-medium text-slate-500">Risiko stunting</span>
               <span class="material-symbols-rounded text-amber-500 text-base">warning</span>
             </div>
-            <p class="text-2xl font-bold text-slate-900">18</p>
+            <p class="text-2xl font-bold text-slate-900">{{ $totalStunted }}</p>
             <p class="text-xs text-slate-500">
-              Temuan risiko dari analisis
+              Kasus pendek & sangat pendek
             </p>
           </div>
 
-          <!-- Card 4 -->
+          <!-- Card 4: Pengguna terdaftar -->
           <div class="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col gap-2">
             <div class="flex items-center justify-between">
               <span class="text-xs font-medium text-slate-500">Pengguna terdaftar</span>
               <span class="material-symbols-rounded text-sky-500 text-base">group</span>
             </div>
-            <p class="text-2xl font-bold text-slate-900">42</p>
+            <p class="text-2xl font-bold text-slate-900">{{ $totalUsers }}</p>
             <p class="text-xs text-slate-500">
-              Kader / petugas yang aktif
+              {{ $totalKader }} kader aktif
             </p>
           </div>
         </div>
@@ -191,61 +191,29 @@
             </div>
 
             <ul class="divide-y divide-slate-100 text-sm">
+              @forelse ($recentMeasurements as $m)
               <li class="py-3 flex items-start gap-3">
-                <div class="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
-                  <span class="material-symbols-rounded text-base">article</span>
-                </div>
-                <div class="flex-1">
-                  <p class="font-medium text-slate-800 text-sm">
-                    Artikel baru: <span class="font-semibold">Panduan MPASI 6–8 bulan</span>
-                  </p>
-                  <p class="text-xs text-slate-500 mt-0.5">
-                    Dibuat oleh Admin Aisyiyah · 10 menit lalu
-                  </p>
-                </div>
-              </li>
-
-              <li class="py-3 flex items-start gap-3">
-                <div class="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
+                <div class="w-8 h-8 rounded-full
+                  {{ $m->status_growth === 'Normal' ? 'bg-emerald-50 text-emerald-600' : ($m->status_growth === 'Pendek' ? 'bg-amber-50 text-amber-600' : 'bg-rose-50 text-rose-600') }}
+                  flex items-center justify-center">
                   <span class="material-symbols-rounded text-base">calculate</span>
                 </div>
                 <div class="flex-1">
                   <p class="font-medium text-slate-800 text-sm">
-                    5 analisis kalkulator dilakukan
+                    Skrining: <span class="font-semibold">{{ $m->child_name ?? 'Tanpa nama' }}</span>
+                    <span class="ml-1 text-xs font-normal
+                      {{ $m->status_growth === 'Normal' ? 'text-emerald-600' : ($m->status_growth === 'Pendek' ? 'text-amber-600' : 'text-rose-600') }}">
+                      · {{ $m->status_growth }}
+                    </span>
                   </p>
                   <p class="text-xs text-slate-500 mt-0.5">
-                    Mayoritas hasil: risiko stunting ringan
+                    {{ $m->city ?? '-' }} · {{ $m->created_at->diffForHumans() }}
                   </p>
                 </div>
               </li>
-
-              <li class="py-3 flex items-start gap-3">
-                <div class="w-8 h-8 rounded-full bg-sky-50 flex items-center justify-center text-sky-600">
-                  <span class="material-symbols-rounded text-base">group</span>
-                </div>
-                <div class="flex-1">
-                  <p class="font-medium text-slate-800 text-sm">
-                    2 kader baru bergabung
-                  </p>
-                  <p class="text-xs text-slate-500 mt-0.5">
-                    Kader Posyandu Melati dan Posyandu Kenanga
-                  </p>
-                </div>
-              </li>
-
-              <li class="py-3 flex items-start gap-3">
-                <div class="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-amber-600">
-                  <span class="material-symbols-rounded text-base">campaign</span>
-                </div>
-                <div class="flex-1">
-                  <p class="font-medium text-slate-800 text-sm">
-                    Artikel unggulan diperbarui di beranda
-                  </p>
-                  <p class="text-xs text-slate-500 mt-0.5">
-                    "Cegah stunting sejak 1000 HPK"
-                  </p>
-                </div>
-              </li>
+              @empty
+              <li class="py-6 text-center text-slate-400 text-xs">Belum ada data pengukuran.</li>
+              @endforelse
             </ul>
           </div>
 
@@ -261,31 +229,27 @@
               </a>
             </div>
 
+            @php
+              $latestArticles = \App\Models\Article::latest('published_date')->limit(3)->get();
+            @endphp
             <ul class="space-y-3 text-sm">
+              @forelse ($latestArticles as $article)
               <li class="border border-slate-100 rounded-xl p-3">
-                <p class="font-medium text-slate-800 text-sm">
-                  Protein hewani harian untuk pertumbuhan optimal anak
+                <p class="font-medium text-slate-800 text-sm line-clamp-2">
+                  {{ $article->title }}
                 </p>
                 <p class="text-xs text-slate-500 mt-1">
-                  Gizi Anak · 7 Juni 2026
+                  {{ $article->category }} · {{ $article->published_date ? $article->published_date->translatedFormat('j M Y') : '-' }}
+                  @if ($article->is_published)
+                    <span class="ml-1 text-emerald-600">· Terbit</span>
+                  @else
+                    <span class="ml-1 text-slate-400">· Draf</span>
+                  @endif
                 </p>
               </li>
-              <li class="border border-slate-100 rounded-xl p-3">
-                <p class="font-medium text-slate-800 text-sm">
-                  Tanda-tanda stunting yang perlu diwaspadai
-                </p>
-                <p class="text-xs text-slate-500 mt-1">
-                  FAQ · 3 Juni 2026
-                </p>
-              </li>
-              <li class="border border-slate-100 rounded-xl p-3">
-                <p class="font-medium text-slate-800 text-sm">
-                  Panduan MPASI kaya protein untuk usia 7–9 bulan
-                </p>
-                <p class="text-xs text-slate-500 mt-1">
-                  MPASI · 30 Mei 2026
-                </p>
-              </li>
+              @empty
+              <li class="py-4 text-center text-slate-400 text-xs">Belum ada artikel.</li>
+              @endforelse
             </ul>
           </div>
         </div>
@@ -298,36 +262,41 @@
               <span class="material-symbols-rounded text-sm text-slate-600">insights</span>
               Ringkasan hasil analisis
             </h2>
+            @php
+              $pctNormal  = $totalMeasurements > 0 ? round($totalNormal / $totalMeasurements * 100) : 0;
+              $pctPendek  = $totalMeasurements > 0 ? round($totalPendek / $totalMeasurements * 100) : 0;
+              $pctSangat  = $totalMeasurements > 0 ? round($totalSangatPendek / $totalMeasurements * 100) : 0;
+            @endphp
             <div class="space-y-3 text-sm">
               <div class="flex items-center justify-between">
                 <span class="text-slate-600">Normal</span>
                 <div class="flex items-center gap-2">
                   <div class="w-24 h-2 rounded-full bg-emerald-100">
-                    <div class="h-2 rounded-full bg-emerald-500" style="width: 55%;"></div>
+                    <div class="h-2 rounded-full bg-emerald-500" style="width: {{ $pctNormal }}%;"></div>
                   </div>
-                  <span class="text-xs text-slate-500">55%</span>
+                  <span class="text-xs text-slate-500">{{ $pctNormal }}%</span>
                 </div>
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-slate-600">Risiko stunting</span>
+                <span class="text-slate-600">Pendek</span>
                 <div class="flex items-center gap-2">
                   <div class="w-24 h-2 rounded-full bg-amber-100">
-                    <div class="h-2 rounded-full bg-amber-500" style="width: 30%;"></div>
+                    <div class="h-2 rounded-full bg-amber-500" style="width: {{ $pctPendek }}%;"></div>
                   </div>
-                  <span class="text-xs text-slate-500">30%</span>
+                  <span class="text-xs text-slate-500">{{ $pctPendek }}%</span>
                 </div>
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-slate-600">Stunting</span>
+                <span class="text-slate-600">Sangat Pendek</span>
                 <div class="flex items-center gap-2">
                   <div class="w-24 h-2 rounded-full bg-rose-100">
-                    <div class="h-2 rounded-full bg-rose-500" style="width: 15%;"></div>
+                    <div class="h-2 rounded-full bg-rose-500" style="width: {{ $pctSangat }}%;"></div>
                   </div>
-                  <span class="text-xs text-slate-500">15%</span>
+                  <span class="text-xs text-slate-500">{{ $pctSangat }}%</span>
                 </div>
               </div>
               <p class="text-xs text-slate-500 mt-2">
-                Angka di atas adalah ringkasan dari seluruh hasil kalkulator yang tercatat. Data detail dapat dilihat di menu "Hasil analisis".
+                Berdasarkan {{ $totalMeasurements }} data skrining yang tercatat. Detail dapat dilihat di menu "Analisis".
               </p>
             </div>
           </div>

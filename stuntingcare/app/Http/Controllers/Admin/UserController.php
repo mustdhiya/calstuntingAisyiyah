@@ -36,7 +36,12 @@ class UserController extends Controller
             }
         }
 
-        $users     = $query->paginate(10)->withQueryString();
+        $perPage = $request->integer('per_page', 10);
+        if (!in_array($perPage, [10, 25, 50])) {
+            $perPage = 10;
+        }
+
+        $users     = $query->paginate($perPage)->withQueryString();
         $totalUsers  = User::count();
         $totalAdminKoordinator = User::whereIn('role', ['admin_wilayah', 'koordinator_cabang'])->count();
         $totalKader  = User::where('role', 'kader_lapangan')->count();

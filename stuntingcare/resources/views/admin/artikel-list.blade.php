@@ -129,7 +129,7 @@
               <span class="material-symbols-rounded text-sm">filter_list</span>
               Filter
             </button>
-            <a href="{{ route('admin.artikel.edit') }}" class="btn btn-primary btn-sm rounded-full">
+            <a href="{{ route('admin.artikel.create') }}" class="btn btn-primary btn-sm rounded-full">
               <span class="material-symbols-rounded text-sm">add</span>
               Artikel baru
             </a>
@@ -179,154 +179,106 @@
                 </tr>
               </thead>
               <tbody>
-                <!-- Row 1 -->
+                @forelse ($articles as $article)
                 <tr>
                   <td>
                     <input type="checkbox" class="checkbox checkbox-xs" />
                   </td>
                   <td>
                     <div class="flex flex-col">
-                      <a href="{{ route('admin.artikel.edit') }}" class="font-medium text-slate-800 hover:text-emerald-700">
-                        Protein hewani harian untuk pertumbuhan optimal anak
+                      <a href="{{ route('admin.artikel.edit', $article) }}" class="font-medium text-slate-800 hover:text-emerald-700">
+                        {{ $article->title }}
                       </a>
                       <span class="text-xs text-slate-500 line-clamp-1">
-                        Pentingnya protein hewani setiap hari untuk mendukung tumbuh kembang anak dan pencegahan stunting.
+                        {{ $article->summary }}
                       </span>
                     </div>
                   </td>
                   <td class="hidden md:table-cell text-xs text-slate-600">
-                    Gizi Anak
+                    {{ $article->category }}
                   </td>
                   <td>
-                    <span class="badge badge-status-published border-0 text-[10px] px-2 py-1 flex items-center gap-1">
-                      <span class="material-symbols-rounded text-[14px]">check_circle</span>
-                      Terbit
-                    </span>
+                    @if ($article->is_published)
+                      <span class="badge badge-status-published border-0 text-[10px] px-2 py-1 flex items-center gap-1">
+                        <span class="material-symbols-rounded text-[14px]">check_circle</span>
+                        Terbit
+                      </span>
+                    @else
+                      <span class="badge badge-status-draft border-0 text-[10px] px-2 py-1 flex items-center gap-1">
+                        <span class="material-symbols-rounded text-[14px]">edit_note</span>
+                        Draf
+                      </span>
+                    @endif
                   </td>
                   <td class="hidden md:table-cell text-xs text-slate-600">
-                    Tim Edukasi SiCegah
+                    {{ $article->author_name }}
                   </td>
                   <td class="hidden md:table-cell text-xs text-slate-600">
-                    07/06/2026
+                    {{ $article->published_date ? $article->published_date->format('d/m/Y') : '-' }}
                   </td>
                   <td class="text-right">
                     <div class="flex items-center justify-end gap-1 text-xs">
-                      <a href="{{ route('admin.artikel.edit') }}" class="btn btn-ghost btn-xs rounded-full">
+                      <a href="{{ route('admin.artikel.edit', $article) }}" class="btn btn-ghost btn-xs rounded-full">
                         <span class="material-symbols-rounded text-sm">edit</span>
                         Edit
                       </a>
-                      <button class="btn btn-ghost btn-xs rounded-full text-red-600">
-                        <span class="material-symbols-rounded text-sm">archive</span>
-                        Arsip
-                      </button>
+                      <form method="POST" action="{{ route('admin.artikel.archive', $article) }}" class="inline">
+                        @csrf @method('PATCH')
+                        <button type="submit" class="btn btn-ghost btn-xs rounded-full text-amber-600">
+                          <span class="material-symbols-rounded text-sm">archive</span>
+                          Arsip
+                        </button>
+                      </form>
+                      <form method="POST" action="{{ route('admin.artikel.destroy', $article) }}" class="inline" onsubmit="return confirm('Yakin hapus artikel ini?')">
+                        @csrf @method('DELETE')
+                        <button type="submit" class="btn btn-ghost btn-xs rounded-full text-red-600">
+                          <span class="material-symbols-rounded text-sm">delete</span>
+                          Hapus
+                        </button>
+                      </form>
                     </div>
                   </td>
                 </tr>
-
-                <!-- Row 2 -->
+                @empty
                 <tr>
-                  <td>
-                    <input type="checkbox" class="checkbox checkbox-xs" />
-                  </td>
-                  <td>
-                    <div class="flex flex-col">
-                      <a href="{{ route('admin.artikel.edit') }}" class="font-medium text-slate-800 hover:text-emerald-700">
-                        Panduan MPASI bergizi untuk usia 6–24 bulan
-                      </a>
-                      <span class="text-xs text-slate-500 line-clamp-1">
-                        Contoh menu MPASI seimbang dengan sumber protein hewani, nabati, dan sayur.
-                      </span>
-                    </div>
-                  </td>
-                  <td class="hidden md:table-cell text-xs text-slate-600">
-                    MPASI
-                  </td>
-                  <td>
-                    <span class="badge badge-status-draft border-0 text-[10px] px-2 py-1 flex items-center gap-1">
-                      <span class="material-symbols-rounded text-[14px]">edit_note</span>
-                      Draf
-                    </span>
-                  </td>
-                  <td class="hidden md:table-cell text-xs text-slate-600">
-                    Bidan Rina
-                  </td>
-                  <td class="hidden md:table-cell text-xs text-slate-600">
-                    01/06/2026
-                  </td>
-                  <td class="text-right">
-                    <div class="flex items-center justify-end gap-1 text-xs">
-                      <a href="{{ route('admin.artikel.edit') }}" class="btn btn-ghost btn-xs rounded-full">
-                        <span class="material-symbols-rounded text-sm">edit</span>
-                        Edit
-                      </a>
-                      <button class="btn btn-ghost btn-xs rounded-full text-red-600">
-                        <span class="material-symbols-rounded text-sm">delete</span>
-                        Hapus
-                      </button>
-                    </div>
-                  </td>
+                  <td colspan="7" class="text-center py-8 text-slate-400 text-sm">Belum ada artikel.</td>
                 </tr>
-
-                <!-- Row 3 -->
-                <tr>
-                  <td>
-                    <input type="checkbox" class="checkbox checkbox-xs" />
-                  </td>
-                  <td>
-                    <div class="flex flex-col">
-                      <a href="{{ route('admin.artikel.edit') }}" class="font-medium text-slate-800 hover:text-emerald-700">
-                        10 tanda anak perlu dipantau tumbuh kembangnya
-                      </a>
-                      <span class="text-xs text-slate-500 line-clamp-1">
-                        Daftar tanda sederhana yang bisa diperhatikan kader dan orang tua.
-                      </span>
-                    </div>
-                  </td>
-                  <td class="hidden md:table-cell text-xs text-slate-600">
-                    FAQ
-                  </td>
-                  <td>
-                    <span class="badge badge-status-scheduled border-0 text-[10px] px-2 py-1 flex items-center gap-1">
-                      <span class="material-symbols-rounded text-[14px]">schedule</span>
-                      Terjadwal
-                    </span>
-                  </td>
-                  <td class="hidden md:table-cell text-xs text-slate-600">
-                    Dokter Anak Laila
-                  </td>
-                  <td class="hidden md:table-cell text-xs text-slate-600">
-                    15/06/2026
-                  </td>
-                  <td class="text-right">
-                    <div class="flex items-center justify-end gap-1 text-xs">
-                      <a href="{{ route('admin.artikel.edit') }}" class="btn btn-ghost btn-xs rounded-full">
-                        <span class="material-symbols-rounded text-sm">edit</span>
-                        Edit
-                      </a>
-                      <button class="btn btn-ghost btn-xs rounded-full text-red-600">
-                        <span class="material-symbols-rounded text-sm">cancel</span>
-                        Batalkan
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                @endforelse
               </tbody>
             </table>
           </div>
 
           <!-- Footer tabel: info & pagination -->
           <div class="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-slate-100 text-xs text-slate-500">
-            <p>Menampilkan 1–3 dari 12 artikel</p>
-            <div class="flex items-center gap-1">
-              <button class="btn btn-ghost btn-xs rounded-full">
-                <span class="material-symbols-rounded text-sm">chevron_left</span>
-              </button>
-              <button class="btn btn-primary btn-xs rounded-full">1</button>
-              <button class="btn btn-ghost btn-xs rounded-full">2</button>
-              <button class="btn btn-ghost btn-xs rounded-full">3</button>
-              <button class="btn btn-ghost btn-xs rounded-full">
-                <span class="material-symbols-rounded text-sm">chevron_right</span>
-              </button>
+            <p>Halaman {{ $articles->currentPage() }} dari {{ $articles->lastPage() }}</p>
+            <div class="join">
+              @if ($articles->onFirstPage())
+                <button class="btn btn-ghost btn-xs join-item text-slate-400" disabled>
+                  <span class="material-symbols-rounded text-sm">chevron_left</span>
+                </button>
+              @else
+                <a href="{{ $articles->previousPageUrl() }}" class="btn btn-ghost btn-xs join-item">
+                  <span class="material-symbols-rounded text-sm">chevron_left</span>
+                </a>
+              @endif
+
+              @for ($i = 1; $i <= $articles->lastPage(); $i++)
+                @if ($i == $articles->currentPage())
+                  <button class="btn btn-primary btn-xs join-item">{{ $i }}</button>
+                @else
+                  <a href="{{ $articles->url($i) }}" class="btn btn-ghost btn-xs join-item">{{ $i }}</a>
+                @endif
+              @endfor
+
+              @if ($articles->hasMorePages())
+                <a href="{{ $articles->nextPageUrl() }}" class="btn btn-ghost btn-xs join-item">
+                  <span class="material-symbols-rounded text-sm">chevron_right</span>
+                </a>
+              @else
+                <button class="btn btn-ghost btn-xs join-item text-slate-400" disabled>
+                  <span class="material-symbols-rounded text-sm">chevron_right</span>
+                </button>
+              @endif
             </div>
           </div>
         </div>
