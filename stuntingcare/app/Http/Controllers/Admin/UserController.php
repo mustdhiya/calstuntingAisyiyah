@@ -36,7 +36,7 @@ class UserController extends Controller
             }
         }
 
-        $perPage = $request->integer('per_page', 10);
+        $perPage = (int) $request->input('per_page', 10);
         if (!in_array($perPage, [10, 25, 50])) {
             $perPage = 10;
         }
@@ -68,10 +68,9 @@ class UserController extends Controller
             'role'         => 'required|in:admin_wilayah,koordinator_cabang,kader_lapangan,pengguna_umum',
             'city'         => 'nullable|string|max:255',
             'is_active'    => 'boolean',
-            'password'     => 'required|string|min:8',
         ]);
 
-        $data['password']  = Hash::make($data['password']);
+        $data['password']  = Hash::make($request->input('password', 'password'));
         $data['is_active'] = $request->boolean('is_active', true);
 
         User::create($data);
@@ -114,5 +113,67 @@ class UserController extends Controller
     {
         $user->delete();
         return redirect()->route('admin.pengguna')->with('success', 'Pengguna berhasil dihapus.');
+    }
+
+    /**
+     * Export the filtered user data as CSV.
+     */
+    public function exportCsv(Request $request)
+    {
+        $query = User::latest();
+
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                  ->orWhere('email', 'like', '%' . $request->search . '%')
+                  ->orWhere('phone_number', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        if ($request->filled('role')) {
+            $roleMap = [
+                'Admin Wilayah'        => 'admin_wilayah',
+                'Koordinator Cabang'   => 'koordinator_cabang',
+                'Kader Lapangan'       => 'kader_lapangan',
+                'Pengguna Umum'        => 'pengguna_umum',
+            ];
+            if (isset($roleMap[$request->role])) {
+                $query->where('role', $roleMap[$request->role]);
+            }
+        }
+
+        $users = $query->get();
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="users-export-' . now()->format('Y-m-d') . '.csv"',
+        ];
+
+        $callback = function () use ($users) {
+            $file = fopen('php://output', 'w');
+            
+            // Add UTF-8 BOM for proper Excel compatibility
+            fputs($file, "\xEF\xBB\xBF");
+            
+            // CSV columns header
+            fputcsv($file, ['ID', 'Nama', 'Email', 'No. HP', 'Peran', 'Wilayah/Kota', 'Status Aktif', 'Tanggal Dibuat']);
+
+            foreach ($users as $user) {
+                fputcsv($file, [
+                    $user->id,
+                    $user->name,
+                    $user->email,
+                    $user->phone_number ?? '-',
+                    ucwords(str_replace('_', ' ', $user->role)),
+                    $user->city ?? '-',
+                    $user->is_active ? 'Aktif' : 'Nonaktif',
+                    $user->created_at->format('Y-m-d H:i:s'),
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

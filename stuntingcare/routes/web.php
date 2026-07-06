@@ -59,6 +59,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::delete('/artikel/{article}',       [ArticleController::class, 'destroy'])->name('artikel.destroy');
 
     // Pengguna CRUD
+    Route::get('/pengguna/export-csv',   [UserController::class, 'exportCsv'])->name('pengguna.export');
     Route::get('/pengguna',              [UserController::class, 'index'])->name('pengguna');
     Route::post('/pengguna',             [UserController::class, 'store'])->name('pengguna.store');
     Route::put('/pengguna/{user}',       [UserController::class, 'update'])->name('pengguna.update');

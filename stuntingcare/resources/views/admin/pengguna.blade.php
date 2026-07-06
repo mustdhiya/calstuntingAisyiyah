@@ -113,11 +113,11 @@
             </p>
           </div>
           <div class="flex flex-wrap gap-2">
-            <button type="button" class="btn btn-outline btn-sm rounded-full">
+            <a href="{{ route('admin.pengguna.export', request()->query()) }}" class="btn btn-outline btn-sm rounded-full">
               <span class="material-symbols-rounded text-sm">download</span>
               Ekspor CSV
-            </button>
-            <button type="button" class="btn btn-primary btn-sm rounded-full">
+            </a>
+            <button type="button" class="btn btn-primary btn-sm rounded-full" onclick="resetForm()">
               <span class="material-symbols-rounded text-sm">person_add</span>
               Tambah pengguna
             </button>
@@ -126,10 +126,7 @@
 
         <!-- Filter + summary -->
         <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-4">
-          <form method="GET" action="{{ route('admin.pengguna') }}">
-            @if(request()->has('per_page'))
-              <input type="hidden" name="per_page" value="{{ request('per_page') }}">
-            @endif
+          <form id="filter-form" method="GET" action="{{ route('admin.pengguna') }}">
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
               <!-- Search -->
@@ -208,10 +205,10 @@
             </p>
             <div class="flex items-center gap-2 text-xs">
               <span class="text-slate-500">Tampilkan</span>
-              <select class="select select-bordered select-xs" onchange="const url = new URL(window.location.href); url.searchParams.set('per_page', this.value); url.searchParams.set('page', 1); window.location.href = url.href;">
-                <option value="10" {{ request('per_page') == '10' ? 'selected' : '' }}>10</option>
-                <option value="25" {{ request('per_page') == '25' ? 'selected' : '' }}>25</option>
-                <option value="50" {{ request('per_page') == '50' ? 'selected' : '' }}>50</option>
+              <select name="per_page" form="filter-form" class="select select-bordered select-xs" onchange="this.form.submit()">
+                <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>10</option>
+                <option value="25" {{ request('per_page', 10) == 25 ? 'selected' : '' }}>25</option>
+                <option value="50" {{ request('per_page', 10) == 50 ? 'selected' : '' }}>50</option>
               </select>
               <span class="text-slate-500">per halaman</span>
             </div>
@@ -279,7 +276,8 @@
                 </td>
                 <td class="text-right">
                   <div class="flex justify-end gap-1">
-                    <button class="btn btn-ghost btn-xs rounded-full">
+                    <button type="button" class="btn btn-ghost btn-xs rounded-full"
+                      onclick="editUser({{ json_encode($user->only(['id', 'name', 'email', 'phone_number', 'role', 'city', 'is_active'])) }})">
                       <span class="material-symbols-rounded text-sm">edit</span>
                     </button>
                     <button type="button" class="btn btn-ghost btn-xs rounded-full text-red-500"
@@ -339,60 +337,62 @@
           </div>
         </div>
 
-        <!-- Panel form singkat (slide-in modal bisa nanti di-Django) -->
-        <div class="bg-white border border-slate-200 rounded-2xl p-4">
-          <h2 class="text-sm font-semibold text-slate-900 mb-3 flex items-center gap-1">
+        <!-- Panel form singkat -->
+        <div id="user-form-card" class="bg-white border border-slate-200 rounded-2xl p-4">
+          <h2 id="form-title" class="text-sm font-semibold text-slate-900 mb-3 flex items-center gap-1">
             <span class="material-symbols-rounded text-sm text-slate-600">person_add</span>
-            Tambah / edit pengguna (ringkas)
+            Tambah pengguna baru
           </h2>
-          <form class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm" method="POST" action="{{ route('admin.pengguna.store') }}">
+          <form id="user-form" class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm" method="POST" action="{{ route('admin.pengguna.store') }}">
             @csrf
+            <input type="hidden" name="_method" id="form-method" value="POST">
+
             <div class="form-control">
               <label class="label pb-1">
                 <span class="label-text text-xs font-medium">Nama lengkap</span>
               </label>
-              <input type="text" class="input input-bordered w-full text-sm" placeholder="Nama pengguna" />
+              <input type="text" name="name" id="user-name" class="input input-bordered w-full text-sm" placeholder="Nama pengguna" required />
             </div>
             <div class="form-control">
               <label class="label pb-1">
                 <span class="label-text text-xs font-medium">Email</span>
               </label>
-              <input type="email" class="input input-bordered w-full text-sm" placeholder="email@contoh.com" />
+              <input type="email" name="email" id="user-email" class="input input-bordered w-full text-sm" placeholder="email@contoh.com" required />
             </div>
             <div class="form-control">
               <label class="label pb-1">
                 <span class="label-text text-xs font-medium">Nomor HP</span>
               </label>
-              <input type="tel" class="input input-bordered w-full text-sm" placeholder="08xx-xxxx-xxxx" />
+              <input type="tel" name="phone_number" id="user-phone" class="input input-bordered w-full text-sm" placeholder="08xx-xxxx-xxxx" />
             </div>
             <div class="form-control">
               <label class="label pb-1">
                 <span class="label-text text-xs font-medium">Peran</span>
               </label>
-              <select class="select select-bordered w-full text-sm">
-                <option>Pengguna Umum</option>
-                <option>Kader Lapangan</option>
-                <option>Koordinator Cabang</option>
-                <option>Admin Wilayah</option>
+              <select name="role" id="user-role" class="select select-bordered w-full text-sm" required>
+                <option value="pengguna_umum">Pengguna Umum</option>
+                <option value="kader_lapangan">Kader Lapangan</option>
+                <option value="koordinator_cabang">Koordinator Cabang</option>
+                <option value="admin_wilayah">Admin Wilayah</option>
               </select>
             </div>
             <div class="form-control">
               <label class="label pb-1">
                 <span class="label-text text-xs font-medium">Wilayah</span>
               </label>
-              <input type="text" class="input input-bordered w-full text-sm" placeholder="Kota / Kabupaten" />
+              <input type="text" name="city" id="user-city" class="input input-bordered w-full text-sm" placeholder="Kota / Kabupaten" />
             </div>
             <div class="form-control">
               <label class="label pb-1">
                 <span class="label-text text-xs font-medium">Status</span>
               </label>
-              <select class="select select-bordered w-full text-sm">
-                <option>Aktif</option>
-                <option>Nonaktif</option>
+              <select name="is_active" id="user-status" class="select select-bordered w-full text-sm" required>
+                <option value="1">Aktif</option>
+                <option value="0">Nonaktif</option>
               </select>
             </div>
             <div class="md:col-span-3 flex justify-end gap-2 pt-2">
-              <button type="button" class="btn btn-ghost btn-sm rounded-full">
+              <button type="button" class="btn btn-ghost btn-sm rounded-full" onclick="resetForm()">
                 <span class="material-symbols-rounded text-sm">close</span>
                 Batal
               </button>
@@ -407,6 +407,51 @@
       </section>
     </div>
   </main>
+
+  <script>
+    function editUser(user) {
+        // Change title
+        document.getElementById('form-title').innerHTML = `
+            <span class="material-symbols-rounded text-sm text-slate-600">edit_note</span>
+            Edit Pengguna: ${user.name}
+        `;
+
+        // Populate fields
+        document.getElementById('user-name').value = user.name;
+        document.getElementById('user-email').value = user.email;
+        document.getElementById('user-phone').value = user.phone_number || '';
+        document.getElementById('user-role').value = user.role;
+        document.getElementById('user-city').value = user.city || '';
+        document.getElementById('user-status').value = user.is_active ? '1' : '0';
+
+        // Update form action and method
+        const form = document.getElementById('user-form');
+        form.action = `/admin/pengguna/${user.id}`;
+        document.getElementById('form-method').value = 'PUT';
+
+        // Scroll to form smoothly
+        document.getElementById('user-form-card').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function resetForm() {
+        // Reset title
+        document.getElementById('form-title').innerHTML = `
+            <span class="material-symbols-rounded text-sm text-slate-600">person_add</span>
+            Tambah pengguna baru
+        `;
+
+        // Reset form inputs
+        document.getElementById('user-form').reset();
+
+        // Restore action and method
+        const form = document.getElementById('user-form');
+        form.action = "{{ route('admin.pengguna.store') }}";
+        document.getElementById('form-method').value = 'POST';
+
+        // Scroll to top or form card
+        document.getElementById('user-form-card').scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
 
 </body>
 </html>
