@@ -217,7 +217,8 @@
 
 
   <!-- ── LAYOUT GRID ── -->
-  <form id="kalkulator-form" action="hasil.html" method="GET" novalidate>
+  <form id="kalkulator-form" action="{{ route('kalkulator.hitung') }}" method="POST" novalidate>
+  @csrf
   <div class="grid lg:grid-cols-3 gap-6 items-start">
 
     <!-- ════ LEFT: FORM ════ -->
@@ -249,7 +250,6 @@
             <div class="relative">
               <span class="material-symbols-rounded absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xl pointer-events-none">person</span>
               <input type="text" name="nama_anak" placeholder="Contoh: Aulia Rahma"
-                     value="Aulia Rahma"
                      class="input input-bordered w-full pl-10 focus:border-green-500 text-sm" />
             </div>
           </div>
@@ -290,7 +290,7 @@
               </label>
               <div class="input-unit-wrap">
                 <input type="number" name="usia_bulan" id="usia_bulan" min="0" max="60"
-                       placeholder="24" value="24"
+                       placeholder="24"
                        class="input input-bordered w-full focus:border-green-500 text-sm" required />
                 <span class="unit-badge">bln</span>
               </div>
@@ -603,34 +603,62 @@
 const navToggle = document.getElementById('nav-toggle');
 const navMobile = document.getElementById('nav-mobile');
 const navIcon   = document.getElementById('nav-icon');
-navToggle.addEventListener('click', () => {
-  navMobile.classList.toggle('hidden');
-  navIcon.textContent = navMobile.classList.contains('hidden') ? 'menu' : 'close';
-});
+if (navToggle && navMobile && navIcon) {
+  navToggle.addEventListener('click', () => {
+    navMobile.classList.toggle('hidden');
+    navIcon.textContent = navMobile.classList.contains('hidden') ? 'menu' : 'close';
+  });
+}
 
 // Collapsible data ibu
 const toggleBtn  = document.getElementById('toggle-optional');
 const optSection = document.getElementById('optional-section');
 const toggleIcon = document.getElementById('toggle-icon');
-toggleBtn.addEventListener('click', () => {
-  const isExpanded = optSection.classList.contains('expanded');
-  optSection.classList.toggle('expanded', !isExpanded);
-  optSection.classList.toggle('collapsed', isExpanded);
-  toggleIcon.style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(180deg)';
-});
+if (toggleBtn && optSection && toggleIcon) {
+  toggleBtn.addEventListener('click', () => {
+    const isExpanded = optSection.classList.contains('expanded');
+    optSection.classList.toggle('expanded', !isExpanded);
+    optSection.classList.toggle('collapsed', isExpanded);
+    toggleIcon.style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(180deg)';
+  });
+}
 
 // Auto-hitung usia dari tanggal lahir
-document.getElementById('tgl_lahir').addEventListener('change', function() {
-  if (!this.value) return;
-  const born  = new Date(this.value);
-  const now   = new Date();
-  const months = Math.floor((now - born) / (1000 * 60 * 60 * 24 * 30.44));
-  const usiaEl = document.getElementById('usia_bulan');
-  if (months >= 0 && months <= 60) {
-    usiaEl.value = months;
-    usiaEl.dispatchEvent(new Event('input'));
+function calculateAge(event) {
+  const target = event ? event.target : document.getElementById('tgl_lahir');
+  if (!target || !target.value) return;
+  
+  const born = new Date(target.value);
+  const now = new Date();
+  
+  let years = now.getFullYear() - born.getFullYear();
+  let months = now.getMonth() - born.getMonth();
+  let days = now.getDate() - born.getDate();
+  
+  let totalMonths = (years * 12) + months;
+  if (days < 0) {
+    totalMonths--;
   }
-});
+  
+  const usiaEl = document.getElementById('usia_bulan');
+  if (usiaEl) {
+    if (totalMonths >= 0 && totalMonths <= 60) {
+      usiaEl.value = totalMonths;
+    } else if (totalMonths > 60) {
+      usiaEl.value = 60;
+    } else {
+      usiaEl.value = 0;
+    }
+    usiaEl.dispatchEvent(new Event('input', { bubbles: true }));
+    usiaEl.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+}
+
+const tglLahirEl = document.getElementById('tgl_lahir');
+if (tglLahirEl) {
+  tglLahirEl.addEventListener('change', calculateAge);
+  tglLahirEl.addEventListener('input', calculateAge);
+}
 
 // Form validation
 document.getElementById('kalkulator-form').addEventListener('submit', function(e) {

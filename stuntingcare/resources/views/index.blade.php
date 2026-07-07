@@ -792,7 +792,7 @@
               <span class="material-symbols-rounded text-[13px]">calendar_today</span>
               5 Jun 2026
             </span>
-            <a href="{{ route('artikel.detail') }}" class="text-[13px] font-semibold text-emerald-600 hover:underline flex items-center gap-0.5">
+            <a href="{{ route('artikel.detail', 'protein-hewani-harian-untuk-pertumbuhan-optimal-anak') }}" class="text-[13px] font-semibold text-emerald-600 hover:underline flex items-center gap-0.5">
               Baca <span class="material-symbols-rounded text-[16px]">arrow_forward</span>
             </a>
           </div>
@@ -813,7 +813,7 @@
               <span class="material-symbols-rounded text-[13px]">calendar_today</span>
               1 Jun 2026
             </span>
-            <a href="{{ route('artikel.detail') }}" class="text-[13px] font-semibold text-sky-600 hover:underline flex items-center gap-0.5">
+            <a href="{{ route('artikel.detail', 'asi-eksklusif-manfaat-dan-cara-pemberian-yang-benar') }}" class="text-[13px] font-semibold text-sky-600 hover:underline flex items-center gap-0.5">
               Baca <span class="material-symbols-rounded text-[16px]">arrow_forward</span>
             </a>
           </div>
@@ -834,7 +834,7 @@
               <span class="material-symbols-rounded text-[13px]">calendar_today</span>
               28 Mei 2026
             </span>
-            <a href="{{ route('artikel.detail') }}" class="text-[13px] font-semibold text-amber-600 hover:underline flex items-center gap-0.5">
+            <a href="{{ route('artikel.detail', 'pentingnya-posyandu-dalam-memantau-kesehatan-ibu-dan-anak') }}" class="text-[13px] font-semibold text-amber-600 hover:underline flex items-center gap-0.5">
               Baca <span class="material-symbols-rounded text-[16px]">arrow_forward</span>
             </a>
           </div>

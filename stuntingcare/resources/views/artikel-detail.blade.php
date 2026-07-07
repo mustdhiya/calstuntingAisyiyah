@@ -1,106 +1,222 @@
+@php
+  if (!function_exists('markdownToHtml')) {
+      function markdownToHtml($text) {
+          if (!$text) return '';
+          // Simple Markdown parser
+          $html = e($text);
+          $html = preg_replace('/^### (.*)$/m', '<h3>$1</h3>', $html);
+          $html = preg_replace('/^## (.*)$/m', '<h2>$1</h2>', $html);
+          $html = preg_replace('/^# (.*)$/m', '<h1>$1</h1>', $html);
+          $html = preg_replace('/\*\*(.+?)\*\*/', '<strong>$1</strong>', $html);
+          $html = preg_replace('/`([^`]+)`/', '<code>$1</code>', $html);
+          $html = preg_replace('/^\s*-\s+(.*)$/m', '<li>$1</li>', $html);
+
+          // Wrap adjacent li elements in ul
+          $html = preg_replace('/(<li>.*?<\/li>)/s', '<ul>$1</ul>', $html);
+          
+          // Paragraphs
+          $lines = explode("\n\n", $html);
+          foreach ($lines as &$line) {
+              $line = trim($line);
+              if (empty($line)) continue;
+              if (strpos($line, '<h') === 0 || strpos($line, '<ul>') === 0 || strpos($line, '<li>') === 0) {
+                  continue;
+              }
+              $line = '<p>' . nl2br($line) . '</p>';
+          }
+          return implode("\n\n", $lines);
+      }
+  }
+
+  $categoryThemes = [
+      'Gizi Anak'     => ['icon' => 'restaurant',     'bg' => 'bg-emerald-100', 'text' => 'text-emerald-700', 'badge' => 'badge-success'],
+      'ASI Eksklusif' => ['icon' => 'child_care',     'bg' => 'bg-cyan-100',    'text' => 'text-cyan-700',    'badge' => 'badge-info'],
+      'MPASI'         => ['icon' => 'lunch_dining',    'bg' => 'bg-amber-100',   'text' => 'text-amber-700',   'badge' => 'badge-warning'],
+      'FAQ'           => ['icon' => 'help',           'bg' => 'bg-purple-100',  'text' => 'text-purple-700',  'badge' => 'badge-secondary'],
+  ];
+  $theme = $categoryThemes[$article->category] ?? ['icon' => 'article', 'bg' => 'bg-slate-100', 'text' => 'text-slate-700', 'badge' => 'badge-ghost'];
+@endphp
 
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Protein Hewani Harian untuk Pertumbuhan Optimal - SiCegah Stunting</title>
-  <meta name="description" content="Detail artikel edukasi tentang pentingnya protein hewani harian untuk pertumbuhan optimal anak." />
+  <title>{{ $article->title }} — SiCegah Stunting</title>
+  <meta name="description" content="{{ $article->summary ?? 'Detail artikel edukasi tentang pencegahan stunting.' }}" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>body{font-family:Inter,sans-serif}.material-symbols-rounded{font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24}</style>
+  <style>
+    body { font-family: Inter, sans-serif; }
+    .material-symbols-rounded { font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24 }
+    .prose h1, .prose h2, .prose h3 { font-weight: 700; color: #1e293b; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+    .prose h1 { font-size: 1.5rem; }
+    .prose h2 { font-size: 1.25rem; }
+    .prose h3 { font-size: 1.1rem; }
+    .prose p { margin-bottom: 1rem; line-height: 1.7; }
+    .prose ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+    .prose li { margin-bottom: 0.25rem; }
+    .prose code { background-color: #f1f5f9; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-size: 0.85em; }
+  </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
+
+  <!-- Navbar -->
   <header class="navbar bg-white border-b border-slate-200 sticky top-0 z-50 px-4 lg:px-8">
-    <div class="navbar-start"><a href="{{ route('home') }}" class="flex items-center gap-3"><div class="w-11 h-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center"><span class="material-symbols-rounded">health_and_safety</span></div><div><div class="font-extrabold text-emerald-700">SiCegah Stunting</div><div class="text-xs text-slate-500">Edukasi dan Skrining Awal</div></div></a></div>
-    <div class="navbar-center hidden lg:flex"><ul class="menu menu-horizontal gap-1"><li><a href="{{ route('home') }}">Beranda</a></li><li><a href="{{ route('kalkulator') }}">Kalkulator</a></li><li><a class="text-emerald-700 font-medium" href="{{ route('edukasi') }}">Edukasi</a></li><li><a href="{{ route('tentang') }}">Tentang</a></li><li><a href="{{ route('faq') }}">FAQ</a></li><li><a href="{{ route('kontak') }}">Kontak</a></li></ul></div>
-    <div class="navbar-end"><a href="{{ route('edukasi') }}" class="btn btn-outline btn-primary rounded-full">Kembali</a></div>
+    <div class="navbar-start">
+      <a href="{{ route('home') }}" class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center">
+          <span class="material-symbols-rounded">health_and_safety</span>
+        </div>
+        <div>
+          <div class="font-extrabold text-emerald-700">SiCegah Stunting</div>
+          <div class="text-xs text-slate-500">Edukasi dan Skrining Awal</div>
+        </div>
+      </a>
+    </div>
+    <div class="navbar-center hidden lg:flex">
+      <ul class="menu menu-horizontal gap-1 font-medium">
+        <li><a href="{{ route('home') }}">Beranda</a></li>
+        <li><a href="{{ route('kalkulator') }}">Kalkulator</a></li>
+        <li><a class="text-emerald-700 font-semibold" href="{{ route('edukasi') }}">Edukasi</a></li>
+        <li><a href="{{ route('tentang') }}">Tentang</a></li>
+        <li><a href="{{ route('faq') }}">FAQ</a></li>
+        <li><a href="{{ route('kontak') }}">Kontak</a></li>
+      </ul>
+    </div>
+    <div class="navbar-end">
+      <a href="{{ route('edukasi') }}" class="btn btn-outline btn-primary rounded-full btn-sm px-4">
+        <span class="material-symbols-rounded text-sm">arrow_back</span> Kembali ke Edukasi
+      </a>
+    </div>
   </header>
 
   <main class="max-w-6xl mx-auto px-4 lg:px-8 py-10">
     <article class="grid lg:grid-cols-3 gap-8">
-      <div class="lg:col-span-2">
-        <div class="badge badge-success badge-outline mb-4">Gizi Anak</div>
-        <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900">Protein hewani harian untuk pertumbuhan optimal anak</h1>
-        <div class="flex flex-wrap items-center gap-4 text-sm text-slate-500 mt-4">
-          <span class="flex items-center gap-1"><span class="material-symbols-rounded text-base">calendar_month</span>07 Juni 2026</span>
-          <span class="flex items-center gap-1"><span class="material-symbols-rounded text-base">person</span>Tim Edukasi SiCegah</span>
-          <span class="flex items-center gap-1"><span class="material-symbols-rounded text-base">schedule</span>6 menit baca</span>
+      
+      <!-- Left Column: Article Content -->
+      <div class="lg:col-span-2 space-y-6">
+        <div>
+          <div class="badge {{ $theme['badge'] }} badge-outline mb-3 text-xs font-semibold">{{ $article->category }}</div>
+          <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 leading-tight">
+            {{ $article->title }}
+          </h1>
+          <div class="flex flex-wrap items-center gap-4 text-xs text-slate-500 mt-4">
+            <span class="flex items-center gap-1">
+              <span class="material-symbols-rounded text-sm text-slate-400">calendar_month</span>
+              {{ $article->published_date ? $article->published_date->format('d M Y') : $article->created_at->format('d M Y') }}
+            </span>
+            <span class="flex items-center gap-1">
+              <span class="material-symbols-rounded text-sm text-slate-400">person</span>
+              {{ $article->author_name }}
+            </span>
+            <span class="flex items-center gap-1">
+              <span class="material-symbols-rounded text-sm text-slate-400">schedule</span>
+              {{ $article->read_time }} menit baca
+            </span>
+          </div>
         </div>
 
-        <figure class="mt-6 rounded-[2rem] overflow-hidden border border-slate-200 bg-emerald-100 h-72 flex items-center justify-center">
-          <span class="material-symbols-rounded text-[96px] text-emerald-700">restaurant</span>
+        <!-- Featured Image Icon -->
+        <figure class="rounded-3xl overflow-hidden border border-slate-200 {{ $theme['bg'] }} h-64 flex items-center justify-center">
+          <span class="material-symbols-rounded text-[84px] {{ $theme['text'] }}">{{ $theme['icon'] }}</span>
         </figure>
 
-        <div class="alert alert-info my-6">
-          <span class="material-symbols-rounded">lightbulb</span>
-          <span>Protein hewani setiap hari bagi bayi di atas usia 6 bulan merupakan salah satu langkah penting pencegahan stunting menurut materi edukasi Kementerian Kesehatan.[web:28]</span>
+        @if($article->summary)
+        <div class="alert alert-info bg-sky-50 border-sky-100 text-sky-900 rounded-2xl p-4 flex gap-3 items-start">
+          <span class="material-symbols-rounded text-sky-600 mt-0.5">lightbulb</span>
+          <div class="text-xs leading-relaxed">
+            <span class="font-bold">Ringkasan:</span> {{ $article->summary }}
+          </div>
         </div>
+        @endif
 
-        <div class="prose prose-slate max-w-none bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm">
-          <h2>Mengapa protein hewani penting?</h2>
-          <p>Protein hewani dibutuhkan untuk membantu pembentukan jaringan tubuh, mendukung pertumbuhan, serta menyediakan zat gizi penting seperti zat besi, zinc, dan vitamin tertentu yang diperlukan anak pada masa pertumbuhan cepat. Dalam konteks pencegahan stunting, kecukupan gizi harian menjadi bagian penting dari upaya menjaga pertumbuhan yang optimal.[web:20][web:28]</p>
-
-          <h2>Sumber protein hewani yang mudah dijangkau</h2>
-          <p>Orang tua dapat memanfaatkan telur, ikan, daging ayam, hati, susu, dan bahan pangan lokal lain sesuai usia anak dan kemampuan keluarga. Prinsip utamanya adalah diberikan secara teratur, aman, dan disesuaikan dengan tekstur makanan anak.</p>
-
-          <div class="divider"></div>
-
-          <h2>Prinsip pemberian</h2>
-          <p>Pada anak yang sudah memasuki fase MPASI, sumber protein hewani dapat dimasukkan ke dalam menu harian dengan porsi kecil lebih dahulu. Variasi menu membantu anak menerima makanan dengan lebih baik dan mendukung kecukupan gizi keluarga.</p>
-
-          <h3>Hal yang perlu diperhatikan</h3>
-          <ul>
-            <li>Pastikan makanan dimasak dengan baik dan higienis.</li>
-            <li>Sesuaikan tekstur dengan usia dan kemampuan makan anak.</li>
-            <li>Gabungkan dengan karbohidrat, sayur, dan buah.</li>
-            <li>Pantau respon anak terhadap makanan baru.</li>
-          </ul>
-
-          <h2>Hubungan dengan pencegahan stunting</h2>
-          <p>Stunting berkaitan dengan kekurangan gizi kronis, infeksi berulang, dan faktor lingkungan serta akses layanan kesehatan. Karena itu, pemberian protein hewani sebaiknya dipahami sebagai bagian dari strategi yang lebih luas, bersama pemantauan pertumbuhan, ASI eksklusif, imunisasi, sanitasi baik, dan kunjungan rutin ke Posyandu atau Puskesmas.[web:20][web:23][web:28]</p>
+        <!-- Body Content -->
+        <div class="prose prose-slate max-w-none bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm text-slate-700">
+          {!! markdownToHtml($article->content) !!}
         </div>
       </div>
 
+      <!-- Right Column: Sidebar -->
       <aside class="space-y-6">
-        <div class="card bg-amber-50 border border-amber-100 shadow-sm">
-          <div class="card-body">
-            <h2 class="card-title text-amber-800">Tips praktis</h2>
-            <ul class="space-y-3 text-sm text-amber-900">
-              <li>Mulai dari menu yang disukai anak.</li>
-              <li>Gunakan bahan lokal yang mudah diperoleh.</li>
-              <li>Catat menu harian untuk evaluasi sederhana.</li>
+        
+        <!-- Tips Card -->
+        <div class="card bg-amber-50 border border-amber-100 shadow-sm rounded-3xl">
+          <div class="card-body p-5">
+            <h2 class="card-title text-amber-800 text-sm font-bold flex items-center gap-1">
+              <span class="material-symbols-rounded text-base text-amber-600">tips_and_updates</span>
+              Tips Praktis Kesehatan
+            </h2>
+            <ul class="space-y-2 text-xs text-amber-900 list-disc pl-4 mt-2 leading-relaxed">
+              <li>Mulai dari menu yang disukai anak secara bertahap.</li>
+              <li>Pilih bahan lokal berkualitas yang segar dan bersih.</li>
+              <li>Lakukan pencatatan berkala terhadap tinggi/berat badan anak.</li>
+              <li>Konsultasikan perkembangan anak dengan kader Posyandu.</li>
             </ul>
           </div>
         </div>
-        <div class="card bg-white border border-slate-200 shadow-sm">
-          <div class="card-body">
-            <h2 class="card-title">Referensi</h2>
-            <ol class="text-sm text-slate-600 list-decimal pl-5 space-y-2">
-              <li>WHO Child Growth Standards.[web:15]</li>
-              <li>Artikel Kementerian Kesehatan tentang pencegahan stunting.[web:23][web:28]</li>
-              <li>Ringkasan faktor penyebab stunting dan edukasi pendukung.[web:20][web:25]</li>
-            </ol>
-          </div>
-        </div>
-        <div class="card bg-white border border-slate-200 shadow-sm">
-          <div class="card-body">
-            <h2 class="card-title">Artikel terkait</h2>
-            <div class="space-y-3">
-              <a href="{{ route('artikel.detail') }}" class="block p-3 rounded-xl bg-slate-50 hover:bg-slate-100">Alasan ASI eksklusif 6 bulan tetap penting</a>
-              <a href="{{ route('artikel.detail') }}" class="block p-3 rounded-xl bg-slate-50 hover:bg-slate-100">Menu MPASI sederhana berbasis bahan lokal</a>
-              <a href="{{ route('artikel.detail') }}" class="block p-3 rounded-xl bg-slate-50 hover:bg-slate-100">Kunjungan Posyandu dan pemantauan pertumbuhan</a>
+
+        <!-- References Card -->
+        @if($article->references)
+        <div class="card bg-white border border-slate-200 shadow-sm rounded-3xl">
+          <div class="card-body p-5">
+            <h2 class="card-title text-slate-800 text-sm font-bold flex items-center gap-1">
+              <span class="material-symbols-rounded text-base text-slate-500">bookmark</span>
+              Referensi Artikel
+            </h2>
+            <div class="text-xs text-slate-600 space-y-1 mt-2 leading-relaxed whitespace-pre-line">
+              {{ $article->references }}
             </div>
           </div>
         </div>
+        @endif
+
+        <!-- Related Articles Card -->
+        <div class="card bg-white border border-slate-200 shadow-sm rounded-3xl">
+          <div class="card-body p-5">
+            <h2 class="card-title text-slate-800 text-sm font-bold">Artikel Terkait</h2>
+            <div class="space-y-3 mt-3">
+              @forelse($relatedArticles as $related)
+                <a href="{{ route('artikel.detail', $related->slug) }}" class="block p-3 rounded-2xl bg-slate-50 hover:bg-emerald-50 hover:text-emerald-800 transition-all font-medium text-xs text-slate-700">
+                  {{ $related->title }}
+                </a>
+              @empty
+                <p class="text-xs text-slate-400">Tidak ada artikel terkait.</p>
+              @endforelse
+            </div>
+          </div>
+        </div>
+
       </aside>
+
     </article>
   </main>
 
-  <footer class="footer p-10 bg-slate-900 text-slate-200 mt-10"><nav><h6 class="footer-title">Navigasi</h6><a class="link link-hover" href="{{ route('home') }}">Beranda</a><a class="link link-hover" href="{{ route('edukasi') }}">Edukasi</a><a class="link link-hover" href="{{ route('faq') }}">FAQ</a></nav><aside><p>Artikel dummy untuk presentasi akademik.</p></aside></footer>
+  <!-- Footer -->
+  <footer class="footer p-10 bg-slate-900 text-slate-200 mt-16">
+    <nav>
+      <h6 class="footer-title">Navigasi</h6>
+      <a class="link link-hover" href="{{ route('home') }}">Beranda</a>
+      <a class="link link-hover" href="{{ route('kalkulator') }}">Kalkulator</a>
+      <a class="link link-hover" href="{{ route('tentang') }}">Tentang</a>
+    </nav>
+    <nav>
+      <h6 class="footer-title">Halaman</h6>
+      <a class="link link-hover" href="{{ route('edukasi') }}">Edukasi</a>
+      <a class="link link-hover" href="{{ route('faq') }}">FAQ</a>
+      <a class="link link-hover" href="{{ route('kontak') }}">Kontak</a>
+    </nav>
+    <aside>
+      <div class="flex items-center gap-2 text-white font-extrabold text-sm mb-2">
+        <span class="material-symbols-rounded text-emerald-500">health_and_safety</span> SiCegah Stunting
+      </div>
+      <p class="text-xs text-slate-400">© 2026 calstuntingAisyiyah. Hak Cipta Dilindungi.</p>
+    </aside>
+  </footer>
+
 </body>
 </html>

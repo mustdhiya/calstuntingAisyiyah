@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\EdukasiController;
+use App\Http\Controllers\KalkulatorController;
 
 // ── Public Routes ──────────────────────────────────────────────
 Route::get('/', function () {
@@ -14,13 +16,10 @@ Route::get('/tentang', function () {
     return view('tentang');
 })->name('tentang');
 
-Route::get('/edukasi', function () {
-    return view('edukasi');
-})->name('edukasi');
+Route::get('/edukasi', [EdukasiController::class, 'index'])->name('edukasi');
 
-Route::get('/kalkulator', function () {
-    return view('kalkulator');
-})->name('kalkulator');
+Route::get('/kalkulator', [KalkulatorController::class, 'index'])->name('kalkulator');
+Route::post('/kalkulator/hitung', [KalkulatorController::class, 'hitung'])->name('kalkulator.hitung');
 
 Route::get('/hasil', function () {
     return view('hasil');
@@ -34,9 +33,7 @@ Route::get('/kontak', function () {
     return view('kontak');
 })->name('kontak');
 
-Route::get('/artikel-detail', function () {
-    return view('artikel-detail');
-})->name('artikel.detail');
+Route::get('/edukasi/{slug}', [EdukasiController::class, 'show'])->name('artikel.detail');
 
 // ── Admin Routes ───────────────────────────────────────────────
 Route::prefix('admin')->name('admin.')->group(function () {

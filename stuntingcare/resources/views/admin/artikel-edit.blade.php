@@ -134,7 +134,7 @@
               <button type="button" class="btn btn-outline btn-sm rounded-full text-slate-700 border-slate-300">
                 <span class="material-symbols-rounded text-sm">visibility</span>Preview
               </button>
-              <button type="submit" class="btn btn-sm rounded-full bg-violet-600 hover:bg-violet-700 text-white border-0 px-4">
+              <button type="submit" class="btn btn-primary btn-sm rounded-full">
                 <span class="material-symbols-rounded text-sm">save</span>Simpan
               </button>
             </div>
@@ -253,7 +253,7 @@
                 <button type="button" class="btn btn-outline btn-sm rounded-full text-slate-700 border-slate-300">
                   <span class="material-symbols-rounded text-sm">link</span>Referensi
                 </button>
-                <button type="submit" class="btn btn-sm rounded-full bg-violet-600 hover:bg-violet-700 text-white border-0 px-4 ml-auto">
+                <button type="submit" class="btn btn-primary btn-sm rounded-full ml-auto">
                   <span class="material-symbols-rounded text-sm">save</span>Simpan perubahan
                 </button>
               </div>
