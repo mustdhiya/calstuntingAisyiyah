@@ -23,6 +23,7 @@ class Article extends Model
         'image',
         'references',
         'is_published',
+        'status',
         'show_on_homepage',
         'is_featured',
         'meta_title',
@@ -36,7 +37,8 @@ class Article extends Model
     {
         return [
             'published_date' => 'date',
-            'is_published' => 'boolean',
+            'is_published'     => 'boolean',
+            'status'           => 'string',
             'show_on_homepage' => 'boolean',
             'is_featured' => 'boolean',
             'views' => 'integer',
@@ -81,5 +83,10 @@ class Article extends Model
     public function scopeOnHomepage($query)
     {
         return $query->where('show_on_homepage', true);
+    }
+
+    public function scopeByStatus($query, string $status)
+    {
+        return $query->where('status', $status);
     }
 }

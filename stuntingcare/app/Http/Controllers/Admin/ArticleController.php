@@ -24,7 +24,7 @@ class ArticleController extends Controller
         }
 
         if ($request->filled('status')) {
-            $query->where('is_published', $request->status === 'Terbit' ? true : false);
+            $query->where('status', $request->status);
         }
 
         if ($request->filled('category')) {
@@ -60,9 +60,10 @@ class ArticleController extends Controller
             'content'          => 'required|string',
             'image'            => 'nullable|image|max:2048',
             'references'       => 'nullable|string',
-            'is_published'     => 'boolean',
-            'show_on_homepage' => 'boolean',
-            'is_featured'      => 'boolean',
+            'status'           => 'required|in:published,draft,scheduled',
+            'is_published'     => 'nullable|boolean',
+            'show_on_homepage' => 'nullable|boolean',
+            'is_featured'      => 'nullable|boolean',
             'meta_title'       => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
         ]);
@@ -77,9 +78,9 @@ class ArticleController extends Controller
             $data['image'] = $request->file('image')->store('articles', 'public');
         }
 
-        Article::create($data);
+        $article = Article::create($data);
 
-        return redirect()->route('admin.artikel.list')->with('success', 'Artikel berhasil ditambahkan.');
+        return redirect()->route('admin.artikel.edit', $article)->with('success', 'Artikel berhasil ditambahkan.');
     }
 
     /**
@@ -106,9 +107,10 @@ class ArticleController extends Controller
             'content'          => 'required|string',
             'image'            => 'nullable|image|max:2048',
             'references'       => 'nullable|string',
-            'is_published'     => 'boolean',
-            'show_on_homepage' => 'boolean',
-            'is_featured'      => 'boolean',
+            'status'           => 'required|in:published,draft,scheduled',
+            'is_published'     => 'nullable|boolean',
+            'show_on_homepage' => 'nullable|boolean',
+            'is_featured'      => 'nullable|boolean',
             'meta_title'       => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
         ]);
@@ -124,7 +126,7 @@ class ArticleController extends Controller
 
         $article->update($data);
 
-        return redirect()->route('admin.artikel.list')->with('success', 'Artikel berhasil diperbarui.');
+        return redirect()->route('admin.artikel.edit', $article)->with('success', 'Artikel berhasil diperbarui.');
     }
 
     /**

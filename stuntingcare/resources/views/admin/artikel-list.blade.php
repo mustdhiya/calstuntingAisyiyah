@@ -137,28 +137,29 @@
         </div>
 
         <!-- Filter bar -->
-        <div class="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
-          <div class="flex-1">
-            <label class="input input-bordered flex items-center gap-2 text-sm w-full">
-              <span class="material-symbols-rounded text-base text-slate-500">search</span>
-              <input type="text" class="grow" placeholder="Cari judul atau penulis..." />
-            </label>
-          </div>
-          <div class="flex flex-wrap gap-2 text-xs">
-            <select class="select select-bordered select-sm">
-              <option selected>Status: Semua</option>
-              <option>Terbit</option>
-              <option>Draf</option>
-              <option>Terjadwal</option>
-            </select>
-            <select class="select select-bordered select-sm">
-              <option selected>Kategori: Semua</option>
-              <option>Gizi Anak</option>
-              <option>MPASI</option>
-              <option>ASI Eksklusif</option>
-              <option>FAQ</option>
-            </select>
-          </div>
+        <div class="bg-white border border-slate-200 rounded-2xl p-4">
+          <form method="GET" action="{{ route('admin.artikel.list') }}" class="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
+            <div class="flex-1">
+              <label class="input input-bordered flex items-center gap-2 text-sm w-full">
+                <span class="material-symbols-rounded text-base text-slate-500">search</span>
+                <input type="text" name="search" class="grow" placeholder="Cari judul atau penulis..." value="{{ request('search') }}" />
+              </label>
+            </div>
+            <div class="flex flex-wrap gap-2 text-xs">
+              <select name="status" class="select select-bordered select-sm" onchange="this.form.submit()">
+                <option value="">Status: Semua</option>
+                <option value="published" {{ request('status')==='published' ? 'selected' : '' }}>Terbit</option>
+                <option value="draft"     {{ request('status')==='draft'     ? 'selected' : '' }}>Draf</option>
+                <option value="scheduled" {{ request('status')==='scheduled' ? 'selected' : '' }}>Terjadwal</option>
+              </select>
+              <select name="category" class="select select-bordered select-sm" onchange="this.form.submit()">
+                <option value="">Kategori: Semua</option>
+                @foreach(['Gizi Anak','MPASI','ASI Eksklusif','FAQ'] as $cat)
+                  <option value="{{ $cat }}" {{ request('category')===$cat ? 'selected' : '' }}>{{ $cat }}</option>
+                @endforeach
+              </select>
+            </div>
+          </form>
         </div>
 
         <!-- Tabel artikel -->
@@ -198,17 +199,18 @@
                     {{ $article->category }}
                   </td>
                   <td>
-                    @if ($article->is_published)
-                      <span class="badge badge-status-published border-0 text-[10px] px-2 py-1 flex items-center gap-1">
-                        <span class="material-symbols-rounded text-[14px]">check_circle</span>
-                        Terbit
-                      </span>
-                    @else
-                      <span class="badge badge-status-draft border-0 text-[10px] px-2 py-1 flex items-center gap-1">
-                        <span class="material-symbols-rounded text-[14px]">edit_note</span>
-                        Draf
-                      </span>
-                    @endif
+                    @php
+                      $badgeMap = [
+                        'published' => ['label'=>'Terbit',    'class'=>'badge-status-published', 'icon'=>'check_circle'],
+                        'draft'     => ['label'=>'Draf',      'class'=>'badge-status-draft',     'icon'=>'edit_note'],
+                        'scheduled' => ['label'=>'Terjadwal', 'class'=>'badge-status-scheduled', 'icon'=>'schedule'],
+                      ];
+                      $b = $badgeMap[$article->status] ?? $badgeMap['draft'];
+                    @endphp
+                    <span class="badge {{ $b['class'] }} border-0 text-[10px] px-2 py-1 flex items-center gap-1">
+                      <span class="material-symbols-rounded text-[14px]">{{ $b['icon'] }}</span>
+                      {{ $b['label'] }}
+                    </span>
                   </td>
                   <td class="hidden md:table-cell text-xs text-slate-600">
                     {{ $article->author_name }}

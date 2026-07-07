@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->text('references')->nullable();
             $table->boolean('is_published')->default(false);
+            $table->enum('status', ['published', 'draft', 'scheduled'])->default('draft');
             $table->boolean('show_on_homepage')->default(false);
             $table->boolean('is_featured')->default(false);
             $table->string('meta_title')->nullable();
