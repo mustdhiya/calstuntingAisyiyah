@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\ArticleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\EdukasiController;
 use App\Http\Controllers\KalkulatorController;
+use App\Http\Controllers\Admin\AnalisisController;
 
 // ── Public Routes ──────────────────────────────────────────────
 Route::get('/', function () {
@@ -41,10 +42,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Analisis (static view for now)
-    Route::get('/analisis', function () {
-        return view('admin.analisis');
-    })->name('analisis');
+    // Analisis
+    Route::get('/analisis', [AnalisisController::class, 'index'])->name('analisis');
+    Route::get('/analisis/export', [AnalisisController::class, 'exportCsv'])->name('analisis.export');
 
     // Artikel CRUD
     Route::get('/artikel',                    [ArticleController::class, 'index'])->name('artikel.list');

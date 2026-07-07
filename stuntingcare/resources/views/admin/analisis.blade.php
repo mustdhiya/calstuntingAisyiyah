@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hasil Analisis — Admin SiCegah Stunting</title>
+  <title>Hasil Analisis - Admin SiCegah Stunting</title>
   <meta name="description" content="Panel admin untuk melihat dan mereview hasil analisis kalkulator stunting." />
 
   <!-- Font & Icon -->
@@ -16,7 +16,7 @@
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Chart.js (ringan, 1 file) -->
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
@@ -104,33 +104,35 @@
 
       <!-- Main content -->
       <section class="lg:col-span-9 space-y-4">
-      <!-- ====== PETA KALIMANTAN TIMUR (GEOCHART) ====== -->
-      <div class="bg-white border border-slate-200 rounded-2xl p-4">
-        <div class="flex items-center justify-between mb-2">
-          <h2 class="text-sm font-semibold text-slate-900 flex items-center gap-1.5">
-            <span class="material-symbols-rounded text-sm text-slate-600">map</span>
-            Peta sebaran risiko per kabupaten/kota (Kaltim)
-          </h2>
-          <span class="text-[11px] text-slate-500">
-            Warna lebih pekat = nilai lebih tinggi
-          </span>
-        </div>
-
-        <!-- Container peta -->
-        <div id="kaltim-map" class="w-full h-72 md:h-80 lg:h-96"></div>
-
-        <div class="mt-3 flex flex-wrap gap-3 text-[11px] text-slate-500">
-          <div class="flex items-center gap-1">
-            <span class="w-4 h-3 rounded-full"
-                  style="background: linear-gradient(to right,#ecfdf3,#22c55e);"></span>
-            <span>Level risiko (rendah → tinggi)</span>
+        
+        <!-- ====== PETA KALIMANTAN TIMUR (GEOCHART) ====== -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <h2 class="text-sm font-semibold text-slate-900 flex items-center gap-1.5">
+              <span class="material-symbols-rounded text-sm text-slate-600">map</span>
+              Peta sebaran risiko per kabupaten/kota (Kaltim)
+            </h2>
+            <span class="text-[11px] text-slate-500">
+              Warna lebih pekat = jumlah stunting lebih tinggi
+            </span>
           </div>
-          <span class="flex items-center gap-1">
-            <span class="material-symbols-rounded text-sm">info</span>
-            Arahkan kursor ke kabupaten/kota untuk melihat detail nilai
-          </span>
+
+          <!-- Container peta -->
+          <div id="kaltim-map" class="w-full h-72 md:h-80 lg:h-96"></div>
+
+          <div class="mt-3 flex flex-wrap gap-3 text-[11px] text-slate-500">
+            <div class="flex items-center gap-1">
+              <span class="w-4 h-3 rounded-full"
+                    style="background: linear-gradient(to right,#ecfdf3,#22c55e);"></span>
+              <span>Jumlah stunting (rendah ? tinggi)</span>
+            </div>
+            <span class="flex items-center gap-1">
+              <span class="material-symbols-rounded text-sm">info</span>
+              Arahkan kursor ke kabupaten/kota untuk melihat detail nilai
+            </span>
+          </div>
         </div>
-      </div>
+
         <!-- Header -->
         <div class="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div>
@@ -146,14 +148,14 @@
             </p>
           </div>
           <div class="flex flex-wrap gap-2">
-            <button type="button" class="btn btn-outline btn-sm rounded-full">
+            <a href="{{ route('admin.analisis.export') }}" class="btn btn-outline btn-sm rounded-full text-xs font-semibold">
               <span class="material-symbols-rounded text-sm">download</span>
               Ekspor CSV
-            </button>
-            <button type="button" class="btn btn-primary btn-sm rounded-full">
+            </a>
+            <a href="{{ route('admin.analisis') }}" class="btn btn-primary btn-sm rounded-full text-xs font-semibold">
               <span class="material-symbols-rounded text-sm">refresh</span>
               Segarkan data
-            </button>
+            </a>
           </div>
         </div>
 
@@ -166,21 +168,21 @@
                 <span class="material-symbols-rounded text-sm">summarize</span>
                 Total pemeriksaan
               </p>
-              <p class="text-2xl font-semibold text-slate-900">128</p>
+              <p class="text-2xl font-semibold text-slate-900">{{ $totalAll }}</p>
             </div>
             <div class="bg-white border border-slate-200 rounded-2xl p-4">
               <p class="text-xs text-slate-500 mb-1 flex items-center gap-1">
                 <span class="material-symbols-rounded text-sm">sentiment_satisfied</span>
                 Normal
               </p>
-              <p class="text-xl font-semibold text-emerald-700">74</p>
+              <p class="text-xl font-semibold text-emerald-700">{{ $totalNormal }}</p>
             </div>
             <div class="bg-white border border-slate-200 rounded-2xl p-4">
               <p class="text-xs text-slate-500 mb-1 flex items-center gap-1">
                 <span class="material-symbols-rounded text-sm">warning</span>
                 Risiko & stunting
               </p>
-              <p class="text-xl font-semibold text-amber-600">54</p>
+              <p class="text-xl font-semibold text-amber-600">{{ $totalStunting }}</p>
             </div>
           </div>
 
@@ -191,7 +193,7 @@
                 <span class="material-symbols-rounded text-sm text-slate-600">pie_chart</span>
                 Komposisi status risiko
               </h2>
-              <span class="text-[11px] text-slate-500">Data 30 hari terakhir</span>
+              <span class="text-[11px] text-slate-500">Data semua pemeriksaan</span>
             </div>
             <div class="h-56">
               <canvas id="statusChart"></canvas>
@@ -201,71 +203,69 @@
                 <span class="w-3 h-3 rounded-full bg-emerald-500"></span> Normal
               </span>
               <span class="inline-flex items-center gap-1">
-                <span class="w-3 h-3 rounded-full bg-amber-400"></span> Risiko
+                <span class="w-3 h-3 rounded-full bg-amber-400"></span> Pendek (Stunting)
               </span>
               <span class="inline-flex items-center gap-1">
-                <span class="w-3 h-3 rounded-full bg-rose-400"></span> Stunting
-              </span>
-              <span class="inline-flex items-center gap-1">
-                <span class="w-3 h-3 rounded-full bg-rose-700"></span> Stunting berat
+                <span class="w-3 h-3 rounded-full bg-rose-500"></span> Sangat Pendek (Stunting Berat)
               </span>
             </div>
           </div>
         </div>
 
         <!-- Filter & Pencarian -->
-        <div class="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+        <form method="GET" action="{{ route('admin.analisis') }}" class="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
             <!-- Nama / ID -->
             <div class="form-control">
-              <label class="label">
-                <span class="label-text text-xs font-medium text-slate-700">Cari nama anak / ID</span>
+              <label class="label pb-1">
+                <span class="label-text text-xs font-medium text-slate-700">Cari nama anak</span>
               </label>
               <div class="relative">
                 <span class="material-symbols-rounded text-slate-400 text-base absolute left-3 top-1/2 -translate-y-1/2">search</span>
                 <input
                   type="text"
-                  class="input input-bordered w-full text-sm pl-9"
-                  placeholder="Contoh: Aisyah / AN-2026-01"
+                  name="search"
+                  value="{{ $search }}"
+                  class="input input-bordered w-full text-sm pl-9 h-10 min-h-10"
+                  placeholder="Contoh: Axel"
                 />
               </div>
             </div>
             <!-- Status -->
             <div class="form-control">
-              <label class="label">
+              <label class="label pb-1">
                 <span class="label-text text-xs font-medium text-slate-700">Status risiko</span>
               </label>
-              <select class="select select-bordered w-full text-sm">
+              <select name="status" class="select select-bordered w-full text-sm h-10 min-h-10">
                 <option value="">Semua status</option>
-                <option>Normal</option>
-                <option>Risiko stunting</option>
-                <option>Stunting</option>
-                <option>Stunting berat</option>
+                <option value="Normal" {{ $status === 'Normal' ? 'selected' : '' }}>Normal</option>
+                <option value="Pendek" {{ $status === 'Pendek' ? 'selected' : '' }}>Pendek (Stunting)</option>
+                <option value="Sangat Pendek" {{ $status === 'Sangat Pendek' ? 'selected' : '' }}>Sangat Pendek (Stunting Berat)</option>
               </select>
             </div>
             <!-- Rentang usia -->
             <div class="form-control">
-              <label class="label">
+              <label class="label pb-1">
                 <span class="label-text text-xs font-medium text-slate-700">Usia (bulan)</span>
               </label>
               <div class="flex gap-2">
-                <input type="number" min="0" class="input input-bordered w-full text-sm" placeholder="min" />
-                <input type="number" min="0" class="input input-bordered w-full text-sm" placeholder="max" />
+                <input type="number" name="age_min" value="{{ $ageMin }}" min="0" class="input input-bordered w-full text-sm h-10 min-h-10" placeholder="min" />
+                <input type="number" name="age_max" value="{{ $ageMax }}" min="0" class="input input-bordered w-full text-sm h-10 min-h-10" placeholder="max" />
               </div>
             </div>
           </div>
 
-          <div class="flex gap-2">
-            <button type="button" class="btn btn-ghost btn-sm rounded-full">
+          <div class="flex gap-2 shrink-0">
+            <a href="{{ route('admin.analisis') }}" class="btn btn-ghost btn-sm rounded-full text-xs">
               <span class="material-symbols-rounded text-sm">restart_alt</span>
               Reset
-            </button>
-            <button type="button" class="btn btn-primary btn-sm rounded-full">
+            </a>
+            <button type="submit" class="btn btn-primary btn-sm rounded-full text-xs">
               <span class="material-symbols-rounded text-sm">filter_alt</span>
               Terapkan
             </button>
           </div>
-        </div>
+        </form>
 
         <!-- Chart distribusi usia -->
         <div class="bg-white border border-slate-200 rounded-2xl p-4">
@@ -281,12 +281,13 @@
           </div>
         </div>
         
-
         <!-- Tabel hasil -->
         <div class="bg-white border border-slate-200 rounded-2xl p-4">
           <div class="flex items-center justify-between mb-3">
             <h2 class="text-sm font-semibold text-slate-900">Daftar hasil pemeriksaan</h2>
-            <span class="text-xs text-slate-500">Menampilkan 10 dari 128 data</span>
+            <span class="text-xs text-slate-500">
+              Menampilkan {{ $measurements->firstItem() ?? 0 }} - {{ $measurements->lastItem() ?? 0 }} dari {{ $measurements->total() }} data
+            </span>
           </div>
 
           <div class="overflow-x-auto">
@@ -305,192 +306,143 @@
                 </tr>
               </thead>
               <tbody class="text-xs">
-                <!-- Baris contoh 1 -->
-                <tr class="hover">
-                  <td>1</td>
-                  <td>
-                    Aisyah
-                    <div class="text-[11px] text-slate-400">AN-2026-001</div>
-                  </td>
-                  <td>18 bln</td>
-                  <td>P</td>
-                  <td>
-                    <span class="badge badge-status-normal border-none px-2 py-1 text-[11px] rounded-full">
-                      Normal
-                    </span>
-                  </td>
-                  <td>-0,5 SD</td>
-                  <td>-0,2 SD</td>
-                  <td>03/07/2026</td>
-                  <td>
-                    <button type="button" class="btn btn-ghost btn-xs rounded-full text-[11px]">
-                      <span class="material-symbols-rounded text-sm">open_in_new</span>
-                      Detail
-                    </button>
-                  </td>
-                </tr>
-
-                <!-- Baris contoh 2 -->
-                <tr class="hover">
-                  <td>2</td>
-                  <td>
-                    Budi
-                    <div class="text-[11px] text-slate-400">AN-2026-002</div>
-                  </td>
-                  <td>24 bln</td>
-                  <td>L</td>
-                  <td>
-                    <span class="badge badge-status-risiko border-none px-2 py-1 text-[11px] rounded-full">
-                      Risiko stunting
-                    </span>
-                  </td>
-                  <td>-2,2 SD</td>
-                  <td>-1,5 SD</td>
-                  <td>03/07/2026</td>
-                  <td>
-                    <button type="button" class="btn btn-ghost btn-xs rounded-full text-[11px]">
-                      <span class="material-symbols-rounded text-sm">open_in_new</span>
-                      Detail
-                    </button>
-                  </td>
-                </tr>
-
-                <!-- Baris contoh 3 -->
-                <tr class="hover">
-                  <td>3</td>
-                  <td>
-                    Siti
-                    <div class="text-[11px] text-slate-400">AN-2026-003</div>
-                  </td>
-                  <td>30 bln</td>
-                  <td>P</td>
-                  <td>
-                    <span class="badge badge-status-stunting border-none px-2 py-1 text-[11px] rounded-full">
-                      Stunting
-                    </span>
-                  </td>
-                  <td>-3,1 SD</td>
-                  <td>-2,4 SD</td>
-                  <td>02/07/2026</td>
-                  <td>
-                    <button type="button" class="btn btn-ghost btn-xs rounded-full text-[11px]">
-                      <span class="material-symbols-rounded text-sm">open_in_new</span>
-                      Detail
-                    </button>
-                  </td>
-                </tr>
+                @forelse($measurements as $index => $m)
+                  <tr class="hover cursor-pointer" onclick="showQuickDetail({{ json_encode($m) }})">
+                    <td>{{ $measurements->firstItem() + $index }}</td>
+                    <td>
+                      <span class="font-semibold text-slate-800">{{ $m->child_name }}</span>
+                      <div class="text-[10px] text-slate-400">{{ substr($m->id, 0, 8) }}</div>
+                    </td>
+                    <td>{{ $m->age_months }} bln</td>
+                    <td>{{ $m->gender }}</td>
+                    <td>
+                      @php
+                        $badgeClass = match($m->status_growth) {
+                          'Normal' => 'badge-status-normal',
+                          'Pendek' => 'badge-status-risiko',
+                          'Sangat Pendek' => 'badge-status-stunting',
+                          default => 'badge-status-normal'
+                        };
+                      @endphp
+                      <span class="badge {{ $badgeClass }} border-none px-2 py-0.5 text-[10px] rounded-full">
+                        {{ $m->status_growth }}
+                      </span>
+                    </td>
+                    <td>{{ $m->height }} cm</td>
+                    <td>{{ $m->weight }} kg</td>
+                    <td>{{ $m->created_at->format('d/m/Y') }}</td>
+                    <td>
+                      <button type="button" class="btn btn-ghost btn-xs rounded-full text-[10px] flex items-center gap-0.5" onclick="event.stopPropagation(); showQuickDetail({{ json_encode($m) }})">
+                        <span class="material-symbols-rounded text-xs">visibility</span>
+                        Detail
+                      </button>
+                    </td>
+                  </tr>
+                @empty
+                  <tr>
+                    <td colspan="9" class="text-center py-8 text-slate-400">Tidak ada data pemeriksaan ditemukan.</td>
+                  </tr>
+                @endforelse
               </tbody>
             </table>
           </div>
 
-          <!-- Pagination sederhana -->
-          <div class="flex items-center justify-between mt-4">
-            <p class="text-xs text-slate-500">Halaman 1 dari 13</p>
-            <div class="join">
-              <button class="btn btn-xs join-item btn-ghost rounded-full">
-                <span class="material-symbols-rounded text-sm">chevron_left</span>
-              </button>
-              <button class="btn btn-xs join-item btn-primary rounded-full">1</button>
-              <button class="btn btn-xs join-item btn-ghost rounded-full">2</button>
-              <button class="btn btn-xs join-item btn-ghost rounded-full">3</button>
-              <button class="btn btn-xs join-item btn-ghost rounded-full">
-                <span class="material-symbols-rounded text-sm">chevron_right</span>
-              </button>
-            </div>
+          <!-- Pagination -->
+          <div class="mt-4">
+            {{ $measurements->links() }}
           </div>
         </div>
 
         <!-- Panel detail (review cepat) -->
-        <div class="bg-white border border-slate-200 rounded-2xl p-4">
+        @php $defaultDetail = $measurements->first(); @endphp
+        <div class="bg-white border border-slate-200 rounded-2xl p-4" id="detail-panel">
           <div class="flex items-center justify-between mb-3">
             <h2 class="text-sm font-semibold text-slate-900 flex items-center gap-1.5">
               <span class="material-symbols-rounded text-sm text-slate-600">visibility</span>
               Detail singkat pemeriksaan terpilih
             </h2>
-            <button class="btn btn-ghost btn-xs rounded-full text-[11px]">
-              <span class="material-symbols-rounded text-sm">open_in_new</span>
-              Buka halaman lengkap
-            </button>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-            <div class="space-y-1">
-              <p class="text-slate-500">Nama anak</p>
-              <p class="font-semibold text-slate-900">Budi</p>
-              <p class="text-[11px] text-slate-400">ID: AN-2026-002</p>
+          @if($defaultDetail)
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+              <div class="space-y-1">
+                <p class="text-slate-500">Nama anak</p>
+                <p class="font-semibold text-slate-900 text-sm" id="det-name">{{ $defaultDetail->child_name }}</p>
+                <p class="text-[11px] text-slate-400" id="det-id">ID: {{ $defaultDetail->id }}</p>
+              </div>
+              <div class="space-y-1">
+                <p class="text-slate-500">Usia & jenis kelamin</p>
+                <p class="font-semibold text-slate-900 text-sm" id="det-age-gender">
+                  {{ $defaultDetail->age_months }} bulan - {{ $defaultDetail->gender === 'L' ? 'Laki-laki' : 'Perempuan' }}
+                </p>
+              </div>
+              <div class="space-y-1">
+                <p class="text-slate-500">Tanggal pemeriksaan</p>
+                <p class="font-semibold text-slate-900 text-sm" id="det-date">{{ $defaultDetail->created_at->format('d F Y') }}</p>
+              </div>
             </div>
-            <div class="space-y-1">
-              <p class="text-slate-500">Usia & jenis kelamin</p>
-              <p class="font-semibold text-slate-900">24 bulan · Laki-laki</p>
-            </div>
-            <div class="space-y-1">
-              <p class="text-slate-500">Tanggal pemeriksaan</p>
-              <p class="font-semibold text-slate-900">03 Juli 2026</p>
-            </div>
-          </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 text-xs">
-            <div class="bg-slate-50 rounded-xl p-3">
-              <p class="text-slate-500 mb-1">Status</p>
-              <span class="badge badge-status-risiko border-none px-2 py-1 text-[11px] rounded-full">
-                Risiko stunting
-              </span>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 text-xs">
+              <div class="bg-slate-50 rounded-xl p-3">
+                <p class="text-slate-500 mb-1">Status</p>
+                @php
+                  $defaultBadge = match($defaultDetail->status_growth) {
+                    'Normal' => 'badge-status-normal',
+                    'Pendek' => 'badge-status-risiko',
+                    'Sangat Pendek' => 'badge-status-stunting',
+                    default => 'badge-status-normal'
+                  };
+                @endphp
+                <span class="badge {{ $defaultBadge }} border-none px-2 py-0.5 text-[11px] rounded-full" id="det-status-badge">
+                  {{ $defaultDetail->status_growth }}
+                </span>
+              </div>
+              <div class="bg-slate-50 rounded-xl p-3">
+                <p class="text-slate-500 mb-1">Tinggi badan</p>
+                <p class="font-semibold text-slate-900" id="det-tb">{{ $defaultDetail->height }} cm</p>
+              </div>
+              <div class="bg-slate-50 rounded-xl p-3">
+                <p class="text-slate-500 mb-1">Berat badan</p>
+                <p class="font-semibold text-slate-900" id="det-bb">{{ $defaultDetail->weight }} kg</p>
+              </div>
+              <div class="bg-slate-50 rounded-xl p-3">
+                <p class="text-slate-500 mb-1">Kota</p>
+                <p class="font-semibold text-slate-900" id="det-city">{{ $defaultDetail->city }}</p>
+              </div>
             </div>
-            <div class="bg-slate-50 rounded-xl p-3">
-              <p class="text-slate-500 mb-1">Tinggi badan</p>
-              <p class="font-semibold text-slate-900">80,2 cm</p>
-            </div>
-            <div class="bg-slate-50 rounded-xl p-3">
-              <p class="text-slate-500 mb-1">Berat badan</p>
-              <p class="font-semibold text-slate-900">9,3 kg</p>
-            </div>
-            <div class="bg-slate-50 rounded-xl p-3">
-              <p class="text-slate-500 mb-1">ASI eksklusif</p>
-              <p class="font-semibold text-slate-900">Ya</p>
-            </div>
-          </div>
 
-          <div class="mt-4 border-t border-slate-100 pt-3 text-xs">
-            <p class="text-slate-500 mb-1">Catatan & rekomendasi sistem</p>
-            <p class="text-slate-700 leading-relaxed">
-              Tinggi badan berdasarkan usia berada di bawah -2 SD. Sarankan orang tua untuk konsultasi ke Posyandu/Puskesmas,
-              evaluasi pola makan, dan pantau pertumbuhan tiap bulan.
-            </p>
-          </div>
+            <div class="mt-4 border-t border-slate-100 pt-3 text-xs">
+              <p class="text-slate-500 mb-1">Catatan & rekomendasi tindakan</p>
+              <p class="text-slate-700 leading-relaxed font-medium" id="det-recs">
+                @if(in_array($defaultDetail->status_growth, ['Pendek', 'Sangat Pendek']))
+                  Tinggi badan berdasarkan usia berada di bawah standar WHO. Rujuk ke layanan kesehatan/Puskesmas terdekat, berikan makanan padat kaya zat besi & protein hewani harian, serta pantau pertumbuhan berkala.
+                @else
+                  Pertumbuhan anak dalam batas normal. Pertahankan asupan gizi seimbang, ASI/MPASI berkualitas, dan imunisasi rutin.
+                @endif
+              </p>
+            </div>
+          @else
+            <p class="text-xs text-slate-400">Belum ada data pemeriksaan terpilih.</p>
+          @endif
         </div>
 
       </section>
     </div>
   </main>
-    <!-- Apache ECharts (CDN) -->
+
+  <!-- Apache ECharts (CDN) -->
   <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 
   <!-- Script Chart.js & ECharts (dashboard) -->
   <script>
-    // === DATA DASHBOARD (SAMAKAN DENGAN DATA LAIN DI DASHBOARD) ===
-    // Nanti isi dari backend, contoh:
-    // const totalNormal   = total_normal;
-    // const totalRisiko   = total_risiko;
-    // dst.
-    const totalNormal   = 74;
-    const totalRisiko   = 32;
-    const totalStunting = 18;
-    const totalBerat    = 4;
+    // === DATA DASHBOARD ===
+    const totalNormal   = {{ $totalNormal }};
+    const totalRisiko   = {{ $chartStatus['Pendek'] }};
+    const totalStunting = {{ $chartStatus['Sangat Pendek'] }};
+    const totalBerat    = 0; // standard grouped into stunting/sgt-pendek
 
-    // Data per kab/kota Kaltim – HARUS sinkron dengan dashboard Anda.
-    // Misal ini total kasus risiko tinggi per kabupaten.
-    const kaltimData = {
-      "Samarinda":            18,
-      "Balikpapan":           12,
-      "Bontang":               7,
-      "Kutai Kartanegara":    25,
-      "Kutai Timur":          20,
-      "Kutai Barat":          15,
-      "Berau":                10,
-      "Paser":                14,
-      "Penajam Paser Utara":   9,
-      "Mahakam Ulu":           5
-    };
+    // Data per kab/kota Kaltim (heatmap stunting)
+    const kaltimData = @json($mapData);
 
     // Mapping nama di GeoJSON -> nama yang dipakai di dashboard
     const nameMapping = {
@@ -508,8 +460,42 @@
 
     // Hitung min & max untuk visualMap
     const values = Object.values(kaltimData);
-    const minVal = Math.min.apply(null, values);
-    const maxVal = Math.max.apply(null, values);
+    const minVal = values.length ? Math.min.apply(null, values) : 0;
+    const maxVal = values.length ? Math.max.apply(null, values) : 10;
+
+    // JavaScript to handle quick detail review panel
+    function showQuickDetail(m) {
+      document.getElementById('det-name').textContent = m.child_name;
+      document.getElementById('det-id').textContent = 'ID: ' + m.id;
+      document.getElementById('det-age-gender').textContent = m.age_months + ' bulan - ' + (m.gender === 'L' ? 'Laki-laki' : 'Perempuan');
+      
+      const createdDate = new Date(m.created_at);
+      const formattedDate = createdDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+      document.getElementById('det-date').textContent = formattedDate;
+      
+      const statusBadge = document.getElementById('det-status-badge');
+      statusBadge.textContent = m.status_growth;
+      
+      statusBadge.className = 'badge border-none px-2 py-0.5 text-[11px] rounded-full';
+      if (m.status_growth === 'Normal') {
+        statusBadge.classList.add('badge-status-normal');
+      } else if (m.status_growth === 'Pendek') {
+        statusBadge.classList.add('badge-status-risiko');
+      } else {
+        statusBadge.classList.add('badge-status-stunting');
+      }
+      
+      document.getElementById('det-tb').textContent = m.height + ' cm';
+      document.getElementById('det-bb').textContent = m.weight + ' kg';
+      document.getElementById('det-city').textContent = m.city;
+      
+      const recsEl = document.getElementById('det-recs');
+      if (m.status_growth === 'Normal') {
+        recsEl.textContent = 'Pertumbuhan anak dalam batas normal. Pertahankan asupan gizi seimbang, ASI/MPASI berkualitas, dan imunisasi rutin.';
+      } else {
+        recsEl.textContent = 'Tinggi badan berdasarkan usia berada di bawah standar WHO. Rujuk ke layanan kesehatan/Puskesmas terdekat, berikan makanan padat kaya zat besi & protein hewani harian, serta pantau pertumbuhan berkala.';
+      }
+    }
 
     document.addEventListener("DOMContentLoaded", function () {
       // ==================== 1. PETA KALIMANTAN TIMUR (ECharts) ====================
@@ -517,8 +503,6 @@
       if (mapContainer && typeof echarts !== "undefined") {
         const mapChart = echarts.init(mapContainer);
 
-        // NOTE: sesuaikan path dengan setup Anda.
-        // Untuk Django: fetch("{% static 'maps/kalimantan-timur-kabkota.geojson' %}")
         fetch("{{ asset('static/maps/kalimantan-timur-kabkota.geojson') }}")
           .then(resp => resp.json())
           .then(geoJson => {
@@ -541,7 +525,7 @@
                   return `
                     <div style="font-size:12px;">
                       <strong>${params.name}</strong><br/>
-                      Nilai: ${value}<br/>
+                      Jumlah Kasus Stunting: ${value}<br/>
                       Perbandingan: ${percent}% dari nilai tertinggi
                     </div>
                   `;
@@ -556,7 +540,6 @@
                 text: ["Tinggi", "Rendah"],
                 textStyle: { fontSize: 11, color: "#64748b" },
                 inRange: {
-                  // Gradasi hijau modern (rendah -> tinggi)
                   color: ["#ecfdf3", "#a7f3d0", "#22c55e", "#15803d"]
                 },
                 calculable: false,
@@ -605,10 +588,10 @@
         new Chart(statusCtx, {
           type: "doughnut",
           data: {
-            labels: ["Normal", "Risiko", "Stunting", "Stunting berat"],
+            labels: ["Normal", "Pendek (Stunting)", "Sangat Pendek (Stunting Berat)"],
             datasets: [{
-              data: [totalNormal, totalRisiko, totalStunting, totalBerat],
-              backgroundColor: ["#22c55e", "#fb923c", "#fb7185", "#b91c1c"],
+              data: [totalNormal, totalRisiko, totalStunting],
+              backgroundColor: ["#22c55e", "#fb923c", "#fb7185"],
               borderWidth: 0
             }]
           },
@@ -629,21 +612,39 @@
         new Chart(ageCtx, {
           type: "bar",
           data: {
-            labels: ["0–6", "7–12", "13–24", "25–36", "37–60"],
+            labels: ["0-6", "7-12", "13-24", "25-36", "37-60"],
             datasets: [
               {
                 label: "Normal",
-                data: [5, 10, 22, 20, 17],
+                data: [
+                  {{ $chartAge['0-6']['Normal'] }},
+                  {{ $chartAge['7-12']['Normal'] }},
+                  {{ $chartAge['13-24']['Normal'] }},
+                  {{ $chartAge['25-36']['Normal'] }},
+                  {{ $chartAge['37-60']['Normal'] }}
+                ],
                 backgroundColor: "#22c55e"
               },
               {
-                label: "Risiko",
-                data: [3, 5, 12, 8, 4],
+                label: "Pendek",
+                data: [
+                  {{ $chartAge['0-6']['Pendek'] }},
+                  {{ $chartAge['7-12']['Pendek'] }},
+                  {{ $chartAge['13-24']['Pendek'] }},
+                  {{ $chartAge['25-36']['Pendek'] }},
+                  {{ $chartAge['37-60']['Pendek'] }}
+                ],
                 backgroundColor: "#fb923c"
               },
               {
-                label: "Stunting",
-                data: [2, 4, 7, 4, 1],
+                label: "Sangat Pendek",
+                data: [
+                  {{ $chartAge['0-6']['Sangat Pendek'] }},
+                  {{ $chartAge['7-12']['Sangat Pendek'] }},
+                  {{ $chartAge['13-24']['Sangat Pendek'] }},
+                  {{ $chartAge['25-36']['Sangat Pendek'] }},
+                  {{ $chartAge['37-60']['Sangat Pendek'] }}
+                ],
                 backgroundColor: "#fb7185"
               }
             ]
@@ -675,7 +676,5 @@
       }
     });
   </script>
-</body>
-</html>
 </body>
 </html>
