@@ -42,7 +42,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{{ $article->title }} — SiCegah Stunting</title>
+  <title>{{ $article->title }} â€” SiCegah Stunting</title>
   <meta name="description" content="{{ $article->summary ?? 'Detail artikel edukasi tentang pencegahan stunting.' }}" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -50,18 +50,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body { font-family: Inter, sans-serif; }
-    .material-symbols-rounded { font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24 }
-    .prose h1, .prose h2, .prose h3 { font-weight: 700; color: #1e293b; margin-top: 1.5rem; margin-bottom: 0.5rem; }
-    .prose h1 { font-size: 1.5rem; }
-    .prose h2 { font-size: 1.25rem; }
-    .prose h3 { font-size: 1.1rem; }
-    .prose p { margin-bottom: 1rem; line-height: 1.7; }
-    .prose ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
-    .prose li { margin-bottom: 0.25rem; }
-    .prose code { background-color: #f1f5f9; padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-size: 0.85em; }
-  </style>
+  <!-- Custom Public CSS (External) -->
+  <link rel="stylesheet" href="{{ asset('css/public.css') }}" />
 </head>
 <body class="bg-slate-50 text-slate-800">
 
@@ -214,7 +204,7 @@
       <div class="flex items-center gap-2 text-white font-extrabold text-sm mb-2">
         <span class="material-symbols-rounded text-emerald-500">health_and_safety</span> SiCegah Stunting
       </div>
-      <p class="text-xs text-slate-400">© 2026 calstuntingAisyiyah. Hak Cipta Dilindungi.</p>
+      <p class="text-xs text-slate-400">ï¿½ 2026 calstuntingAisyiyah. Hak Cipta Dilindungi.</p>
     </aside>
   </footer>
 

@@ -15,32 +15,17 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // ── Public Routes ──────────────────────────────────────────────
-Route::get('/', function () {
-    return view('index');
-})->name('home');
-
-Route::get('/tentang', function () {
-    return view('tentang');
-})->name('tentang');
+Route::view('/', 'public.index')->name('home');
+Route::view('/tentang', 'public.tentang')->name('tentang');
+Route::view('/hasil', 'public.hasil')->name('hasil');
+Route::view('/faq', 'public.faq')->name('faq');
+Route::view('/kontak', 'public.kontak')->name('kontak');
 
 Route::get('/edukasi', [EdukasiController::class, 'index'])->name('edukasi');
+Route::get('/edukasi/{slug}', [EdukasiController::class, 'show'])->name('artikel.detail');
 
 Route::get('/kalkulator', [KalkulatorController::class, 'index'])->name('kalkulator');
 Route::post('/kalkulator/hitung', [KalkulatorController::class, 'hitung'])->name('kalkulator.hitung');
-
-Route::get('/hasil', function () {
-    return view('hasil');
-})->name('hasil');
-
-Route::get('/faq', function () {
-    return view('faq');
-})->name('faq');
-
-Route::get('/kontak', function () {
-    return view('kontak');
-})->name('kontak');
-
-Route::get('/edukasi/{slug}', [EdukasiController::class, 'show'])->name('artikel.detail');
 
 // ── Admin Routes ───────────────────────────────────────────────
 Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
@@ -49,22 +34,28 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     // Analisis
-    Route::get('/analisis', [AnalisisController::class, 'index'])->name('analisis');
-    Route::get('/analisis/export', [AnalisisController::class, 'exportCsv'])->name('analisis.export');
+    Route::controller(AnalisisController::class)->group(function () {
+        Route::get('/analisis', 'index')->name('analisis');
+        Route::get('/analisis/export', 'exportCsv')->name('analisis.export');
+    });
 
     // Artikel CRUD
-    Route::get('/artikel',                    [ArticleController::class, 'index'])->name('artikel.list');
-    Route::get('/artikel/create',             [ArticleController::class, 'create'])->name('artikel.create');
-    Route::post('/artikel',                   [ArticleController::class, 'store'])->name('artikel.store');
-    Route::get('/artikel/{article}/edit',     [ArticleController::class, 'edit'])->name('artikel.edit');
-    Route::put('/artikel/{article}',          [ArticleController::class, 'update'])->name('artikel.update');
-    Route::patch('/artikel/{article}/archive',[ArticleController::class, 'archive'])->name('artikel.archive');
-    Route::delete('/artikel/{article}',       [ArticleController::class, 'destroy'])->name('artikel.destroy');
+    Route::controller(ArticleController::class)->group(function () {
+        Route::get('/artikel',                     'index')->name('artikel.list');
+        Route::get('/artikel/create',              'create')->name('artikel.create');
+        Route::post('/artikel',                    'store')->name('artikel.store');
+        Route::get('/artikel/{article}/edit',      'edit')->name('artikel.edit');
+        Route::put('/artikel/{article}',           'update')->name('artikel.update');
+        Route::patch('/artikel/{article}/archive', 'archive')->name('artikel.archive');
+        Route::delete('/artikel/{article}',        'destroy')->name('artikel.destroy');
+    });
 
     // Pengguna CRUD
-    Route::get('/pengguna/export-csv',   [UserController::class, 'exportCsv'])->name('pengguna.export');
-    Route::get('/pengguna',              [UserController::class, 'index'])->name('pengguna');
-    Route::post('/pengguna',             [UserController::class, 'store'])->name('pengguna.store');
-    Route::put('/pengguna/{user}',       [UserController::class, 'update'])->name('pengguna.update');
-    Route::delete('/pengguna/{user}',    [UserController::class, 'destroy'])->name('pengguna.destroy');
+    Route::controller(UserController::class)->group(function () {
+        Route::get('/pengguna',              'index')->name('pengguna');
+        Route::get('/pengguna/export-csv',   'exportCsv')->name('pengguna.export');
+        Route::post('/pengguna',             'store')->name('pengguna.store');
+        Route::put('/pengguna/{user}',       'update')->name('pengguna.update');
+        Route::delete('/pengguna/{user}',    'destroy')->name('pengguna.destroy');
+    });
 });

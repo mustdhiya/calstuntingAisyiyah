@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+﻿@extends('admin.layouts.app')
 
 @section('title', 'Hasil Analisis - Admin')
 
@@ -525,7 +525,7 @@
         new Chart(statusCtx, {
           type: "doughnut",
           data: {
-            labels: ["Normal", "Pendek (Stunting)", "Sangat Pendek (Stunting Berat)"],
+            labels: ["Normal", "Risiko", "Stunting Berat", "Stunting berat"],
             datasets: [{
               data: [totalNormal, totalRisiko, totalStunting],
               backgroundColor: ["#22c55e", "#fb923c", "#fb7185"],
@@ -563,7 +563,7 @@
                 backgroundColor: "#22c55e"
               },
               {
-                label: "Pendek",
+                label: "Risiko",
                 data: [
                   {{ $chartAge['0-6']['Pendek'] }},
                   {{ $chartAge['7-12']['Pendek'] }},

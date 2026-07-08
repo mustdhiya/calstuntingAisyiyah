@@ -324,6 +324,8 @@ class ArticleSeeder extends Seeder
             ],
         ];
 
+        $articlesData = array_slice($articlesData, 0, 15);
+
         foreach ($articlesData as $a) {
             Article::create(array_merge($a, [
                 'author_name' => 'Tim Edukasi SiCegah',

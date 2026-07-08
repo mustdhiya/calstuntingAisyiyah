@@ -25,7 +25,7 @@ class EdukasiController extends Controller
 
         $articles = $query->paginate(9)->withQueryString();
 
-        return view('edukasi', compact('articles'));
+        return view('public.edukasi', compact('articles'));
     }
 
     public function show(string $slug)
@@ -53,6 +53,6 @@ class EdukasiController extends Controller
             $relatedArticles = $relatedArticles->concat($extra);
         }
 
-        return view('artikel-detail', compact('article', 'relatedArticles'));
+        return view('public.artikel-detail', compact('article', 'relatedArticles'));
     }
 }

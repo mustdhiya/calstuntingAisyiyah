@@ -11,7 +11,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>body{font-family:Inter,sans-serif}.material-symbols-rounded{font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24}</style>
+  <!-- Custom Public CSS (External) -->
+  <link rel="stylesheet" href="{{ asset('css/public.css') }}" />
 </head>
 <body class="bg-slate-50 text-slate-800">
   <header class="navbar bg-white border-b border-slate-200 sticky top-0 z-50 px-4 lg:px-8">

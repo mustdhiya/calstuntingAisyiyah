@@ -263,7 +263,7 @@
             <span class="material-symbols-rounded text-sm text-slate-600">person_add</span>
             Tambah pengguna baru
           </h2>
-          <form id="user-form" class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm" method="POST" action="{{ route('admin.pengguna.store') }}">
+          <form id="user-form" class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm" method="POST" action="{{ route('admin.pengguna.store') }}" data-store-url="{{ route('admin.pengguna.store') }}">
             @csrf
             <input type="hidden" name="_method" id="form-method" value="POST">
 
@@ -327,48 +327,5 @@
 @endsection
 
 @section('scripts')
-  <script>
-    function editUser(user) {
-        // Change title
-        document.getElementById('form-title').innerHTML = `
-            <span class="material-symbols-rounded text-sm text-slate-600">edit_note</span>
-            Edit Pengguna: ${user.name}
-        `;
-
-        // Populate fields
-        document.getElementById('user-name').value = user.name;
-        document.getElementById('user-email').value = user.email;
-        document.getElementById('user-phone').value = user.phone_number || '';
-        document.getElementById('user-role').value = user.role;
-        document.getElementById('user-city').value = user.city || '';
-        document.getElementById('user-status').value = user.is_active ? '1' : '0';
-
-        // Update form action and method
-        const form = document.getElementById('user-form');
-        form.action = `/admin/pengguna/${user.id}`;
-        document.getElementById('form-method').value = 'PUT';
-
-        // Scroll to form smoothly
-        document.getElementById('user-form-card').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    function resetForm() {
-        // Reset title
-        document.getElementById('form-title').innerHTML = `
-            <span class="material-symbols-rounded text-sm text-slate-600">person_add</span>
-            Tambah pengguna baru
-        `;
-
-        // Reset form inputs
-        document.getElementById('user-form').reset();
-
-        // Restore action and method
-        const form = document.getElementById('user-form');
-        form.action = "{{ route('admin.pengguna.store') }}";
-        document.getElementById('form-method').value = 'POST';
-
-        // Scroll to top or form card
-        document.getElementById('user-form-card').scrollIntoView({ behavior: 'smooth' });
-    }
-  </script>
+  <script src="{{ asset('js/admin-users.js') }}"></script>
 @endsection

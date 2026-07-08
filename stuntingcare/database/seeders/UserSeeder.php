@@ -133,34 +133,7 @@ class UserSeeder extends Seeder
             ],
         ];
 
-        $roles = ['admin_wilayah', 'koordinator_cabang', 'kader_lapangan', 'pengguna_umum'];
-        $cities = [
-            'Samarinda', 'Balikpapan', 'Bontang', 'Kutai Kartanegara',
-            'Kutai Timur', 'Kutai Barat', 'Berau', 'Paser',
-            'Penajam Paser Utara', 'Mahakam Ulu'
-        ];
 
-        for ($i = 0; $i < 35; $i++) {
-            $role = fake()->randomElement($roles);
-            $cityName = fake()->randomElement($cities);
-            $firstName = fake()->firstName();
-            $lastName = fake()->lastName();
-            $name = $firstName . ' ' . $lastName;
-            $email = strtolower($firstName . '.' . $lastName . '@' . (fake()->boolean(70) ? 'example.com' : 'sicegah.id'));
-
-            if (collect($usersData)->contains('email', $email)) {
-                $email = strtolower($firstName . '.' . $lastName . rand(10, 99) . '@example.com');
-            }
-
-            $usersData[] = [
-                'name'         => $name,
-                'email'        => $email,
-                'phone_number' => '08' . fake()->numerify('##-####-####'),
-                'role'         => $role,
-                'city'         => $cityName,
-                'is_active'    => fake()->boolean(85),
-            ];
-        }
 
         foreach ($usersData as $userData) {
             User::create(array_merge($userData, [

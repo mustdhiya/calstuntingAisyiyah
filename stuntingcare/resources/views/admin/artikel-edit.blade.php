@@ -2,15 +2,8 @@
 
 @section('title', $article ? 'Edit Artikel' : 'Tambah Artikel')
 
-@section('styles')
-  <style>
-    .markdown-preview h1,.markdown-preview h2,.markdown-preview h3 { font-weight:600;margin-top:1rem;margin-bottom:.5rem; }
-    .markdown-preview p { margin-bottom:.75rem; }
-    .markdown-preview ul { padding-left:1.25rem;margin-bottom:.75rem;list-style-type:disc; }
-    .markdown-preview li { margin-bottom:.25rem; }
-    .markdown-preview code { background:#f3f4f6;padding:.15rem .3rem;border-radius:.25rem;font-size:.85em; }
-  </style>
-@endsection
+
+
 
 @section('sidebar-extra')
         <div class="bg-amber-50 border border-amber-100 rounded-2xl p-4">

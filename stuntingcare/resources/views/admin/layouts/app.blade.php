@@ -16,25 +16,8 @@
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <style>
-    body {
-      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-    .material-symbols-rounded {
-      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-      vertical-align: middle;
-    }
-    /* Growth status badges */
-    .badge-status-normal   { background-color: #E8F5E9; color:#2E7D32; }
-    .badge-status-risiko   { background-color: #FFF3E0; color:#E65100; }
-    .badge-status-stunting { background-color:#FFEBEE; color:#C62828; }
-    .badge-status-berat    { background-color:#FFEBEE; color:#B71C1C; }
-    
-    /* Article status badges */
-    .badge-status-published { background-color: #dcfce7; color: #166534; }
-    .badge-status-draft     { background-color: #fee2e2; color: #b91c1c; }
-    .badge-status-scheduled { background-color: #fef9c3; color: #854d0e; }
-  </style>
+  <!-- Custom Admin CSS (External) -->
+  <link rel="stylesheet" href="{{ asset('css/admin.css') }}" />
   @yield('styles')
 </head>
 <body class="bg-slate-50 text-slate-800">

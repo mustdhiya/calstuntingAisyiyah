@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hasil Skrining: {{ $result["nama_anak"] }} - SiCegah Stunting</title>
+  <title>Hasil Skrining: {{ $result["nama_anak"] }} — SiCegah Stunting</title>
   <meta name="description" content="Hasil analisis risiko stunting berdasarkan standar pertumbuhan WHO untuk {{ $result['nama_anak'] }}." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,80 +11,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body { font-family: "Inter", sans-serif; background: #f8fafc; color: #1e293b; -webkit-font-smoothing: antialiased; }
-    .material-symbols-rounded { font-variation-settings: "FILL" 1, "wght" 500, "GRAD" 0, "opsz" 24; vertical-align: middle; line-height: 1; }
-
-    /* Navbar */
-    .navbar-custom { height: 64px; border-bottom: 1px solid #e2e8f0; background: rgba(255,255,255,0.95); backdrop-filter: blur(12px); }
-    .nav-link { padding: 6px 14px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #475569; transition: background 0.15s, color 0.15s; }
-    .nav-link:hover { background: #f1f5f9; color: #059669; }
-
-    /* Cards */
-    .result-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 28px; }
-
-    /* Risk progress bar */
-    .risk-track {
-      position: relative; height: 12px; border-radius: 999px;
-      background: linear-gradient(90deg, #22c55e 0%, #facc15 40%, #f97316 70%, #ef4444 100%);
-      overflow: visible;
-    }
-    .risk-track-mask {
-      position: absolute; right: 0; top: 0; bottom: 0;
-      background: #e2e8f0; border-radius: 0 999px 999px 0;
-      transition: width 0.6s ease;
-    }
-    .risk-marker {
-      position: absolute; top: 100%; margin-top: 4px;
-      transform: translateX(-50%);
-      display: flex; flex-direction: column; align-items: center; gap: 2px;
-    }
-    .risk-marker-arrow {
-      width: 0; height: 0;
-      border-left: 6px solid transparent;
-      border-right: 6px solid transparent;
-      border-bottom: 8px solid #475569;
-    }
-    .risk-marker-badge {
-      background: #1e293b; color: #fff;
-      font-size: 11px; font-weight: 700;
-      padding: 3px 8px; border-radius: 6px;
-      white-space: nowrap;
-    }
-
-    /* Factor bars */
-    .factor-bar-wrap { background: #f1f5f9; border-radius: 12px; overflow: hidden; height: 38px; position: relative; }
-    .factor-bar-fill { height: 100%; border-radius: 12px; display: flex; align-items: center; padding: 0 14px; font-size: 13px; font-weight: 600; color: #fff; white-space: nowrap; transition: width 0.7s ease; }
-
-    /* Pill badge */
-    .pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; }
-    .pill-green { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
-    .pill-amber { background: #fef3c7; color: #78350f; border: 1px solid #fde68a; }
-    .pill-orange { background: #ffedd5; color: #7c2d12; border: 1px solid #fed7aa; }
-    .pill-red   { background: #fee2e2; color: #7f1d1d; border: 1px solid #fecaca; }
-    .pill-blue  { background: #e0f2fe; color: #0c4a6e; border: 1px solid #bae6fd; }
-
-    /* Buttons */
-    .btn-primary-full { display: inline-flex; align-items: center; gap: 8px; padding: 12px 26px; border-radius: 999px; background: #059669; color: #fff; font-size: 15px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; text-decoration: none; box-shadow: 0 4px 14px rgba(5,150,105,0.25); }
-    .btn-primary-full:hover { background: #047857; transform: translateY(-1px); }
-    .btn-outline-green { display: inline-flex; align-items: center; gap: 8px; padding: 12px 26px; border-radius: 999px; background: #fff; color: #059669; font-size: 15px; font-weight: 600; border: 1.5px solid #059669; cursor: pointer; transition: all 0.2s; text-decoration: none; }
-    .btn-outline-green:hover { background: #f0fdf4; }
-
-    /* Sidebar table */
-    .data-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
-    .data-row:last-child { border-bottom: none; }
-    .data-label { color: #64748b; }
-    .data-value { font-weight: 600; color: #1e293b; }
-
-    /* Footer */
-    .footer-main { background: #0f172a; color: #94a3b8; }
-
-    /* Recommendation item */
-    .rec-item { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; }
-    .rec-icon-wrap { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  </style>
+  <!-- Custom Public CSS (External) -->
+  <link rel="stylesheet" href="{{ asset('css/public.css') }}" />
 </head>
 <body>
 

@@ -12,7 +12,7 @@ class KalkulatorController extends Controller
      */
     public function index()
     {
-        return view('kalkulator');
+        return view('public.kalkulator');
     }
 
     /**
@@ -116,7 +116,7 @@ class KalkulatorController extends Controller
             'tb_ibu'        => $data['tb_ibu'] ?? null,
         ];
 
-        return view('hasil-kalkulator', compact('result'));
+        return view('public.hasil-kalkulator', compact('result'));
     }
 
     // =========================================================================
