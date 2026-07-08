@@ -3,282 +3,483 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hasil Skrining: {{ $result['nama_anak'] }} - SiCegah Stunting</title>
+  <title>Hasil Skrining: {{ $result["nama_anak"] }} - SiCegah Stunting</title>
   <meta name="description" content="Hasil analisis risiko stunting berdasarkan standar pertumbuhan WHO untuk {{ $result['nama_anak'] }}." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body { font-family: Inter, sans-serif; }
-    .material-symbols-rounded { font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24 }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: "Inter", sans-serif; background: #f8fafc; color: #1e293b; -webkit-font-smoothing: antialiased; }
+    .material-symbols-rounded { font-variation-settings: "FILL" 1, "wght" 500, "GRAD" 0, "opsz" 24; vertical-align: middle; line-height: 1; }
+
+    /* Navbar */
+    .navbar-custom { height: 64px; border-bottom: 1px solid #e2e8f0; background: rgba(255,255,255,0.95); backdrop-filter: blur(12px); }
+    .nav-link { padding: 6px 14px; border-radius: 8px; font-size: 14px; font-weight: 500; color: #475569; transition: background 0.15s, color 0.15s; }
+    .nav-link:hover { background: #f1f5f9; color: #059669; }
+
+    /* Cards */
+    .result-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 28px; }
+
+    /* Risk progress bar */
+    .risk-track {
+      position: relative; height: 12px; border-radius: 999px;
+      background: linear-gradient(90deg, #22c55e 0%, #facc15 40%, #f97316 70%, #ef4444 100%);
+      overflow: visible;
+    }
+    .risk-track-mask {
+      position: absolute; right: 0; top: 0; bottom: 0;
+      background: #e2e8f0; border-radius: 0 999px 999px 0;
+      transition: width 0.6s ease;
+    }
+    .risk-marker {
+      position: absolute; top: 100%; margin-top: 4px;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+    }
+    .risk-marker-arrow {
+      width: 0; height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-bottom: 8px solid #475569;
+    }
+    .risk-marker-badge {
+      background: #1e293b; color: #fff;
+      font-size: 11px; font-weight: 700;
+      padding: 3px 8px; border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    /* Factor bars */
+    .factor-bar-wrap { background: #f1f5f9; border-radius: 12px; overflow: hidden; height: 38px; position: relative; }
+    .factor-bar-fill { height: 100%; border-radius: 12px; display: flex; align-items: center; padding: 0 14px; font-size: 13px; font-weight: 600; color: #fff; white-space: nowrap; transition: width 0.7s ease; }
+
+    /* Pill badge */
+    .pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+    .pill-green { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+    .pill-amber { background: #fef3c7; color: #78350f; border: 1px solid #fde68a; }
+    .pill-orange { background: #ffedd5; color: #7c2d12; border: 1px solid #fed7aa; }
+    .pill-red   { background: #fee2e2; color: #7f1d1d; border: 1px solid #fecaca; }
+    .pill-blue  { background: #e0f2fe; color: #0c4a6e; border: 1px solid #bae6fd; }
+
+    /* Buttons */
+    .btn-primary-full { display: inline-flex; align-items: center; gap: 8px; padding: 12px 26px; border-radius: 999px; background: #059669; color: #fff; font-size: 15px; font-weight: 600; border: none; cursor: pointer; transition: all 0.2s; text-decoration: none; box-shadow: 0 4px 14px rgba(5,150,105,0.25); }
+    .btn-primary-full:hover { background: #047857; transform: translateY(-1px); }
+    .btn-outline-green { display: inline-flex; align-items: center; gap: 8px; padding: 12px 26px; border-radius: 999px; background: #fff; color: #059669; font-size: 15px; font-weight: 600; border: 1.5px solid #059669; cursor: pointer; transition: all 0.2s; text-decoration: none; }
+    .btn-outline-green:hover { background: #f0fdf4; }
+
+    /* Sidebar table */
+    .data-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+    .data-row:last-child { border-bottom: none; }
+    .data-label { color: #64748b; }
+    .data-value { font-weight: 600; color: #1e293b; }
+
+    /* Footer */
+    .footer-main { background: #0f172a; color: #94a3b8; }
+
+    /* Recommendation item */
+    .rec-item { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; }
+    .rec-icon-wrap { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800">
+<body>
 
-  <!-- Navbar -->
-  <header class="navbar bg-white border-b border-slate-200 sticky top-0 z-50 px-4 lg:px-8">
-    <div class="navbar-start">
-      <a href="{{ route('home') }}" class="flex items-center gap-3">
-        <div class="w-11 h-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center">
-          <span class="material-symbols-rounded">health_and_safety</span>
-        </div>
-        <div>
-          <div class="font-extrabold text-emerald-700">SiCegah Stunting</div>
-          <div class="text-xs text-slate-500">Edukasi dan Skrining Awal</div>
-        </div>
-      </a>
-    </div>
-    <div class="navbar-center hidden lg:flex">
-      <ul class="menu menu-horizontal gap-1">
-        <li><a href="{{ route('home') }}">Beranda</a></li>
-        <li><a href="{{ route('kalkulator') }}">Kalkulator</a></li>
-        <li><a href="{{ route('edukasi') }}">Edukasi</a></li>
-        <li><a href="{{ route('tentang') }}">Tentang</a></li>
-        <li><a href="{{ route('faq') }}">FAQ</a></li>
-        <li><a href="{{ route('kontak') }}">Kontak</a></li>
-      </ul>
-    </div>
-    <div class="navbar-end">
-      <a href="{{ route('kalkulator') }}" class="btn btn-primary rounded-full">Hitung Ulang</a>
-    </div>
-  </header>
-
-  <main class="max-w-6xl mx-auto px-4 lg:px-8 py-10">
-    <section class="mb-8">
-      <div class="badge {{ $result['risk_level']['badge'] }} badge-outline mb-3">
-        Hasil Analisis Risiko
+<!-- Navbar -->
+<header class="navbar-custom sticky top-0 z-50">
+  <div class="max-w-6xl mx-auto px-4 lg:px-8 h-full flex items-center justify-between gap-4">
+    <a href="{{ route('home') }}" class="flex items-center gap-3 flex-shrink-0">
+      <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center">
+        <span class="material-symbols-rounded text-xl">health_and_safety</span>
       </div>
-      <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900">Ringkasan hasil skrining awal</h1>
-      <p class="text-slate-600 mt-3 max-w-3xl">
-        Hasil skrining untuk <strong>{{ $result['nama_anak'] }}</strong> berdasarkan standar pertumbuhan WHO 2006.
-        Ini merupakan skrining awal dan bukan pengganti diagnosis medis profesional.
-      </p>
-    </section>
+      <div class="leading-tight">
+        <div class="font-bold text-[15px] text-emerald-700 leading-none">SiCegah Stunting</div>
+        <div class="text-[11px] text-slate-400 mt-0.5">Edukasi &amp; Skrining Awal</div>
+      </div>
+    </a>
+    <nav class="hidden lg:flex items-center gap-1">
+      <a href="{{ route('home') }}" class="nav-link">Beranda</a>
+      <a href="{{ route('kalkulator') }}" class="nav-link">Kalkulator</a>
+      <a href="{{ route('edukasi') }}" class="nav-link">Edukasi</a>
+      <a href="{{ route('tentang') }}" class="nav-link">Tentang</a>
+      <a href="{{ route('faq') }}" class="nav-link">FAQ</a>
+      <a href="{{ route('kontak') }}" class="nav-link">Kontak</a>
+    </nav>
+    <a href="{{ route('kalkulator') }}" class="btn-primary-full text-sm !py-2.5 !px-5">
+      <span class="material-symbols-rounded text-[18px]">refresh</span>
+      Hitung Ulang
+    </a>
+  </div>
+</header>
 
-    <div class="grid lg:grid-cols-3 gap-6">
+<main class="max-w-6xl mx-auto px-4 lg:px-8 py-10">
 
-      <!-- MAIN CONTENT -->
-      <section class="lg:col-span-2 space-y-6">
+  <!-- Breadcrumb + Title -->
+  <div class="mb-8">
+    <div class="flex items-center gap-2 mb-4">
+      @php
+        $riskCode = $result["risk_level"]["code"];
+        $breadcrumbClass = match($riskCode) {
+          "rendah"       => "pill-green",
+          "sedang"       => "pill-amber",
+          "tinggi"       => "pill-orange",
+          "sangat_tinggi"=> "pill-red",
+          default        => "pill-green",
+        };
+      @endphp
+      <span class="pill {{ $breadcrumbClass }}">
+        <span class="material-symbols-rounded text-[13px]">analytics</span>
+        Hasil Analisis
+      </span>
+      <span class="material-symbols-rounded text-slate-400 text-[16px]">chevron_right</span>
+    </div>
+    <h1 class="text-[30px] sm:text-[36px] font-extrabold text-slate-900 mb-2">Ringkasan hasil skrining awal</h1>
+    <p class="text-slate-500 text-[15px] leading-relaxed max-w-2xl">
+      Hasil skrining untuk <strong class="text-slate-700">{{ $result["nama_anak"] }}</strong> berdasarkan standar pertumbuhan WHO 2006.
+      Ini merupakan skrining awal dan bukan pengganti diagnosis medis profesional.
+    </p>
+  </div>
 
-        <!-- Status Card -->
-        <div class="card bg-white shadow-lg border border-slate-200">
-          <div class="card-body">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div>
-                <h2 class="card-title text-2xl">Status Analisis</h2>
-                <p class="text-slate-500">
-                  {{ $result['nama_anak'] }},
-                  {{ $result['gender'] === 'L' ? 'Laki-laki' : 'Perempuan' }},
-                  usia {{ $result['usia'] }} bulan
-                </p>
-              </div>
-              <div class="badge {{ $result['risk_level']['badge'] }} badge-lg py-4 px-5 text-sm font-bold">
-                {{ $result['risk_level']['label'] }}
-              </div>
-            </div>
+  <!-- 2-column grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-            @php
-              $statusDesc = match($result['status_tbu']['code']) {
-                'normal'         => 'Tinggi badan anak sesuai dengan standar WHO untuk usianya. Pertumbuhan berjalan normal.',
-                'stunting'       => 'Tinggi badan anak berada di bawah standar WHO untuk usianya (Z-score TB/U antara -3 dan -2 SD). Diperlukan pemantauan dan intervensi gizi.',
-                'stunting_berat' => 'Tinggi badan anak jauh di bawah standar WHO (Z-score < -3 SD). Kondisi ini membutuhkan penanganan medis segera.',
-                default          => 'Hasil analisis menunjukkan perlu adanya perhatian terhadap tumbuh kembang anak.',
-              };
-            @endphp
-            <p class="text-slate-600 mt-2">{{ $statusDesc }}</p>
+    <!-- ═══════ LEFT COLUMN (2/3) ═══════ -->
+    <div class="lg:col-span-2 space-y-5">
 
-            <progress class="progress {{ $result['risk_level']['progress'] }} w-full mt-3" value="{{ $result['risk_score'] }}" max="100"></progress>
-            <div class="flex justify-between text-sm text-slate-500 mt-1">
-              <span>Risiko rendah</span>
-              <span class="font-semibold">Skor: {{ $result['risk_score'] }}/100</span>
-              <span>Risiko tinggi</span>
-            </div>
+      {{-- ── Card 1: Status Analisis ── --}}
+      <div class="result-card">
+        <div class="flex items-start justify-between gap-4 mb-3">
+          <div>
+            <h2 class="text-[18px] font-bold text-slate-800">Status Analisis</h2>
+            <p class="text-sm text-slate-500 mt-0.5">
+              Nama anak: <strong>{{ $result["nama_anak"] }}</strong>, usia {{ $result["usia"] }} bulan
+            </p>
           </div>
-        </div>
-
-        <!-- Z-Score Indicators -->
-        <div class="card bg-white shadow-md border border-slate-200">
-          <div class="card-body">
-            <h2 class="card-title mb-4">Indikator Z-Score WHO</h2>
-            <div class="grid sm:grid-cols-3 gap-4">
-
-              <!-- TB/U -->
-              <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100 text-center">
-                <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">TB/U</div>
-                <div class="text-3xl font-extrabold {{ $result['status_tbu']['code'] === 'normal' ? 'text-emerald-600' : 'text-red-600' }} mb-1">
-                  {{ $result['zscore_tbu'] }}
-                </div>
-                <div class="badge {{ $result['status_tbu']['badge'] }} badge-sm">{{ $result['status_tbu']['label'] }}</div>
-                <div class="text-xs text-slate-500 mt-2">Median WHO: {{ $result['ideal_tb']['median'] }} cm</div>
-              </div>
-
-              <!-- BB/U -->
-              <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100 text-center">
-                <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">BB/U</div>
-                <div class="text-3xl font-extrabold {{ $result['status_bbu']['code'] === 'normal' ? 'text-emerald-600' : 'text-amber-600' }} mb-1">
-                  {{ $result['zscore_bbu'] }}
-                </div>
-                <div class="badge {{ $result['status_bbu']['badge'] }} badge-sm">{{ $result['status_bbu']['label'] }}</div>
-                <div class="text-xs text-slate-500 mt-2">Median WHO: {{ $result['ideal_bb']['median'] }} kg</div>
-              </div>
-
-              <!-- BB/TB -->
-              <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100 text-center">
-                <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">BB/TB</div>
-                <div class="text-3xl font-extrabold {{ $result['status_bbtb']['code'] === 'normal' ? 'text-emerald-600' : 'text-orange-600' }} mb-1">
-                  {{ $result['zscore_bbtb'] }}
-                </div>
-                <div class="badge {{ $result['status_bbtb']['badge'] }} badge-sm">{{ $result['status_bbtb']['label'] }}</div>
-                <div class="text-xs text-slate-500 mt-2">Wasting indicator</div>
-              </div>
-
-            </div>
-          </div>
-        </div>
-
-        <!-- Rekomendasi -->
-        <div class="card bg-white shadow-md border border-slate-200">
-          <div class="card-body">
-            <h2 class="card-title mb-4">Rekomendasi awal</h2>
-            <div class="space-y-3">
-              @foreach($result['recommendations'] as $rec)
-                <div class="flex items-start gap-3 p-3 {{ $rec['bg'] }} rounded-2xl border border-slate-100">
-                  <span class="material-symbols-rounded {{ $rec['color'] }} mt-0.5 shrink-0">{{ $rec['icon'] }}</span>
-                  <div>
-                    <div class="font-semibold text-sm text-slate-800">{{ $rec['title'] }}</div>
-                    <div class="text-xs text-slate-600 mt-0.5 leading-relaxed">{{ $rec['desc'] }}</div>
-                  </div>
-                </div>
-              @endforeach
-            </div>
-          </div>
-        </div>
-
-        <!-- Disclaimer -->
-        <div class="alert alert-warning">
-          <span class="material-symbols-rounded">warning</span>
-          <span class="text-sm">
-            <strong>Disclaimer:</strong> Hasil ini merupakan skrining awal berbasis standar WHO dan tidak menggantikan
-            diagnosis atau konsultasi dengan tenaga medis profesional. Untuk penanganan lebih lanjut, hubungi bidan,
-            dokter, atau puskesmas terdekat.
+          @php
+            $rlCode = $result["risk_level"]["code"];
+            $badgeClass = match($rlCode) {
+              "rendah"        => "bg-emerald-100 text-emerald-700 border border-emerald-200",
+              "sedang"        => "bg-amber-100 text-amber-700 border border-amber-200",
+              "tinggi"        => "bg-orange-100 text-orange-700 border border-orange-200",
+              "sangat_tinggi" => "bg-red-100 text-red-700 border border-red-200",
+              default         => "bg-slate-100 text-slate-700",
+            };
+          @endphp
+          <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-[13px] font-bold {{ $badgeClass }} flex-shrink-0">
+            <span class="material-symbols-rounded text-[15px]">
+              {{ $rlCode === "rendah" ? "check_circle" : ($rlCode === "sedang" ? "warning" : "error") }}
+            </span>
+            {{ $result["risk_level"]["label"] }}
           </span>
         </div>
 
-        <!-- Action buttons -->
-        <div class="flex flex-col sm:flex-row gap-3">
-          <a href="{{ route('edukasi') }}" class="btn btn-primary rounded-full">
-            <span class="material-symbols-rounded">menu_book</span>
-            Lanjut ke Edukasi
-          </a>
-          <a href="{{ route('kalkulator') }}" class="btn btn-outline btn-secondary rounded-full">
-            <span class="material-symbols-rounded">refresh</span>
-            Hitung Ulang
-          </a>
+        {{-- Status TB/U, BB/U, BB/TB summary --}}
+        <p class="text-[14px] text-slate-600 leading-relaxed mb-5">
+          @if(in_array($result["status_tbu"]["code"], ["stunting", "stunting_berat"]))
+            Data menunjukkan bahwa tinggi badan anak berada di bawah harapan untuk usianya.
+            Penilaian tinggi badan menurut usia merupakan indikator utama untuk identifikasi stunting pada balita.
+          @else
+            Data menunjukkan bahwa tinggi badan anak berada dalam rentang normal sesuai usianya berdasarkan standar WHO 2006.
+            Pertahankan pola makan bergizi dan pantau pertumbuhan secara rutin.
+          @endif
+        </p>
+
+        {{-- Indikator status (TB/U, BB/U, BB/TB) --}}
+        <div class="grid grid-cols-3 gap-3 mb-6">
+          @foreach([
+            ["label" => "TB/U", "sub" => "Tinggi/Usia", "status" => $result["status_tbu"], "icon" => "height"],
+            ["label" => "BB/U", "sub" => "Berat/Usia", "status" => $result["status_bbu"], "icon" => "monitor_weight"],
+            ["label" => "BB/TB", "sub" => "Berat/Tinggi", "status" => $result["status_bbtb"], "icon" => "straighten"],
+          ] as $ind)
+          @php
+            $indCode = $ind["status"]["code"];
+            $indColor = match($indCode) {
+              "normal"         => ["bg" => "bg-emerald-50", "text" => "text-emerald-700", "icon" => "text-emerald-500", "pill" => "pill-green"],
+              "pendek","stunting"=> ["bg" => "bg-amber-50", "text" => "text-amber-700", "icon" => "text-amber-500", "pill" => "pill-amber"],
+              "stunting_berat" => ["bg" => "bg-red-50", "text" => "text-red-700", "icon" => "text-red-500", "pill" => "pill-red"],
+              "kurang","wasting"=> ["bg" => "bg-orange-50", "text" => "text-orange-700", "icon" => "text-orange-500", "pill" => "pill-orange"],
+              default          => ["bg" => "bg-blue-50", "text" => "text-blue-700", "icon" => "text-blue-500", "pill" => "pill-blue"],
+            };
+          @endphp
+          <div class="rounded-16px {{ $indColor['bg'] }} p-3 rounded-xl text-center">
+            <span class="material-symbols-rounded text-[22px] {{ $indColor['icon'] }}">{{ $ind["icon"] }}</span>
+            <p class="text-[11px] font-semibold text-slate-500 mt-1">{{ $ind["label"] }}</p>
+            <p class="text-[10px] text-slate-400">{{ $ind["sub"] }}</p>
+            <p class="text-[13px] font-bold {{ $indColor['text'] }} mt-1 leading-tight">{{ $ind["status"]["label"] }}</p>
+          </div>
+          @endforeach
         </div>
-      </section>
 
-      <!-- SIDEBAR -->
-      <aside class="space-y-6">
-
-        <!-- Ringkasan data input -->
-        <div class="card bg-emerald-50 border border-emerald-100 shadow-sm">
-          <div class="card-body">
-            <h3 class="card-title text-emerald-800 text-base">Ringkasan data</h3>
-            <div class="overflow-x-auto">
-              <table class="table table-sm">
-                <tbody>
-                  <tr><td class="text-slate-600 text-xs">Nama anak</td><td class="font-medium text-sm">{{ $result['nama_anak'] }}</td></tr>
-                  <tr><td class="text-slate-600 text-xs">Usia</td><td class="font-medium text-sm">{{ $result['usia'] }} bulan</td></tr>
-                  <tr><td class="text-slate-600 text-xs">Jenis kelamin</td><td class="font-medium text-sm">{{ $result['gender'] === 'L' ? 'Laki-laki' : 'Perempuan' }}</td></tr>
-                  <tr><td class="text-slate-600 text-xs">Tinggi badan</td><td class="font-medium text-sm">{{ $result['tb'] }} cm</td></tr>
-                  <tr><td class="text-slate-600 text-xs">Berat badan</td><td class="font-medium text-sm">{{ $result['bb'] }} kg</td></tr>
-                  @if($result['tb_ibu'])
-                  <tr><td class="text-slate-600 text-xs">Tinggi ibu</td><td class="font-medium text-sm">{{ $result['tb_ibu'] }} cm</td></tr>
-                  @endif
-                  @if($result['asi_eksklusif'])
-                  <tr><td class="text-slate-600 text-xs">ASI eksklusif</td><td class="font-medium text-sm">{{ $result['asi_eksklusif'] === 'ya' ? 'Ya' : 'Tidak' }}</td></tr>
-                  @endif
-                </tbody>
-              </table>
+        {{-- Risk progress bar --}}
+        @php
+          $score   = (int) $result['risk_score'];
+          $clamp   = min(97, max(3, $score));
+          $maskPct = 100 - $clamp;   // grey mask from right
+          $rlCode  = $result['risk_level']['code'];
+          $markerColor = match($rlCode) {
+            'rendah'        => '#22c55e',
+            'sedang'        => '#f59e0b',
+            'tinggi'        => '#f97316',
+            'sangat_tinggi' => '#ef4444',
+            default         => '#64748b',
+          };
+        @endphp
+        <div class="mt-2 mb-6">
+          {{-- Track --}}
+          <div class="risk-track" style="margin-bottom: 28px;">
+            {{-- Grey mask covers the right portion --}}
+            <div class="risk-track-mask" style="width: {{ $maskPct }}%;"></div>
+            {{-- Marker below the current position --}}
+            <div class="risk-marker" style="left: {{ $clamp }}%;">
+              <div class="risk-marker-arrow" style="border-bottom-color: {{ $markerColor }};"></div>
+              <div class="risk-marker-badge" style="background: {{ $markerColor }};">{{ $score }}/100</div>
             </div>
           </div>
-        </div>
-
-        <!-- Referensi ideal -->
-        <div class="card bg-white border border-slate-200 shadow-sm">
-          <div class="card-body">
-            <h3 class="card-title text-slate-700 text-base mb-3">Referensi WHO usia {{ $result['usia'] }} bulan</h3>
-            <div class="space-y-3">
-              <div class="flex items-center justify-between">
-                <span class="text-xs text-slate-500">Median TB/U</span>
-                <span class="font-bold text-sm text-emerald-700">{{ $result['ideal_tb']['median'] }} cm</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-xs text-slate-500">TB/U normal min. (-2 SD)</span>
-                <span class="font-bold text-sm text-amber-700">{{ $result['ideal_tb']['min_normal'] }} cm</span>
-              </div>
-              <div class="divider my-1"></div>
-              <div class="flex items-center justify-between">
-                <span class="text-xs text-slate-500">Median BB/U</span>
-                <span class="font-bold text-sm text-emerald-700">{{ $result['ideal_bb']['median'] }} kg</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="text-xs text-slate-500">BB/U normal min. (-2 SD)</span>
-                <span class="font-bold text-sm text-amber-700">{{ $result['ideal_bb']['min_normal'] }} kg</span>
-              </div>
-            </div>
+          {{-- Labels --}}
+          <div class="flex justify-between text-[12px] text-slate-500 mt-1">
+            <span class="flex items-center gap-1">
+              <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+              Risiko rendah
+            </span>
+            <span class="font-semibold text-slate-700">{{ $result['risk_level']['label'] }}</span>
+            <span class="flex items-center gap-1">
+              Risiko tinggi
+              <span class="inline-block w-2.5 h-2.5 rounded-full bg-red-400"></span>
+            </span>
           </div>
         </div>
+      </div>
 
-        <!-- Legenda Z-score -->
-        <div class="card bg-blue-50 border border-blue-100 shadow-sm">
-          <div class="card-body">
-            <h3 class="card-title text-blue-800 text-sm mb-3">Kategori TB/U</h3>
-            <div class="space-y-2 text-xs">
+      {{-- ── Card 2: Z-score Faktor ── --}}
+      <div class="result-card">
+        <h2 class="text-[16px] font-bold text-slate-800 mb-5">Faktor yang mempengaruhi</h2>
+        <div class="space-y-3">
+          @php
+            $factors = [
+              [
+                "label" => "TB/U — Tinggi menurut Usia",
+                "zscore" => $result["zscore_tbu"],
+                "detail" => "Z-score: " . $result["zscore_tbu"],
+                "icon"   => "height",
+              ],
+              [
+                "label" => "BB/U — Berat menurut Usia",
+                "zscore" => $result["zscore_bbu"],
+                "detail" => "Z-score: " . $result["zscore_bbu"],
+                "icon"   => "monitor_weight",
+              ],
+              [
+                "label" => "BB/TB — Berat menurut Tinggi",
+                "zscore" => $result["zscore_bbtb"],
+                "detail" => "Z-score: " . $result["zscore_bbtb"],
+                "icon"   => "straighten",
+              ],
+            ];
+          @endphp
+          @foreach($factors as $fac)
+          @php
+            // z-score range biasanya -4 sampai +4
+            // Tampilkan sebagai bar 0-100% dari range -4 s/d +4
+            $z      = $fac["zscore"];
+            $pct    = round(min(100, max(0, (($z + 4) / 8) * 100)));
+            $barColor = $z >= -1 ? "#22c55e" : ($z >= -2 ? "#86efac" : ($z >= -3 ? "#f97316" : "#ef4444"));
+            $emoji  = $z >= -2 ? "check_circle" : ($z >= -3 ? "warning" : "cancel");
+            $emojiColor = $z >= -2 ? "#22c55e" : ($z >= -3 ? "#f97316" : "#ef4444");
+          @endphp
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
               <div class="flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-green-500 shrink-0"></span>
-                <span class="font-semibold text-green-700">Normal</span>
-                <span class="text-slate-500">&ge; -2 SD</span>
+                <span class="material-symbols-rounded text-[16px] text-slate-400">{{ $fac["icon"] }}</span>
+                <span class="text-[13px] font-semibold text-slate-700">{{ $fac["label"] }}</span>
               </div>
-              <div class="flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-orange-400 shrink-0"></span>
-                <span class="font-semibold text-orange-700">Pendek</span>
-                <span class="text-slate-500">-3 s/d -2 SD</span>
-              </div>
-              <div class="flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-red-600 shrink-0"></span>
-                <span class="font-semibold text-red-700">Sangat Pendek</span>
-                <span class="text-slate-500">&lt; -3 SD</span>
+              <div class="flex items-center gap-1.5">
+                <span class="material-symbols-rounded text-[16px]" style="color: {{ $emojiColor }}">{{ $emoji }}</span>
+                <span class="text-[12px] font-bold text-slate-600">{{ $fac["detail"] }}</span>
               </div>
             </div>
+            <div class="factor-bar-wrap">
+              <div class="factor-bar-fill" style="width: {{ $pct }}%; background: {{ $barColor }};"></div>
+              {{-- Median marker at 50% --}}
+              <div style="position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: rgba(255,255,255,0.5);"></div>
+            </div>
+            <div class="flex justify-between text-[10px] text-slate-400 mt-0.5">
+              <span>−4 SD (sangat rendah)</span>
+              <span>Median</span>
+              <span>+4 SD (sangat tinggi)</span>
+            </div>
+          </div>
+          @endforeach
+        </div>
+      </div>
+
+      {{-- ── Card 3: Rekomendasi ── --}}
+      <div class="result-card">
+        <h2 class="text-[16px] font-bold text-slate-800 mb-4">Rekomendasi awal</h2>
+        <div class="space-y-3">
+          @foreach($result["recommendations"] as $rec)
+          <div class="rec-item">
+            <div class="rec-icon-wrap {{ $rec["bg"] }}">
+              <span class="material-symbols-rounded text-[18px] {{ $rec["color"] }}">{{ $rec["icon"] }}</span>
+            </div>
+            <div>
+              <p class="text-[14px] font-semibold text-slate-800 mb-0.5">{{ $rec["title"] }}</p>
+              <p class="text-[13px] text-slate-500 leading-relaxed">{{ $rec["desc"] }}</p>
+            </div>
+          </div>
+          @endforeach
+        </div>
+      </div>
+
+      {{-- ── Disclaimer ── --}}
+      <div class="bg-amber-50 border border-amber-200 rounded-16px rounded-xl p-4 flex gap-3 items-start">
+        <span class="material-symbols-rounded text-amber-500 text-[22px] flex-shrink-0 mt-0.5">info</span>
+        <p class="text-[13px] text-amber-800 leading-relaxed">
+          <strong>Disclaimer:</strong> Hasil ini hanya merupakan skrining awal untuk edukasi dan <strong>tidak menggantikan</strong>
+          diagnosis atau konsultasi medis profesional. Segera kunjungi tenaga kesehatan jika ada kekhawatiran terkait tumbuh kembang anak.
+        </p>
+      </div>
+
+      {{-- ── Action buttons ── --}}
+      <div class="flex flex-wrap gap-3">
+        <a href="{{ route("edukasi") }}" class="btn-primary-full">
+          <span class="material-symbols-rounded text-[20px]">menu_book</span>
+          Lanjut ke Edukasi
+        </a>
+        <a href="{{ route("kalkulator") }}" class="btn-outline-green">
+          <span class="material-symbols-rounded text-[20px]">refresh</span>
+          Hitung Ulang
+        </a>
+      </div>
+
+    </div><!-- /left column -->
+
+    <!-- ═══════ RIGHT COLUMN (1/3) ═══════ -->
+    <div class="space-y-5">
+
+      {{-- ── Sidebar: Ringkasan Data ── --}}
+      <div class="result-card">
+        <h3 class="text-[15px] font-bold text-emerald-700 mb-4 flex items-center gap-2">
+          <span class="material-symbols-rounded text-[18px]">summarize</span>
+          Ringkasan data
+        </h3>
+        <div>
+          <div class="data-row">
+            <span class="data-label">Usia</span>
+            <span class="data-value">{{ $result["usia"] }} bulan</span>
+          </div>
+          <div class="data-row">
+            <span class="data-label">Jenis kelamin</span>
+            <span class="data-value">{{ $result["gender"] === "L" ? "Laki-laki" : "Perempuan" }}</span>
+          </div>
+          <div class="data-row">
+            <span class="data-label">Tinggi badan</span>
+            <span class="data-value">{{ $result["tb"] }} cm</span>
+          </div>
+          <div class="data-row">
+            <span class="data-label">Berat badan</span>
+            <span class="data-value">{{ $result["bb"] }} kg</span>
+          </div>
+          @if(!empty($result["tb_ibu"]))
+          <div class="data-row">
+            <span class="data-label">Tinggi ibu</span>
+            <span class="data-value">{{ $result["tb_ibu"] }} cm</span>
+          </div>
+          @endif
+          <div class="data-row">
+            <span class="data-label">TB ideal (median)</span>
+            <span class="data-value text-emerald-600">{{ $result["ideal_tb"]["median"] }} cm</span>
+          </div>
+          <div class="data-row">
+            <span class="data-label">BB ideal (median)</span>
+            <span class="data-value text-emerald-600">{{ $result["ideal_bb"]["median"] }} kg</span>
           </div>
         </div>
+      </div>
 
-      </aside>
+      {{-- ── Sidebar: Catatan Edukasi ── --}}
+      <div class="result-card bg-emerald-50 border-emerald-100">
+        <h3 class="text-[14px] font-bold text-emerald-700 mb-2 flex items-center gap-2">
+          <span class="material-symbols-rounded text-[17px]">school</span>
+          Catatan edukasi
+        </h3>
+        <p class="text-[13px] text-emerald-800 leading-relaxed">
+          WHO menyediakan alat dan standar pertumbuhan untuk mendukung implementasi pemantauan fisik anak,
+          termasuk indikator tinggi badan menurut usia. Standar ini digunakan secara global oleh tenaga kesehatan.
+        </p>
+      </div>
+
+      {{-- ── Sidebar: Referensi Normal ── --}}
+      <div class="result-card">
+        <h3 class="text-[14px] font-bold text-slate-700 mb-3 flex items-center gap-2">
+          <span class="material-symbols-rounded text-[17px] text-blue-500">info</span>
+          Referensi normal WHO
+        </h3>
+        <div class="space-y-2 text-[13px]">
+          <div class="flex justify-between">
+            <span class="text-slate-500">TB normal minimal</span>
+            <span class="font-semibold text-slate-700">{{ $result["ideal_tb"]["min_normal"] }} cm</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-500">BB normal minimal</span>
+            <span class="font-semibold text-slate-700">{{ $result["ideal_bb"]["min_normal"] }} kg</span>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-2 leading-relaxed">
+            Berdasarkan z-score &ge; &minus;2 SD untuk anak usia {{ $result["usia"] }} bulan,
+            {{ $result["gender"] === "L" ? "laki-laki" : "perempuan" }}.
+          </p>
+        </div>
+      </div>
+
+    </div><!-- /right column -->
+  </div><!-- /grid -->
+</main>
+
+<!-- Footer -->
+<footer class="footer-main mt-14 pt-12 pb-8">
+  <div class="max-w-6xl mx-auto px-4 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 pb-8 border-b border-white/10">
+      <div>
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center">
+            <span class="material-symbols-rounded">health_and_safety</span>
+          </div>
+          <div>
+            <div class="font-bold text-white text-[15px]">SiCegah Stunting</div>
+            <div class="text-[11px] text-slate-400">Edukasi dan Skrining Awal</div>
+          </div>
+        </div>
+        <p class="text-slate-400 text-[13px] leading-relaxed">
+          Platform edukasi dan analisis risiko stunting untuk kader dan masyarakat Aisyiyah Kalimantan Timur.
+        </p>
+      </div>
+      <div>
+        <h4 class="font-semibold text-white text-[13px] uppercase tracking-wider mb-3">NAVIGASI</h4>
+        <ul class="space-y-2">
+          <li><a href="{{ route("home") }}" class="text-slate-400 text-[13px] hover:text-white transition-colors">Beranda</a></li>
+          <li><a href="{{ route("kalkulator") }}" class="text-slate-400 text-[13px] hover:text-white transition-colors">Kalkulator</a></li>
+          <li><a href="{{ route("edukasi") }}" class="text-slate-400 text-[13px] hover:text-white transition-colors">Edukasi</a></li>
+          <li><a href="{{ route("faq") }}" class="text-slate-400 text-[13px] hover:text-white transition-colors">FAQ</a></li>
+          <li><a href="{{ route("kontak") }}" class="text-slate-400 text-[13px] hover:text-white transition-colors">Kontak</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-semibold text-white text-[13px] uppercase tracking-wider mb-3">INFORMASI</h4>
+        <ul class="space-y-2">
+          <li><a href="{{ route("edukasi") }}" class="text-slate-400 text-[13px] hover:text-white transition-colors">Edukasi</a></li>
+          <li><a href="{{ route("faq") }}" class="text-slate-400 text-[13px] hover:text-white transition-colors">FAQ</a></li>
+          <li><a href="{{ route("kontak") }}" class="text-slate-400 text-[13px] hover:text-white transition-colors">Kontak</a></li>
+        </ul>
+        <p class="text-slate-400 text-[13px] mt-4">Pengurus Wilayah Aisyiyah Kalimantan Timur</p>
+      </div>
     </div>
-  </main>
-
-  <footer class="footer p-10 bg-slate-900 text-slate-200 mt-10">
-    <nav>
-      <h6 class="footer-title">Navigasi</h6>
-      <a class="link link-hover" href="{{ route('home') }}">Beranda</a>
-      <a class="link link-hover" href="{{ route('kalkulator') }}">Kalkulator</a>
-      <a class="link link-hover" href="{{ route('hasil') }}">Contoh Hasil</a>
-    </nav>
-    <nav>
-      <h6 class="footer-title">Informasi</h6>
-      <a class="link link-hover" href="{{ route('edukasi') }}">Edukasi</a>
-      <a class="link link-hover" href="{{ route('faq') }}">FAQ</a>
-      <a class="link link-hover" href="{{ route('kontak') }}">Kontak</a>
-    </nav>
-    <aside>
-      <p>Pengurus Wilayah Aisyiyah Kalimantan Timur</p>
-      <p class="text-xs text-slate-500 mt-1">Menggunakan standar WHO & Kemenkes RI</p>
-    </aside>
-  </footer>
+    <p class="text-slate-500 text-[12px] text-center mt-6">
+      &copy; {{ date("Y") }} SiCegah Stunting - Aisyiyah Kalimantan Timur. Dikembangkan untuk penelitian dan pengabdian masyarakat.
+    </p>
+  </div>
+</footer>
 
 </body>
 </html>

@@ -1,94 +1,8 @@
-<!DOCTYPE html>
-<html lang="id" data-theme="light">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hasil Analisis - Admin SiCegah Stunting</title>
-  <meta name="description" content="Panel admin untuk melihat dan mereview hasil analisis kalkulator stunting." />
+@extends('admin.layouts.app')
 
-  <!-- Font & Icon -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24..48,400,0..1,0..200" rel="stylesheet" />
+@section('title', 'Hasil Analisis - Admin')
 
-  <!-- Tailwind + DaisyUI (CDN) -->
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <style>
-    body {
-      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-    .material-symbols-rounded {
-      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-      vertical-align: middle;
-    }
-    .badge-status-normal   { background-color: #E8F5E9; color:#2E7D32; }
-    .badge-status-risiko   { background-color: #FFF3E0; color:#E65100; }
-    .badge-status-stunting { background-color:#FFEBEE; color:#C62828; }
-    .badge-status-berat    { background-color:#FFEBEE; color:#B71C1C; }
-  </style>
-</head>
-
-<body class="bg-slate-50 text-slate-800">
-
-  <!-- Navbar -->
-  <header class="sticky top-0 z-40 bg-white border-b border-slate-200">
-    <div class="max-w-7xl mx-auto px-4 lg:px-8 h-16 flex items-center justify-between">
-      <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center">
-          <span class="material-symbols-rounded">admin_panel_settings</span>
-        </div>
-        <div>
-          <div class="font-bold text-emerald-700 text-sm">Admin SiCegah</div>
-          <div class="text-xs text-slate-500">Kelola konten & analisis</div>
-        </div>
-      </a>
-
-      <div class="flex items-center gap-3">
-        <div class="hidden sm:flex items-center gap-2 text-xs text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full">
-          <span class="material-symbols-rounded text-sm">account_circle</span>
-          Admin Aisyiyah
-        </div>
-        <a href="{{ route('home') }}" class="btn btn-outline btn-sm rounded-full">
-          <span class="material-symbols-rounded text-sm">open_in_new</span>
-          Lihat Website
-        </a>
-      </div>
-    </div>
-  </header>
-
-  <main class="max-w-7xl mx-auto px-4 lg:px-8 py-8">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-      <!-- Sidebar -->
-      <aside class="lg:col-span-3 space-y-4">
-        <div class="bg-white border border-slate-200 rounded-2xl p-4">
-          <p class="text-xs text-slate-500 mb-2">Menu admin</p>
-          <nav class="space-y-1 text-sm">
-            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-100">
-              <span class="material-symbols-rounded text-sm">dashboard</span>
-              Dashboard
-            </a>
-            <a href="{{ route('admin.artikel.list') }}" class="flex items-center gap-2 px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-100">
-              <span class="material-symbols-rounded text-sm">article</span>
-              Artikel edukasi
-            </a>
-            <a href="{{ route('admin.analisis') }}" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-50 text-emerald-700 font-medium">
-              <span class="material-symbols-rounded text-sm">analytics</span>
-              Hasil analisis
-            </a>
-            <a href="{{ route('admin.pengguna') }}" class="flex items-center gap-2 px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-100">
-              <span class="material-symbols-rounded text-sm">group</span>
-              Data pengguna
-            </a>
-          </nav>
-        </div>
-
+@section('sidebar-extra')
         <div class="bg-sky-50 border border-sky-100 rounded-2xl p-4">
           <div class="flex items-start gap-3">
             <span class="material-symbols-rounded text-sky-600 text-base">insights</span>
@@ -100,10 +14,9 @@
             </div>
           </div>
         </div>
-      </aside>
+@endsection
 
-      <!-- Main content -->
-      <section class="lg:col-span-9 space-y-4">
+@section('content')
         
         <!-- ====== PETA KALIMANTAN TIMUR (GEOCHART) ====== -->
         <div class="bg-white border border-slate-200 rounded-2xl p-4">
@@ -361,6 +274,10 @@
               <span class="material-symbols-rounded text-sm text-slate-600">visibility</span>
               Detail singkat pemeriksaan terpilih
             </h2>
+            <button class="btn btn-ghost btn-xs rounded-full text-[11px]">
+              <span class="material-symbols-rounded text-sm">open_in_new</span>
+              Buka halaman lengkap
+            </button>
           </div>
 
           @if($defaultDetail)
@@ -368,68 +285,81 @@
               <div class="space-y-1">
                 <p class="text-slate-500">Nama anak</p>
                 <p class="font-semibold text-slate-900 text-sm" id="det-name">{{ $defaultDetail->child_name }}</p>
-                <p class="text-[11px] text-slate-400" id="det-id">ID: {{ $defaultDetail->id }}</p>
+                <p class="text-[11px] text-slate-400" id="det-id">ID: {{ Str::upper(Str::substr($defaultDetail->id, 0, 8)) }}</p>
               </div>
               <div class="space-y-1">
-                <p class="text-slate-500">Usia & jenis kelamin</p>
+                <p class="text-slate-500">Usia &amp; jenis kelamin</p>
                 <p class="font-semibold text-slate-900 text-sm" id="det-age-gender">
-                  {{ $defaultDetail->age_months }} bulan - {{ $defaultDetail->gender === 'L' ? 'Laki-laki' : 'Perempuan' }}
+                  {{ $defaultDetail->age_months }} bulan &middot; {{ $defaultDetail->gender === 'L' ? 'Laki-laki' : 'Perempuan' }}
                 </p>
               </div>
               <div class="space-y-1">
                 <p class="text-slate-500">Tanggal pemeriksaan</p>
-                <p class="font-semibold text-slate-900 text-sm" id="det-date">{{ $defaultDetail->created_at->format('d F Y') }}</p>
+                <p class="font-semibold text-slate-900 text-sm" id="det-date">{{ $defaultDetail->created_at->translatedFormat('d F Y') }}</p>
               </div>
             </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 text-xs">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 text-xs">
               <div class="bg-slate-50 rounded-xl p-3">
                 <p class="text-slate-500 mb-1">Status</p>
                 @php
                   $defaultBadge = match($defaultDetail->status_growth) {
-                    'Normal' => 'badge-status-normal',
-                    'Pendek' => 'badge-status-risiko',
-                    'Sangat Pendek' => 'badge-status-stunting',
-                    default => 'badge-status-normal'
+                    'Normal'       => 'badge-status-normal',
+                    'Pendek'       => 'badge-status-risiko',
+                    'Sangat Pendek'=> 'badge-status-stunting',
+                    default        => 'badge-status-normal'
+                  };
+                  $statusLabel = match($defaultDetail->status_growth) {
+                    'Normal'       => 'Normal',
+                    'Pendek'       => 'Risiko stunting',
+                    'Sangat Pendek'=> 'Stunting berat',
+                    default        => $defaultDetail->status_growth
                   };
                 @endphp
-                <span class="badge {{ $defaultBadge }} border-none px-2 py-0.5 text-[11px] rounded-full" id="det-status-badge">
-                  {{ $defaultDetail->status_growth }}
+                <span class="badge {{ $defaultBadge }} border-none px-2 py-1 text-[11px] rounded-full" id="det-status-badge">
+                  {{ $statusLabel }}
                 </span>
               </div>
               <div class="bg-slate-50 rounded-xl p-3">
                 <p class="text-slate-500 mb-1">Tinggi badan</p>
-                <p class="font-semibold text-slate-900" id="det-tb">{{ $defaultDetail->height }} cm</p>
+                <p class="font-semibold text-slate-900" id="det-tb">{{ number_format($defaultDetail->height, 1, ',', '.') }} cm</p>
               </div>
               <div class="bg-slate-50 rounded-xl p-3">
                 <p class="text-slate-500 mb-1">Berat badan</p>
-                <p class="font-semibold text-slate-900" id="det-bb">{{ $defaultDetail->weight }} kg</p>
+                <p class="font-semibold text-slate-900" id="det-bb">{{ number_format($defaultDetail->weight, 1, ',', '.') }} kg</p>
               </div>
               <div class="bg-slate-50 rounded-xl p-3">
-                <p class="text-slate-500 mb-1">Kota</p>
-                <p class="font-semibold text-slate-900" id="det-city">{{ $defaultDetail->city }}</p>
+                <p class="text-slate-500 mb-1">ASI eksklusif</p>
+                <p class="font-semibold text-slate-900" id="det-asi">{{ $defaultDetail->asi_eksklusif ?? 'Ya' }}</p>
               </div>
             </div>
 
             <div class="mt-4 border-t border-slate-100 pt-3 text-xs">
-              <p class="text-slate-500 mb-1">Catatan & rekomendasi tindakan</p>
-              <p class="text-slate-700 leading-relaxed font-medium" id="det-recs">
+              <p class="text-slate-500 mb-1">Catatan &amp; rekomendasi sistem</p>
+              <p class="text-slate-700 leading-relaxed" id="det-recs">
                 @if(in_array($defaultDetail->status_growth, ['Pendek', 'Sangat Pendek']))
-                  Tinggi badan berdasarkan usia berada di bawah standar WHO. Rujuk ke layanan kesehatan/Puskesmas terdekat, berikan makanan padat kaya zat besi & protein hewani harian, serta pantau pertumbuhan berkala.
+                  Tinggi badan berdasarkan usia berada di bawah -2 SD. Sarankan orang tua untuk konsultasi ke Posyandu/Puskesmas,
+                  evaluasi pola makan, dan pantau pertumbuhan tiap bulan.
                 @else
-                  Pertumbuhan anak dalam batas normal. Pertahankan asupan gizi seimbang, ASI/MPASI berkualitas, dan imunisasi rutin.
+                  Pertumbuhan anak dalam batas normal berdasarkan standar WHO. Pertahankan asupan gizi seimbang,
+                  lanjutkan ASI/MPASI berkualitas, dan lakukan imunisasi rutin.
                 @endif
               </p>
             </div>
           @else
-            <p class="text-xs text-slate-400">Belum ada data pemeriksaan terpilih.</p>
+            <div class="text-center py-6 text-slate-400">
+              <span class="material-symbols-rounded text-3xl mb-2 block">inbox</span>
+              <p class="text-xs">Belum ada data pemeriksaan.</p>
           @endif
         </div>
+
 
       </section>
     </div>
   </main>
+@endsection
 
+@section('scripts')
   <!-- Apache ECharts (CDN) -->
   <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 
@@ -465,35 +395,42 @@
 
     // JavaScript to handle quick detail review panel
     function showQuickDetail(m) {
-      document.getElementById('det-name').textContent = m.child_name;
-      document.getElementById('det-id').textContent = 'ID: ' + m.id;
-      document.getElementById('det-age-gender').textContent = m.age_months + ' bulan - ' + (m.gender === 'L' ? 'Laki-laki' : 'Perempuan');
+      document.getElementById('det-name').textContent = m.child_name || 'Anak';
+      document.getElementById('det-id').textContent = 'ID: ' + (m.id ? m.id.substring(0, 8).toUpperCase() : '—');
+      document.getElementById('det-age-gender').textContent = m.age_months + ' bulan \u00B7 ' + (m.gender === 'L' ? 'Laki-laki' : 'Perempuan');
       
       const createdDate = new Date(m.created_at);
-      const formattedDate = createdDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+      const formattedDate = createdDate.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
       document.getElementById('det-date').textContent = formattedDate;
       
       const statusBadge = document.getElementById('det-status-badge');
-      statusBadge.textContent = m.status_growth;
+      let statusLabel = m.status_growth;
       
-      statusBadge.className = 'badge border-none px-2 py-0.5 text-[11px] rounded-full';
+      statusBadge.className = 'badge border-none px-2 py-1 text-[11px] rounded-full';
       if (m.status_growth === 'Normal') {
+        statusLabel = 'Normal';
         statusBadge.classList.add('badge-status-normal');
       } else if (m.status_growth === 'Pendek') {
+        statusLabel = 'Risiko stunting';
         statusBadge.classList.add('badge-status-risiko');
       } else {
+        statusLabel = 'Stunting berat';
         statusBadge.classList.add('badge-status-stunting');
       }
+      statusBadge.textContent = statusLabel;
       
-      document.getElementById('det-tb').textContent = m.height + ' cm';
-      document.getElementById('det-bb').textContent = m.weight + ' kg';
-      document.getElementById('det-city').textContent = m.city;
+      const tbVal = parseFloat(m.height || 0).toFixed(1).replace('.', ',');
+      const bbVal = parseFloat(m.weight || 0).toFixed(1).replace('.', ',');
+      
+      document.getElementById('det-tb').textContent = tbVal + ' cm';
+      document.getElementById('det-bb').textContent = bbVal + ' kg';
+      document.getElementById('det-asi').textContent = m.asi_eksklusif || 'Ya';
       
       const recsEl = document.getElementById('det-recs');
       if (m.status_growth === 'Normal') {
-        recsEl.textContent = 'Pertumbuhan anak dalam batas normal. Pertahankan asupan gizi seimbang, ASI/MPASI berkualitas, dan imunisasi rutin.';
+        recsEl.textContent = 'Pertumbuhan anak dalam batas normal berdasarkan standar WHO. Pertahankan asupan gizi seimbang, lanjutkan ASI/MPASI berkualitas, dan lakukan imunisasi rutin.';
       } else {
-        recsEl.textContent = 'Tinggi badan berdasarkan usia berada di bawah standar WHO. Rujuk ke layanan kesehatan/Puskesmas terdekat, berikan makanan padat kaya zat besi & protein hewani harian, serta pantau pertumbuhan berkala.';
+        recsEl.textContent = 'Tinggi badan berdasarkan usia berada di bawah -2 SD. Sarankan orang tua untuk konsultasi ke Posyandu/Puskesmas, evaluasi pola makan, dan pantau pertumbuhan tiap bulan.';
       }
     }
 
@@ -676,5 +613,4 @@
       }
     });
   </script>
-</body>
-</html>
+@endsection

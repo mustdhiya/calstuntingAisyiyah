@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Measurement;
 use Illuminate\Http\Request;
 
 class KalkulatorController extends Controller
@@ -64,6 +65,28 @@ class KalkulatorController extends Controller
         // ---------- Ideal ranges for display ----------
         $ideal_tb = $this->getIdealTB($gender, $usia);
         $ideal_bb = $this->getIdealBB($gender, $usia);
+
+        // ---------- Tentukan status_growth untuk disimpan ke DB ----------
+        // Mapping dari code TB/U ke label yang disimpan
+        $statusGrowthMap = [
+            'normal'        => 'Normal',
+            'stunting'      => 'Pendek',
+            'stunting_berat'=> 'Sangat Pendek',
+        ];
+        $statusGrowth = $statusGrowthMap[$status_tbu['code']] ?? 'Normal';
+
+        // ---------- Simpan ke tabel measurements ----------
+        Measurement::create([
+            'child_name'    => $data['nama_anak'] ?? 'Anak',
+            'gender'        => $gender,
+            'age_months'    => $usia,
+            'birth_date'    => $data['tanggal_lahir'] ?? null,
+            'height'        => $tb,
+            'weight'        => $bb,
+            'status_growth' => $statusGrowth,
+            'city'          => $request->input('kota') ?? null,
+            'asi_eksklusif' => ($request->input('asi_eksklusif') === 'tidak') ? 'Tidak' : 'Ya',
+        ]);
 
         $result = [
             'nama_anak'    => $data['nama_anak'] ?? 'Anak',

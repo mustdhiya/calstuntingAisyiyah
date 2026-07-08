@@ -1,76 +1,18 @@
-<!DOCTYPE html>
-<html lang="id" data-theme="light">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{{ $article ? 'Edit Artikel' : 'Tambah Artikel' }} SiCegah Stunting</title>
-  <meta name="description" content="Panel admin untuk mengelola artikel edukasi stunting." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24..48,400,0..1,0..200" rel="stylesheet" />
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
+@extends('admin.layouts.app')
+
+@section('title', $article ? 'Edit Artikel' : 'Tambah Artikel')
+
+@section('styles')
   <style>
-    body { font-family: Inter, system-ui, sans-serif; }
-    .material-symbols-rounded { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
     .markdown-preview h1,.markdown-preview h2,.markdown-preview h3 { font-weight:600;margin-top:1rem;margin-bottom:.5rem; }
     .markdown-preview p { margin-bottom:.75rem; }
     .markdown-preview ul { padding-left:1.25rem;margin-bottom:.75rem;list-style-type:disc; }
     .markdown-preview li { margin-bottom:.25rem; }
     .markdown-preview code { background:#f3f4f6;padding:.15rem .3rem;border-radius:.25rem;font-size:.85em; }
   </style>
-</head>
-<body class="bg-slate-50 text-slate-800">
+@endsection
 
-  <!-- Navbar -->
-  <header class="sticky top-0 z-40 bg-white border-b border-slate-200">
-    <div class="max-w-7xl mx-auto px-4 lg:px-8 h-16 flex items-center justify-between">
-      <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center">
-          <span class="material-symbols-rounded">admin_panel_settings</span>
-        </div>
-        <div>
-          <div class="font-bold text-emerald-700 text-sm">Admin SiCegah</div>
-          <div class="text-xs text-slate-500">Kelola konten edukasi</div>
-        </div>
-      </a>
-      <div class="flex items-center gap-3">
-        <div class="hidden sm:flex items-center gap-2 text-xs text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full">
-          <span class="material-symbols-rounded text-sm">account_circle</span>
-          {{ auth()->user()->name ?? 'Admin' }}
-        </div>
-        <a href="{{ route('home') }}" class="btn btn-outline btn-sm rounded-full">
-          <span class="material-symbols-rounded text-sm">open_in_new</span>
-          Lihat Website
-        </a>
-      </div>
-    </div>
-  </header>
-
-  <main class="max-w-7xl mx-auto px-4 lg:px-8 py-8">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-      <!-- Sidebar -->
-      <aside class="lg:col-span-3 space-y-4">
-        <div class="bg-white border border-slate-200 rounded-2xl p-4">
-          <p class="text-xs text-slate-500 mb-2">Menu admin</p>
-          <nav class="space-y-1 text-sm">
-            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-100">
-              <span class="material-symbols-rounded text-sm">dashboard</span>Dashboard
-            </a>
-            <a href="{{ route('admin.artikel.list') }}" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-50 text-emerald-700 font-medium">
-              <span class="material-symbols-rounded text-sm">article</span>Artikel edukasi
-            </a>
-            <a href="{{ route('admin.analisis') }}" class="flex items-center gap-2 px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-100">
-              <span class="material-symbols-rounded text-sm">analytics</span>Hasil analisis
-            </a>
-            <a href="{{ route('admin.pengguna') }}" class="flex items-center gap-2 px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-100">
-              <span class="material-symbols-rounded text-sm">group</span>Data pengguna
-            </a>
-          </nav>
-        </div>
-
+@section('sidebar-extra')
         <div class="bg-amber-50 border border-amber-100 rounded-2xl p-4">
           <div class="flex items-start gap-3">
             <span class="material-symbols-rounded text-amber-600 text-base">lightbulb</span>
@@ -82,10 +24,9 @@
             </div>
           </div>
         </div>
-      </aside>
+@endsection
 
-      <!-- Main content -->
-      <section class="lg:col-span-9 space-y-4">
+@section('content')
 
         @if(session('success'))
           <div class="alert alert-success text-sm rounded-2xl">
@@ -317,10 +258,9 @@
             </div>
           </div>
         </form>
-      </section>
-    </div>
-  </main>
+@endsection
 
+@section('scripts')
   <script>
     const titleInput  = document.getElementById('title-input');
     const slugInput   = document.getElementById('slug-input');
@@ -364,5 +304,4 @@
       if(i) i.addEventListener('input',updatePreview);
     });
   </script>
-</body>
-</html>
+@endsection

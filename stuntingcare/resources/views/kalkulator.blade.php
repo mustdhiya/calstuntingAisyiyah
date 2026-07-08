@@ -254,6 +254,30 @@
             </div>
           </div>
 
+          <!-- Kota / Kabupaten -->
+          <div class="form-control">
+            <label class="label pb-1.5">
+              <span class="label-text font-semibold text-slate-700 text-sm">Kota / Kabupaten</span>
+              <span class="label-text-alt text-slate-400 text-xs">Opsional</span>
+            </label>
+            <div class="relative">
+              <span class="material-symbols-rounded absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xl pointer-events-none">location_city</span>
+              <select name="kota" class="select select-bordered w-full pl-10 focus:border-green-500 text-sm">
+                <option value="">-- Pilih kota/kabupaten --</option>
+                <option value="Samarinda">Samarinda</option>
+                <option value="Balikpapan">Balikpapan</option>
+                <option value="Bontang">Bontang</option>
+                <option value="Kutai Kartanegara">Kutai Kartanegara</option>
+                <option value="Kutai Timur">Kutai Timur</option>
+                <option value="Kutai Barat">Kutai Barat</option>
+                <option value="Berau">Berau</option>
+                <option value="Paser">Paser</option>
+                <option value="Penajam Paser Utara">Penajam Paser Utara</option>
+                <option value="Mahakam Ulu">Mahakam Ulu</option>
+              </select>
+            </div>
+          </div>
+
           <!-- Jenis Kelamin — Radio Card -->
           <div class="form-control">
             <label class="label pb-1.5">

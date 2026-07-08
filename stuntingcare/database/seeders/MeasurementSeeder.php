@@ -42,6 +42,7 @@ class MeasurementSeeder extends Seeder
                     'weight'       => round(rand(6, 20) + rand(0, 9) / 10, 1),
                     'status_growth'=> $status,
                     'city'         => $city,
+                    'asi_eksklusif'=> rand(0, 1) ? 'Ya' : 'Tidak',
                     'kader_id'     => $randomKader->id,
                 ]);
             }

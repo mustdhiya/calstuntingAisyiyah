@@ -21,6 +21,7 @@ return new class extends Migration
             $table->decimal('weight', 5, 2);
             $table->string('status_growth');
             $table->string('city')->nullable();
+            $table->enum('asi_eksklusif', ['Ya', 'Tidak'])->default('Ya');
             $table->foreignUuid('kader_id')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });

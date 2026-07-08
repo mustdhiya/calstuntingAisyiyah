@@ -19,6 +19,7 @@ class Measurement extends Model
         'weight',
         'status_growth',
         'city',
+        'asi_eksklusif',
         'kader_id',
     ];
 

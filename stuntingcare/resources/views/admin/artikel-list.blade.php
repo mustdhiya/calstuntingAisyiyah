@@ -1,99 +1,8 @@
-<!DOCTYPE html>
-<html lang="id"data-theme="light">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Daftar Artikel — SiCegah Stunting</title>
-  <meta name="description" content="Panel admin untuk melihat dan mengelola daftar artikel edukasi stunting." />
+@extends('admin.layouts.app')
 
-  <!-- Font & Icon -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24..48,400,0..1,0..200" rel="stylesheet" />
+@section('title', 'Daftar Artikel — Admin')
 
-  <!-- Tailwind + DaisyUI (CDN) -->
-  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <style>
-    body {
-      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-    .material-symbols-rounded {
-      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-      vertical-align: middle;
-    }
-    .badge-status-published {
-      background-color: #dcfce7;
-      color: #166534;
-    }
-    .badge-status-draft {
-      background-color: #fee2e2;
-      color: #b91c1c;
-    }
-    .badge-status-scheduled {
-      background-color: #fef9c3;
-      color: #854d0e;
-    }
-  </style>
-</head>
-
-<body class="bg-slate-50 text-slate-800">
-
-  <!-- Navbar -->
-  <header class="sticky top-0 z-40 bg-white border-b border-slate-200">
-    <div class="max-w-7xl mx-auto px-4 lg:px-8 h-16 flex items-center justify-between">
-      <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center">
-          <span class="material-symbols-rounded">admin_panel_settings</span>
-        </div>
-        <div>
-          <div class="font-bold text-emerald-700 text-sm">Admin SiCegah</div>
-          <div class="text-xs text-slate-500">Kelola konten edukasi</div>
-        </div>
-      </a>
-
-      <div class="flex items-center gap-3">
-        <div class="hidden sm:flex items-center gap-2 text-xs text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full">
-          <span class="material-symbols-rounded text-sm">account_circle</span>
-          Admin Aisyiyah
-        </div>
-        <a href="{{ route('home') }}" class="btn btn-outline btn-sm rounded-full">
-          <span class="material-symbols-rounded text-sm">open_in_new</span>
-          Lihat Website
-        </a>
-      </div>
-    </div>
-  </header>
-
-  <main class="max-w-7xl mx-auto px-4 lg:px-8 py-8">
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-      <!-- Sidebar -->
-      <aside class="lg:col-span-3 space-y-4">
-        <div class="bg-white border border-slate-200 rounded-2xl p-4">
-          <p class="text-xs text-slate-500 mb-2">Menu admin</p>
-          <nav class="space-y-1 text-sm">
-            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-100">
-              <span class="material-symbols-rounded text-sm">dashboard</span>
-              Dashboard
-            </a>
-            <a href="{{ route('admin.artikel.list') }}" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-50 text-emerald-700 font-medium">
-              <span class="material-symbols-rounded text-sm">article</span>
-              Artikel edukasi
-            </a>
-            <a href="{{ route('admin.analisis') }}" class="flex items-center gap-2 px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-100">
-              <span class="material-symbols-rounded text-sm">analytics</span>
-              Hasil analisis
-            </a>
-            <a href="{{ route('admin.pengguna') }}" class="flex items-center gap-2 px-3 py-2 rounded-xl text-slate-600 hover:bg-slate-100">
-              <span class="material-symbols-rounded text-sm">group</span>
-              Data pengguna
-            </a>
-          </nav>
-        </div>
-
+@section('sidebar-extra')
         <div class="bg-amber-50 border border-amber-100 rounded-2xl p-4">
           <div class="flex items-start gap-3">
             <span class="material-symbols-rounded text-amber-600 text-base">lightbulb</span>
@@ -105,10 +14,9 @@
             </div>
           </div>
         </div>
-      </aside>
+@endsection
 
-      <!-- Main content -->
-      <section class="lg:col-span-9 space-y-4">
+@section('content')
 
         <!-- Header + actions -->
         <div class="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
@@ -285,9 +193,4 @@
           </div>
         </div>
 
-      </section>
-    </div>
-  </main>
-
-</body>
-</html>
+@endsection

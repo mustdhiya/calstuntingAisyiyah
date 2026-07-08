@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
@@ -7,6 +7,12 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\EdukasiController;
 use App\Http\Controllers\KalkulatorController;
 use App\Http\Controllers\Admin\AnalisisController;
+use App\Http\Controllers\AuthController;
+
+// ── Auth Routes ────────────────────────────────────────────────
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // ── Public Routes ──────────────────────────────────────────────
 Route::get('/', function () {
@@ -37,7 +43,7 @@ Route::get('/kontak', function () {
 Route::get('/edukasi/{slug}', [EdukasiController::class, 'show'])->name('artikel.detail');
 
 // ── Admin Routes ───────────────────────────────────────────────
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
 
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
