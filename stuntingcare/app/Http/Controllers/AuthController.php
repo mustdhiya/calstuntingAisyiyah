@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -61,6 +63,51 @@ class AuthController extends Controller
             ->withErrors([
                 'email' => 'Email atau kata sandi salah. Silakan coba lagi.',
             ]);
+    }
+
+    /**
+     * Tampilkan halaman register.
+     */
+    public function showRegister()
+    {
+        if (Auth::check()) {
+            return redirect()->route('admin.dashboard');
+        }
+
+        return view('auth.register');
+    }
+
+    /**
+     * Proses form register (role default: pengguna_umum).
+     */
+    public function register(Request $request)
+    {
+        $validated = $request->validate([
+            'name'                  => ['required', 'string', 'max:255'],
+            'email'                 => ['required', 'email', 'unique:users,email'],
+            'phone_number'          => ['nullable', 'string', 'max:20'],
+            'city'                  => ['nullable', 'string', 'max:100'],
+            'password'              => ['required', 'string', 'min:8', 'confirmed'],
+        ], [
+            'name.required'         => 'Nama lengkap wajib diisi.',
+            'email.required'        => 'Alamat email wajib diisi.',
+            'email.unique'          => 'Email ini sudah terdaftar.',
+            'password.min'          => 'Kata sandi minimal 8 karakter.',
+            'password.confirmed'    => 'Konfirmasi kata sandi tidak cocok.',
+        ]);
+
+        User::create([
+            'name'         => $validated['name'],
+            'email'        => $validated['email'],
+            'phone_number' => $validated['phone_number'] ?? null,
+            'city'         => $validated['city'] ?? null,
+            'password'     => Hash::make($validated['password']),
+            'role'         => 'pengguna_umum',
+            'is_active'    => true,
+        ]);
+
+        return redirect()->route('login')
+            ->with('success', 'Akun berhasil dibuat! Silakan masuk untuk melanjutkan.');
     }
 
     /**

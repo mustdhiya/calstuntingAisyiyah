@@ -181,66 +181,60 @@
         </div>
       </div>
 
-      {{-- ── Card 2: Z-score Faktor ── --}}
+      {{-- ── Card 2: Faktor yang Memengaruhi ── --}}
       <div class="result-card">
-        <h2 class="text-[16px] font-bold text-slate-800 mb-5">Faktor yang mempengaruhi</h2>
-        <div class="space-y-3">
+        <h2 class="text-[16px] font-bold text-slate-800 mb-4">Faktor yang memengaruhi</h2>
+        <ul class="timeline timeline-vertical">
           @php
-            $factors = [
-              [
-                "label" => "TB/U — Tinggi menurut Usia",
-                "zscore" => $result["zscore_tbu"],
-                "detail" => "Z-score: " . $result["zscore_tbu"],
-                "icon"   => "height",
-              ],
-              [
-                "label" => "BB/U — Berat menurut Usia",
-                "zscore" => $result["zscore_bbu"],
-                "detail" => "Z-score: " . $result["zscore_bbu"],
-                "icon"   => "monitor_weight",
-              ],
-              [
-                "label" => "BB/TB — Berat menurut Tinggi",
-                "zscore" => $result["zscore_bbtb"],
-                "detail" => "Z-score: " . $result["zscore_bbtb"],
-                "icon"   => "straighten",
-              ],
-            ];
+            $zTbu  = $result['zscore_tbu'];
+            $zBbu  = $result['zscore_bbu'];
+            $zBbtb = $result['zscore_bbtb'];
+
+            $descTbu  = $zTbu  >= -1 ? "Tinggi badan anak sesuai usia, pertahankan pola gizi saat ini."
+                      : ($zTbu  >= -2 ? "Tinggi badan anak sedikit di bawah rata-rata, perlu pemantauan."
+                      : "Tinggi badan anak berisiko stunting, segera konsultasikan ke tenaga kesehatan.");
+            $descBbu  = $zBbu  >= -1 ? "Berat badan anak sesuai usia, pertahankan asupan nutrisi."
+                      : ($zBbu  >= -2 ? "Berat badan perlu dipantau agar sesuai dengan pertumbuhan usia."
+                      : "Berat badan anak rendah untuk usianya, waspadai risiko gizi kurang.");
+            $descBbtb = $zBbtb >= -1 ? "Proporsi berat terhadap tinggi badan anak baik."
+                      : ($zBbtb >= -2 ? "Berat badan anak sedikit rendah terhadap tinggi, pantau perkembangannya."
+                      : "Proporsi berat terhadap tinggi berisiko, konsultasikan ke dokter atau ahli gizi.");
+
+            $colorTbu  = $zTbu  >= -1 ? 'text-emerald-600' : ($zTbu  >= -2 ? 'text-amber-500' : 'text-red-500');
+            $colorBbu  = $zBbu  >= -1 ? 'text-emerald-600' : ($zBbu  >= -2 ? 'text-cyan-600'  : 'text-red-500');
+            $colorBbtb = $zBbtb >= -1 ? 'text-emerald-600' : ($zBbtb >= -2 ? 'text-amber-500' : 'text-red-500');
+            $hrTbu     = $zTbu  >= -2 ? 'bg-emerald-500' : 'bg-amber-400';
+            $hrBbu     = $zBbu  >= -2 ? 'bg-cyan-500'    : 'bg-amber-400';
           @endphp
-          @foreach($factors as $fac)
-          @php
-            // z-score range biasanya -4 sampai +4
-            // Tampilkan sebagai bar 0-100% dari range -4 s/d +4
-            $z      = $fac["zscore"];
-            $pct    = round(min(100, max(0, (($z + 4) / 8) * 100)));
-            $barColor = $z >= -1 ? "#22c55e" : ($z >= -2 ? "#86efac" : ($z >= -3 ? "#f97316" : "#ef4444"));
-            $emoji  = $z >= -2 ? "check_circle" : ($z >= -3 ? "warning" : "cancel");
-            $emojiColor = $z >= -2 ? "#22c55e" : ($z >= -3 ? "#f97316" : "#ef4444");
-          @endphp
-          <div>
-            <div class="flex items-center justify-between mb-1.5">
-              <div class="flex items-center gap-2">
-                <span class="material-symbols-rounded text-[16px] text-slate-400">{{ $fac["icon"] }}</span>
-                <span class="text-[13px] font-semibold text-slate-700">{{ $fac["label"] }}</span>
-              </div>
-              <div class="flex items-center gap-1.5">
-                <span class="material-symbols-rounded text-[16px]" style="color: {{ $emojiColor }}">{{ $emoji }}</span>
-                <span class="text-[12px] font-bold text-slate-600">{{ $fac["detail"] }}</span>
-              </div>
+          <li>
+            <div class="timeline-start timeline-box text-[13px]">
+              <span class="font-semibold">TB/U (Z: {{ $zTbu }})</span><br>{{ $descTbu }}
             </div>
-            <div class="factor-bar-wrap">
-              <div class="factor-bar-fill" style="width: {{ $pct }}%; background: {{ $barColor }};"></div>
-              {{-- Median marker at 50% --}}
-              <div style="position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: rgba(255,255,255,0.5);"></div>
+            <div class="timeline-middle {{ $colorTbu }}">
+              <span class="material-symbols-rounded">straighten</span>
             </div>
-            <div class="flex justify-between text-[10px] text-slate-400 mt-0.5">
-              <span>−4 SD (sangat rendah)</span>
-              <span>Median</span>
-              <span>+4 SD (sangat tinggi)</span>
+            <hr class="{{ $hrTbu }}" />
+          </li>
+          <li>
+            <hr class="{{ $hrTbu }}" />
+            <div class="timeline-start timeline-box text-[13px]">
+              <span class="font-semibold">BB/U (Z: {{ $zBbu }})</span><br>{{ $descBbu }}
             </div>
-          </div>
-          @endforeach
-        </div>
+            <div class="timeline-middle {{ $colorBbu }}">
+              <span class="material-symbols-rounded">monitor_weight</span>
+            </div>
+            <hr class="{{ $hrBbu }}" />
+          </li>
+          <li>
+            <hr class="{{ $hrBbu }}" />
+            <div class="timeline-start timeline-box text-[13px]">
+              <span class="font-semibold">BB/TB (Z: {{ $zBbtb }})</span><br>{{ $descBbtb }}
+            </div>
+            <div class="timeline-middle {{ $colorBbtb }}">
+              <span class="material-symbols-rounded">family_home</span>
+            </div>
+          </li>
+        </ul>
       </div>
 
       {{-- ── Card 3: Rekomendasi ── --}}
