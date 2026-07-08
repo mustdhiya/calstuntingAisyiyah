@@ -36,10 +36,37 @@
       <a href="{{ route('faq') }}" class="nav-link">FAQ</a>
       <a href="{{ route('kontak') }}" class="nav-link">Kontak</a>
     </nav>
-    <a href="{{ route('kalkulator') }}" class="btn-primary-full text-sm !py-2.5 !px-5">
-      <span class="material-symbols-rounded text-[18px]">refresh</span>
-      Hitung Ulang
-    </a>
+    <div class="flex items-center gap-2">
+      @guest
+        <a href="{{ route('login') }}" class="btn-hero-primary bg-white text-emerald-700 border border-emerald-600 hover:bg-emerald-50 text-sm !py-2 !px-4 hidden sm:inline-flex" style="background:#fff; color:#047857; border: 1.5px solid #059669; box-shadow:none;">
+          <span class="material-symbols-rounded text-[18px]">login</span>
+          Masuk
+        </a>
+      @endguest
+
+      @auth
+        <div class="hidden sm:flex items-center gap-2 text-xs text-slate-600 bg-slate-100 px-3 py-2 rounded-full font-medium">
+          <span class="material-symbols-rounded text-sm text-emerald-600">account_circle</span>
+          <span class="max-w-[100px] truncate">{{ Auth::user()->name }}</span>
+        </div>
+        @if(Auth::user()->isAdminWilayah() || Auth::user()->isKoordinatorCabang())
+          <a href="{{ route('admin.dashboard') }}" class="btn-hero-primary text-sm !py-2 !px-4 hidden sm:inline-flex bg-slate-800 hover:bg-slate-900 border-none">
+            Dashboard
+          </a>
+        @endif
+        <form action="{{ route('logout') }}" method="POST" class="hidden sm:inline">
+          @csrf
+          <button type="submit" class="btn-hero-primary bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 text-sm !py-2 !px-4 inline-flex items-center gap-1.5" style="background:#fef2f2; color:#dc2626; border:1px solid #fee2e2; box-shadow:none;">
+            Keluar
+          </button>
+        </form>
+      @endauth
+
+      <a href="{{ route('kalkulator') }}" class="btn-primary-full text-sm !py-2.5 !px-5">
+        <span class="material-symbols-rounded text-[18px]">refresh</span>
+        Hitung Ulang
+      </a>
+    </div>
   </div>
 </header>
 

@@ -52,6 +52,33 @@
 
     <!-- CTA + Mobile button -->
     <div class="flex items-center gap-2">
+      @guest
+        <a href="{{ route('login') }}" class="btn-hero-primary bg-white text-emerald-700 border border-emerald-600 hover:bg-emerald-50 text-sm !py-2.5 !px-5 hidden sm:inline-flex" style="background:#fff; color:#047857; border: 1.5px solid #059669; box-shadow:none;">
+          <span class="material-symbols-rounded text-[18px]">login</span>
+          Masuk
+        </a>
+      @endguest
+
+      @auth
+        <div class="hidden sm:flex items-center gap-2 text-xs text-slate-600 bg-slate-100 px-3 py-2 rounded-full font-medium">
+          <span class="material-symbols-rounded text-sm text-emerald-600">account_circle</span>
+          <span class="max-w-[100px] truncate">{{ Auth::user()->name }}</span>
+        </div>
+        @if(Auth::user()->isAdminWilayah() || Auth::user()->isKoordinatorCabang())
+          <a href="{{ route('admin.dashboard') }}" class="btn-hero-primary text-sm !py-2.5 !px-5 hidden sm:inline-flex bg-slate-800 hover:bg-slate-900 border-none">
+            <span class="material-symbols-rounded text-[18px]">dashboard</span>
+            Dashboard
+          </a>
+        @endif
+        <form action="{{ route('logout') }}" method="POST" class="hidden sm:inline">
+          @csrf
+          <button type="submit" class="btn-hero-primary bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 text-sm !py-2.5 !px-4 inline-flex items-center gap-1.5" style="background:#fef2f2; color:#dc2626; border:1px solid #fee2e2; box-shadow:none;">
+            <span class="material-symbols-rounded text-[18px]">logout</span>
+            Keluar
+          </button>
+        </form>
+      @endauth
+
       <a href="{{ route('kalkulator') }}"
          class="btn-hero-primary text-sm !py-2.5 !px-5 hidden sm:inline-flex">
         <span class="material-symbols-rounded text-[18px]">calculate</span>
@@ -68,6 +95,16 @@
   <!-- Mobile drawer -->
   <div id="mobile-menu" class="absolute top-full left-0 right-0 bg-white border-t border-slate-100 shadow-lg">
     <nav class="container py-3 flex flex-col gap-0.5" aria-label="Navigasi mobile">
+      @auth
+        <div class="px-4 py-2 mb-1 bg-slate-50 rounded-xl flex items-center gap-2">
+          <span class="material-symbols-rounded text-emerald-600">account_circle</span>
+          <div>
+            <div class="text-xs text-slate-400">Masuk sebagai:</div>
+            <div class="text-sm font-semibold text-slate-800 truncate">{{ Auth::user()->name }}</div>
+          </div>
+        </div>
+      @endauth
+
       <a href="{{ route('home') }}"      class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-emerald-700 transition-colors">
         <span class="material-symbols-rounded text-base text-slate-400">home</span>Beranda
       </a>
@@ -86,6 +123,27 @@
       <a href="{{ route('kontak') }}"     class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-emerald-700 transition-colors">
         <span class="material-symbols-rounded text-base text-slate-400">mail</span>Kontak
       </a>
+
+      @guest
+        <a href="{{ route('login') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-emerald-700 hover:bg-emerald-50 transition-colors">
+          <span class="material-symbols-rounded text-base">login</span>Masuk Akun
+        </a>
+      @endguest
+
+      @auth
+        @if(Auth::user()->isAdminWilayah() || Auth::user()->isKoordinatorCabang())
+          <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-800 hover:bg-slate-50 transition-colors">
+            <span class="material-symbols-rounded text-base text-slate-500">dashboard</span>Dashboard Admin
+          </a>
+        @endif
+        <form action="{{ route('logout') }}" method="POST" class="w-full">
+          @csrf
+          <button type="submit" class="flex w-full items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-red-600 hover:bg-red-50 transition-colors">
+            <span class="material-symbols-rounded text-base text-red-400">logout</span>Keluar Sistem
+          </button>
+        </form>
+      @endauth
+
       <div class="px-4 pt-2 pb-3">
         <a href="{{ route('kalkulator') }}" class="btn-hero-primary w-full justify-center text-sm !py-3">
           <span class="material-symbols-rounded text-[18px]">calculate</span>

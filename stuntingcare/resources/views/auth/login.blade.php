@@ -108,17 +108,11 @@
           </label>
         </div>
 
-        {{-- Submit & Register --}}
-        <div class="flex gap-3">
-          <button type="submit" class="login-btn flex-1" id="loginBtn">
-            <span class="material-symbols-rounded text-[20px]">login</span>
-            Masuk
-          </button>
-          <a href="{{ route('register') }}" class="login-btn flex-1 bg-white text-emerald-600 border border-emerald-600 hover:bg-emerald-50" style="box-shadow: none; background: #fff; color: #059669; border: 1.5px solid #059669;">
-            <span class="material-symbols-rounded text-[20px]">person_add</span>
-            Daftar
-          </a>
-        </div>
+        {{-- Submit --}}
+        <button type="submit" class="login-btn w-full" id="loginBtn">
+          <span class="material-symbols-rounded text-[20px]">login</span>
+          Masuk
+        </button>
       </form>
 
       <div class="mt-6 pt-6 border-t border-slate-100 text-center">
@@ -133,8 +127,8 @@
 
     <!-- Disclaimer -->
     <p class="text-center text-[11px] text-slate-400 mt-4 leading-relaxed">
-      Akses panel admin hanya untuk Admin Wilayah dan Koordinator Cabang.<br>
-      Pengguna Umum dapat <a href="{{ route('register') }}" class="text-emerald-500 hover:underline">mendaftar</a> atau masuk untuk menggunakan fitur skrining.<br>
+      Akses sistem hanya untuk pengguna yang telah terdaftar.<br>
+      Penambahan akun dilakukan oleh administrator.<br>
       &copy; {{ date('Y') }} SiCegah Stunting — Aisyiyah Kalimantan Timur
     </p>
   </div>

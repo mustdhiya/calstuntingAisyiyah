@@ -137,11 +137,38 @@
       </nav>
 
       <!-- Desktop CTA -->
-      <a href="{{ route('kalkulator') }}"
-         class="hidden lg:inline-flex items-center gap-1.5 px-4 py-2 bg-brand-600 text-white text-sm font-semibold rounded-full hover:bg-brand-700 transition-all shadow-sm">
-        <span class="material-symbols-rounded text-base">calculate</span>
-        Cek Sekarang
-      </a>
+      <div class="hidden lg:flex items-center gap-2">
+        @guest
+          <a href="{{ route('login') }}" class="px-4 py-2 border border-brand-600 text-brand-700 text-sm font-semibold rounded-full hover:bg-brand-50 transition-all">
+            <span class="material-symbols-rounded text-base">login</span>
+            Masuk
+          </a>
+        @endguest
+
+        @auth
+          <div class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 rounded-full text-xs text-slate-600 font-medium">
+            <span class="material-symbols-rounded text-sm text-brand-600 font-normal">account_circle</span>
+            <span class="max-w-[80px] truncate">{{ Auth::user()->name }}</span>
+          </div>
+          @if(Auth::user()->isAdminWilayah() || Auth::user()->isKoordinatorCabang())
+            <a href="{{ route('admin.dashboard') }}" class="px-4 py-2 bg-slate-800 text-white text-sm font-semibold rounded-full hover:bg-slate-900 transition-all">
+              Dashboard
+            </a>
+          @endif
+          <form action="{{ route('logout') }}" method="POST" class="inline">
+            @csrf
+            <button type="submit" class="px-4 py-2 bg-red-50 text-red-600 text-sm font-semibold rounded-full hover:bg-red-100 transition-all">
+              Keluar
+            </button>
+          </form>
+        @endauth
+
+        <a href="{{ route('kalkulator') }}"
+           class="inline-flex items-center gap-1.5 px-4 py-2 bg-brand-600 text-white text-sm font-semibold rounded-full hover:bg-brand-700 transition-all shadow-sm">
+          <span class="material-symbols-rounded text-base">calculate</span>
+          Cek Sekarang
+        </a>
+      </div>
 
       <!-- Mobile hamburger -->
       <button id="hamburger" aria-label="Buka menu" aria-expanded="false"
@@ -153,12 +180,34 @@
     <!-- Mobile nav -->
     <div id="mobile-nav">
       <div class="max-w-6xl mx-auto px-4 pb-4 flex flex-col gap-1">
+        @auth
+          <div class="px-3 py-2 mb-1 bg-slate-50 rounded-xl flex items-center gap-2 text-xs text-slate-600 font-medium">
+            <span class="material-symbols-rounded text-brand-600">account_circle</span>
+            <span class="truncate">{{ Auth::user()->name }}</span>
+          </div>
+        @endauth
+
         <a href="{{ route('home') }}"      class="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-slate-700 hover:bg-slate-50 transition-colors"><span class="material-symbols-rounded text-slate-400 text-base">home</span>Beranda</a>
         <a href="{{ route('kalkulator') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-slate-700 hover:bg-slate-50 transition-colors"><span class="material-symbols-rounded text-slate-400 text-base">calculate</span>Kalkulator</a>
         <a href="{{ route('edukasi') }}"    class="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-slate-700 hover:bg-slate-50 transition-colors"><span class="material-symbols-rounded text-slate-400 text-base">menu_book</span>Edukasi</a>
         <a href="{{ route('tentang') }}"    class="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium text-brand-700 bg-brand-50 transition-colors"><span class="material-symbols-rounded text-brand-600 text-base">info</span>Tentang</a>
         <a href="{{ route('faq') }}"        class="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-slate-700 hover:bg-slate-50 transition-colors"><span class="material-symbols-rounded text-slate-400 text-base">help</span>FAQ</a>
         <a href="{{ route('kontak') }}"     class="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-slate-700 hover:bg-slate-50 transition-colors"><span class="material-symbols-rounded text-slate-400 text-base">mail</span>Kontak</a>
+
+        @guest
+          <a href="{{ route('login') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-brand-700 font-semibold hover:bg-brand-50 transition-colors"><span class="material-symbols-rounded text-base">login</span>Masuk Akun</a>
+        @endguest
+
+        @auth
+          @if(Auth::user()->isAdminWilayah() || Auth::user()->isKoordinatorCabang())
+            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-slate-700 hover:bg-slate-50 transition-colors"><span class="material-symbols-rounded text-base">dashboard</span>Dashboard Admin</a>
+          @endif
+          <form action="{{ route('logout') }}" method="POST" class="w-full">
+            @csrf
+            <button type="submit" class="flex w-full items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-red-600 font-semibold hover:bg-red-50 transition-colors"><span class="material-symbols-rounded text-base">logout</span>Keluar</button>
+          </form>
+        @endauth
+
         <a href="{{ route('kalkulator') }}"
            class="mt-1 flex items-center justify-center gap-2 px-4 py-3 bg-brand-600 text-white text-sm font-semibold rounded-xl hover:bg-brand-700 transition-all">
           <span class="material-symbols-rounded text-base">calculate</span>

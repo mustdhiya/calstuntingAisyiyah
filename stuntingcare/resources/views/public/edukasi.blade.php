@@ -102,7 +102,32 @@
         <li><a href="{{ route('kontak') }}">Kontak</a></li>
       </ul>
     </div>
-    <div class="navbar-end">
+    <div class="navbar-end gap-2">
+      @guest
+        <a href="{{ route('login') }}" class="btn btn-outline border-emerald-600 text-emerald-700 hover:bg-emerald-50 rounded-full px-4 btn-sm font-semibold">
+          <span class="material-symbols-rounded text-sm">login</span>
+          Masuk
+        </a>
+      @endguest
+
+      @auth
+        <div class="hidden md:flex items-center gap-1 bg-slate-100 rounded-full px-2.5 py-1 text-xs font-semibold text-slate-600">
+          <span class="material-symbols-rounded text-base text-emerald-600">account_circle</span>
+          <span class="max-w-[70px] truncate">{{ Auth::user()->name }}</span>
+        </div>
+        @if(Auth::user()->isAdminWilayah() || Auth::user()->isKoordinatorCabang())
+          <a href="{{ route('admin.dashboard') }}" class="btn bg-slate-800 hover:bg-slate-900 text-white rounded-full px-4 btn-sm font-semibold border-0">
+            Dashboard
+          </a>
+        @endif
+        <form action="{{ route('logout') }}" method="POST" class="inline">
+          @csrf
+          <button type="submit" class="btn bg-red-50 hover:bg-red-100 text-red-600 rounded-full px-4 btn-sm font-semibold border-0">
+            Keluar
+          </button>
+        </form>
+      @endauth
+
       <a href="{{ route('artikel.detail', 'protein-hewani-harian-untuk-pertumbuhan-optimal-anak') }}" class="btn bg-blue-600 hover:bg-blue-700 text-white border-0 rounded-full px-5 btn-sm font-semibold">
         Buka Artikel
       </a>

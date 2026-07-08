@@ -18,7 +18,34 @@
   <header class="navbar bg-white border-b border-slate-200 sticky top-0 z-50 px-4 lg:px-8">
     <div class="navbar-start"><a href="{{ route('home') }}" class="flex items-center gap-3"><div class="w-11 h-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center"><span class="material-symbols-rounded">health_and_safety</span></div><div><div class="font-extrabold text-emerald-700">SiCegah Stunting</div><div class="text-xs text-slate-500">Edukasi dan Skrining Awal</div></div></a></div>
     <div class="navbar-center hidden lg:flex"><ul class="menu menu-horizontal gap-1"><li><a href="{{ route('home') }}">Beranda</a></li><li><a href="{{ route('kalkulator') }}">Kalkulator</a></li><li><a href="{{ route('edukasi') }}">Edukasi</a></li><li><a href="{{ route('tentang') }}">Tentang</a></li><li><a href="{{ route('faq') }}">FAQ</a></li><li><a href="{{ route('kontak') }}">Kontak</a></li></ul></div>
-    <div class="navbar-end"><a href="{{ route('kalkulator') }}" class="btn btn-primary rounded-full">Hitung Ulang</a></div>
+    <div class="navbar-end gap-2">
+      @guest
+        <a href="{{ route('login') }}" class="btn btn-outline border-emerald-600 text-emerald-700 hover:bg-emerald-50 rounded-full px-4 btn-sm font-semibold">
+          <span class="material-symbols-rounded text-sm">login</span>
+          Masuk
+        </a>
+      @endguest
+
+      @auth
+        <div class="hidden md:flex items-center gap-1 bg-slate-100 rounded-full px-2.5 py-1 text-xs font-semibold text-slate-600">
+          <span class="material-symbols-rounded text-base text-emerald-600">account_circle</span>
+          <span class="max-w-[70px] truncate">{{ Auth::user()->name }}</span>
+        </div>
+        @if(Auth::user()->isAdminWilayah() || Auth::user()->isKoordinatorCabang())
+          <a href="{{ route('admin.dashboard') }}" class="btn bg-slate-800 hover:bg-slate-900 text-white rounded-full px-4 btn-sm font-semibold border-0">
+            Dashboard
+          </a>
+        @endif
+        <form action="{{ route('logout') }}" method="POST" class="inline">
+          @csrf
+          <button type="submit" class="btn bg-red-50 hover:bg-red-100 text-red-600 rounded-full px-4 btn-sm font-semibold border-0">
+            Keluar
+          </button>
+        </form>
+      @endauth
+
+      <a href="{{ route('kalkulator') }}" class="btn btn-primary rounded-full px-5 btn-sm font-semibold">Hitung Ulang</a>
+    </div>
   </header>
 
   <main class="max-w-6xl mx-auto px-4 lg:px-8 py-10">

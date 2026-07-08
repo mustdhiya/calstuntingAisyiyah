@@ -1,4 +1,4 @@
-﻿@extends('admin.layouts.app')
+@extends('admin.layouts.app')
 
 @section('title', 'Hasil Analisis - Admin')
 
@@ -350,267 +350,30 @@
             <div class="text-center py-6 text-slate-400">
               <span class="material-symbols-rounded text-3xl mb-2 block">inbox</span>
               <p class="text-xs">Belum ada data pemeriksaan.</p>
+            </div>
           @endif
         </div>
 
-
-      </section>
-    </div>
-  </main>
 @endsection
 
 @section('scripts')
+  <!-- Chart.js (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <!-- Apache ECharts (CDN) -->
   <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 
-  <!-- Script Chart.js & ECharts (dashboard) -->
+  <!-- Script Chart.js & ECharts (dashboard eksternal) -->
   <script>
-    // === DATA DASHBOARD ===
-    const totalNormal   = {{ $totalNormal }};
-    const totalRisiko   = {{ $chartStatus['Pendek'] }};
-    const totalStunting = {{ $chartStatus['Sangat Pendek'] }};
-    const totalBerat    = 0; // standard grouped into stunting/sgt-pendek
-
-    // Data per kab/kota Kaltim (heatmap stunting)
-    const kaltimData = @json($mapData);
-
-    // Mapping nama di GeoJSON -> nama yang dipakai di dashboard
-    const nameMapping = {
-      "KOTA SAMARINDA": "Samarinda",
-      "KOTA BALIKPAPAN": "Balikpapan",
-      "KOTA BONTANG": "Bontang",
-      "KUTAI KARTANEGARA": "Kutai Kartanegara",
-      "KUTAI TIMUR": "Kutai Timur",
-      "KUTAI BARAT": "Kutai Barat",
-      "BERAU": "Berau",
-      "PASER": "Paser",
-      "PENAJAM PASER UTARA": "Penajam Paser Utara",
-      "MAHAKAM ULU": "Mahakam Ulu"
+    window.analisisData = {
+      totalNormal: {{ $totalNormal }},
+      totalRisiko: {{ $chartStatus['Pendek'] }},
+      totalStunting: {{ $chartStatus['Sangat Pendek'] }},
+      totalBerat: 0, // Nilai default stunting berat
+      kaltimData: @json($mapData),
+      geoJsonUrl: "{{ asset('static/maps/kalimantan-timur-kabkota.geojson') }}",
+      chartAgeData: @json($chartAge)
     };
-
-    // Hitung min & max untuk visualMap
-    const values = Object.values(kaltimData);
-    const minVal = values.length ? Math.min.apply(null, values) : 0;
-    const maxVal = values.length ? Math.max.apply(null, values) : 10;
-
-    // JavaScript to handle quick detail review panel
-    function showQuickDetail(m) {
-      document.getElementById('det-name').textContent = m.child_name || 'Anak';
-      document.getElementById('det-id').textContent = 'ID: ' + (m.id ? m.id.substring(0, 8).toUpperCase() : '—');
-      document.getElementById('det-age-gender').textContent = m.age_months + ' bulan \u00B7 ' + (m.gender === 'L' ? 'Laki-laki' : 'Perempuan');
-      
-      const createdDate = new Date(m.created_at);
-      const formattedDate = createdDate.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
-      document.getElementById('det-date').textContent = formattedDate;
-      
-      const statusBadge = document.getElementById('det-status-badge');
-      let statusLabel = m.status_growth;
-      
-      statusBadge.className = 'badge border-none px-2 py-1 text-[11px] rounded-full';
-      if (m.status_growth === 'Normal') {
-        statusLabel = 'Normal';
-        statusBadge.classList.add('badge-status-normal');
-      } else if (m.status_growth === 'Pendek') {
-        statusLabel = 'Risiko stunting';
-        statusBadge.classList.add('badge-status-risiko');
-      } else {
-        statusLabel = 'Stunting berat';
-        statusBadge.classList.add('badge-status-stunting');
-      }
-      statusBadge.textContent = statusLabel;
-      
-      const tbVal = parseFloat(m.height || 0).toFixed(1).replace('.', ',');
-      const bbVal = parseFloat(m.weight || 0).toFixed(1).replace('.', ',');
-      
-      document.getElementById('det-tb').textContent = tbVal + ' cm';
-      document.getElementById('det-bb').textContent = bbVal + ' kg';
-      document.getElementById('det-asi').textContent = m.asi_eksklusif || 'Ya';
-      
-      const recsEl = document.getElementById('det-recs');
-      if (m.status_growth === 'Normal') {
-        recsEl.textContent = 'Pertumbuhan anak dalam batas normal berdasarkan standar WHO. Pertahankan asupan gizi seimbang, lanjutkan ASI/MPASI berkualitas, dan lakukan imunisasi rutin.';
-      } else {
-        recsEl.textContent = 'Tinggi badan berdasarkan usia berada di bawah -2 SD. Sarankan orang tua untuk konsultasi ke Posyandu/Puskesmas, evaluasi pola makan, dan pantau pertumbuhan tiap bulan.';
-      }
-    }
-
-    document.addEventListener("DOMContentLoaded", function () {
-      // ==================== 1. PETA KALIMANTAN TIMUR (ECharts) ====================
-      const mapContainer = document.getElementById("kaltim-map");
-      if (mapContainer && typeof echarts !== "undefined") {
-        const mapChart = echarts.init(mapContainer);
-
-        fetch("{{ asset('static/maps/kalimantan-timur-kabkota.geojson') }}")
-          .then(resp => resp.json())
-          .then(geoJson => {
-            echarts.registerMap("KaltimKab", geoJson);
-
-            const seriesData = geoJson.features.map(f => {
-              const rawName = (f.properties.NAME_2 || f.properties.NAME || "").toUpperCase();
-              const displayName = nameMapping[rawName] || rawName;
-              const val = kaltimData[displayName] || 0;
-              return { name: displayName, value: val };
-            });
-
-            const option = {
-              tooltip: {
-                trigger: "item",
-                formatter: function (params) {
-                  const value = params.value || 0;
-                  const percentBase = maxVal || 1;
-                  const percent = ((value / percentBase) * 100).toFixed(1);
-                  return `
-                    <div style="font-size:12px;">
-                      <strong>${params.name}</strong><br/>
-                      Jumlah Kasus Stunting: ${value}<br/>
-                      Perbandingan: ${percent}% dari nilai tertinggi
-                    </div>
-                  `;
-                }
-              },
-              visualMap: {
-                min: minVal,
-                max: maxVal,
-                orient: "vertical",
-                left: "left",
-                top: "middle",
-                text: ["Tinggi", "Rendah"],
-                textStyle: { fontSize: 11, color: "#64748b" },
-                inRange: {
-                  color: ["#ecfdf3", "#a7f3d0", "#22c55e", "#15803d"]
-                },
-                calculable: false,
-                itemWidth: 10,
-                itemHeight: 80
-              },
-              series: [{
-                type: "map",
-                map: "KaltimKab",
-                roam: true,
-                zoom: 1.1,
-                label: {
-                  show: true,
-                  fontSize: 10,
-                  color: "#0f172a"
-                },
-                emphasis: {
-                  label: {
-                    show: true,
-                    fontWeight: "600",
-                    color: "#0f172a"
-                  },
-                  itemStyle: {
-                    areaColor: "#bfdbfe"
-                  }
-                },
-                itemStyle: {
-                  borderColor: "#e5e7eb",
-                  borderWidth: 1
-                },
-                data: seriesData
-              }]
-            };
-
-            mapChart.setOption(option);
-            window.addEventListener("resize", () => mapChart.resize());
-          })
-          .catch(err => {
-            console.error("Gagal memuat GeoJSON Kaltim:", err);
-          });
-      }
-
-      // ==================== 2. PIE CHART KOMPOSISI STATUS ====================
-      const statusCtx = document.getElementById("statusChart");
-      if (statusCtx) {
-        new Chart(statusCtx, {
-          type: "doughnut",
-          data: {
-            labels: ["Normal", "Risiko", "Stunting Berat", "Stunting berat"],
-            datasets: [{
-              data: [totalNormal, totalRisiko, totalStunting],
-              backgroundColor: ["#22c55e", "#fb923c", "#fb7185"],
-              borderWidth: 0
-            }]
-          },
-          options: {
-            plugins: {
-              legend: { display: false }
-            },
-            cutout: "65%",
-            responsive: true,
-            maintainAspectRatio: false
-          }
-        });
-      }
-
-      // ==================== 3. BAR CHART DISTRIBUSI USIA ====================
-      const ageCtx = document.getElementById("ageChart");
-      if (ageCtx) {
-        new Chart(ageCtx, {
-          type: "bar",
-          data: {
-            labels: ["0-6", "7-12", "13-24", "25-36", "37-60"],
-            datasets: [
-              {
-                label: "Normal",
-                data: [
-                  {{ $chartAge['0-6']['Normal'] }},
-                  {{ $chartAge['7-12']['Normal'] }},
-                  {{ $chartAge['13-24']['Normal'] }},
-                  {{ $chartAge['25-36']['Normal'] }},
-                  {{ $chartAge['37-60']['Normal'] }}
-                ],
-                backgroundColor: "#22c55e"
-              },
-              {
-                label: "Risiko",
-                data: [
-                  {{ $chartAge['0-6']['Pendek'] }},
-                  {{ $chartAge['7-12']['Pendek'] }},
-                  {{ $chartAge['13-24']['Pendek'] }},
-                  {{ $chartAge['25-36']['Pendek'] }},
-                  {{ $chartAge['37-60']['Pendek'] }}
-                ],
-                backgroundColor: "#fb923c"
-              },
-              {
-                label: "Sangat Pendek",
-                data: [
-                  {{ $chartAge['0-6']['Sangat Pendek'] }},
-                  {{ $chartAge['7-12']['Sangat Pendek'] }},
-                  {{ $chartAge['13-24']['Sangat Pendek'] }},
-                  {{ $chartAge['25-36']['Sangat Pendek'] }},
-                  {{ $chartAge['37-60']['Sangat Pendek'] }}
-                ],
-                backgroundColor: "#fb7185"
-              }
-            ]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              x: {
-                stacked: true,
-                ticks: { font: { size: 11 } }
-              },
-              y: {
-                stacked: true,
-                ticks: {
-                  stepSize: 5,
-                  font: { size: 11 }
-                },
-                beginAtZero: true
-              }
-            },
-            plugins: {
-              legend: {
-                labels: { font: { size: 11 } }
-              }
-            }
-          }
-        });
-      }
-    });
   </script>
+  <script src="{{ asset('js/admin-analisis.js') }}"></script>
 @endsection

@@ -46,18 +46,63 @@
       </div>
 
       <div class="navbar-end gap-2">
-        <a href="{{ route('kalkulator') }}" class="hidden sm:inline-flex btn btn-primary rounded-full">Buka Kalkulator</a>
+        @guest
+          <a href="{{ route('login') }}" class="btn btn-outline border-emerald-600 text-emerald-700 hover:bg-emerald-50 rounded-full px-4 btn-sm font-semibold">
+            <span class="material-symbols-rounded text-sm">login</span>
+            Masuk
+          </a>
+        @endguest
+
+        @auth
+          <div class="hidden md:flex items-center gap-1 bg-slate-100 rounded-full px-2.5 py-1 text-xs font-semibold text-slate-600">
+            <span class="material-symbols-rounded text-base text-emerald-600">account_circle</span>
+            <span class="max-w-[70px] truncate">{{ Auth::user()->name }}</span>
+          </div>
+          @if(Auth::user()->isAdminWilayah() || Auth::user()->isKoordinatorCabang())
+            <a href="{{ route('admin.dashboard') }}" class="btn bg-slate-800 hover:bg-slate-900 text-white rounded-full px-4 btn-sm font-semibold border-0">
+              Dashboard
+            </a>
+          @endif
+          <form action="{{ route('logout') }}" method="POST" class="inline">
+            @csrf
+            <button type="submit" class="btn bg-red-50 hover:bg-red-100 text-red-600 rounded-full px-4 btn-sm font-semibold border-0">
+              Keluar
+            </button>
+          </form>
+        @endauth
+
+        <a href="{{ route('kalkulator') }}" class="hidden sm:inline-flex btn btn-primary rounded-full btn-sm">Buka Kalkulator</a>
+        
         <div class="dropdown dropdown-end lg:hidden">
           <div tabindex="0" role="button" class="btn btn-ghost btn-circle" aria-label="Buka menu">
             <span class="material-symbols-rounded">menu</span>
           </div>
           <ul tabindex="0" class="menu dropdown-content mt-3 z-[1] p-2 shadow bg-white rounded-box w-56 border border-slate-200">
+            @auth
+              <li class="menu-title px-4 py-1 text-[11px] text-slate-400">Akun: {{ Auth::user()->name }}</li>
+            @endauth
             <li><a href="{{ route('home') }}">Beranda</a></li>
             <li><a href="{{ route('kalkulator') }}">Kalkulator</a></li>
             <li><a href="{{ route('edukasi') }}">Edukasi</a></li>
             <li><a href="{{ route('tentang') }}">Tentang</a></li>
             <li><a href="{{ route('faq') }}">FAQ</a></li>
             <li><a class="font-semibold text-emerald-700" href="{{ route('kontak') }}">Kontak</a></li>
+            
+            @guest
+              <li class="border-t border-slate-100 mt-1 pt-1"><a href="{{ route('login') }}" class="font-semibold text-emerald-700"><span class="material-symbols-rounded text-sm">login</span>Masuk</a></li>
+            @endguest
+
+            @auth
+              <li class="border-t border-slate-100 mt-1 pt-1">
+                @if(Auth::user()->isAdminWilayah() || Auth::user()->isKoordinatorCabang())
+                  <a href="{{ route('admin.dashboard') }}"><span class="material-symbols-rounded text-sm">dashboard</span>Dashboard</a>
+                @endif
+                <form action="{{ route('logout') }}" method="POST" class="w-full">
+                  @csrf
+                  <button type="submit" class="w-full text-left text-red-600 font-semibold flex items-center gap-1"><span class="material-symbols-rounded text-sm">logout</span>Keluar</button>
+                </form>
+              </li>
+            @endauth
           </ul>
         </div>
       </div>

@@ -144,6 +144,31 @@
     </div>
 
     <div class="hidden lg:flex items-center gap-2">
+      @guest
+        <a href="{{ route('login') }}" class="px-4 py-2 border border-green-600 text-green-700 text-sm font-semibold rounded-full hover:bg-green-50 transition-colors">
+          <span class="material-symbols-rounded text-base">login</span>
+          Masuk
+        </a>
+      @endguest
+
+      @auth
+        <div class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 rounded-full text-xs text-slate-600 font-medium">
+          <span class="material-symbols-rounded text-sm text-green-600 font-normal">account_circle</span>
+          <span class="max-w-[80px] truncate">{{ Auth::user()->name }}</span>
+        </div>
+        @if(Auth::user()->isAdminWilayah() || Auth::user()->isKoordinatorCabang())
+          <a href="{{ route('admin.dashboard') }}" class="px-4 py-2 bg-slate-800 text-white text-sm font-semibold rounded-full hover:bg-slate-900 transition-colors">
+            Dashboard
+          </a>
+        @endif
+        <form action="{{ route('logout') }}" method="POST" class="inline">
+          @csrf
+          <button type="submit" class="px-4 py-2 bg-red-50 text-red-600 text-sm font-semibold rounded-full hover:bg-red-100 transition-colors">
+            Keluar
+          </button>
+        </form>
+      @endauth
+
       <a href="{{ route('hasil') }}" class="flex items-center gap-1.5 px-4 py-2 bg-green-600 text-white text-sm font-semibold rounded-full hover:bg-green-700 transition-colors shadow-sm">
         <span class="material-symbols-rounded text-base">bar_chart</span>
         Contoh Hasil
@@ -159,11 +184,32 @@
   <!-- Mobile menu -->
   <div id="nav-mobile" class="hidden lg:hidden border-t border-slate-100 bg-white px-4 pb-4">
     <div class="flex flex-col gap-1 pt-2">
+      @auth
+        <div class="px-3 py-2 mb-1 bg-slate-50 rounded-lg flex items-center gap-2 text-xs text-slate-600 font-medium">
+          <span class="material-symbols-rounded text-green-600">account_circle</span>
+          <span class="truncate">{{ Auth::user()->name }}</span>
+        </div>
+      @endauth
+
       <a href="{{ route('home') }}"      class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-slate-700 hover:bg-slate-50"><span class="material-symbols-rounded text-base text-slate-400">home</span>Beranda</a>
       <a href="{{ route('kalkulator') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-green-700 font-semibold bg-green-50"><span class="material-symbols-rounded text-base">calculate</span>Kalkulator</a>
       <a href="{{ route('edukasi') }}"    class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-slate-700 hover:bg-slate-50"><span class="material-symbols-rounded text-base text-slate-400">menu_book</span>Edukasi</a>
       <a href="{{ route('tentang') }}"    class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-slate-700 hover:bg-slate-50"><span class="material-symbols-rounded text-base text-slate-400">info</span>Tentang</a>
       <a href="{{ route('faq') }}"        class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-slate-700 hover:bg-slate-50"><span class="material-symbols-rounded text-base text-slate-400">help</span>FAQ</a>
+
+      @guest
+        <a href="{{ route('login') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-green-700 font-semibold hover:bg-green-50"><span class="material-symbols-rounded text-base">login</span>Masuk Akun</a>
+      @endguest
+
+      @auth
+        @if(Auth::user()->isAdminWilayah() || Auth::user()->isKoordinatorCabang())
+          <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-slate-700 hover:bg-slate-50"><span class="material-symbols-rounded text-base text-slate-400">dashboard</span>Dashboard Admin</a>
+        @endif
+        <form action="{{ route('logout') }}" method="POST" class="w-full">
+          @csrf
+          <button type="submit" class="flex w-full items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-red-600 font-semibold hover:bg-red-50"><span class="material-symbols-rounded text-base">logout</span>Keluar</button>
+        </form>
+      @endauth
     </div>
   </div>
 </header>
