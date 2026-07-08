@@ -29,10 +29,12 @@
   }
 
   $categoryThemes = [
-      'Gizi Anak'     => ['icon' => 'restaurant',     'bg' => 'bg-emerald-100', 'text' => 'text-emerald-700', 'badge' => 'badge-success'],
-      'ASI Eksklusif' => ['icon' => 'child_care',     'bg' => 'bg-cyan-100',    'text' => 'text-cyan-700',    'badge' => 'badge-info'],
-      'MPASI'         => ['icon' => 'lunch_dining',    'bg' => 'bg-amber-100',   'text' => 'text-amber-700',   'badge' => 'badge-warning'],
-      'FAQ'           => ['icon' => 'help',           'bg' => 'bg-purple-100',  'text' => 'text-purple-700',  'badge' => 'badge-secondary'],
+      'Gizi Anak'           => ['icon' => 'restaurant',     'bg' => 'bg-emerald-100', 'text' => 'text-emerald-700', 'badge' => 'badge-success'],
+      'ASI Eksklusif'       => ['icon' => 'child_care',     'bg' => 'bg-cyan-100',    'text' => 'text-cyan-700',    'badge' => 'badge-info'],
+      'MPASI'               => ['icon' => 'lunch_dining',    'bg' => 'bg-amber-100',   'text' => 'text-amber-700',   'badge' => 'badge-warning'],
+      'Pencegahan Stunting' => ['icon' => 'shield_with_heart','bg' => 'bg-indigo-100',  'text' => 'text-indigo-700',  'badge' => 'badge-primary'],
+      'Kesehatan Ibu'       => ['icon' => 'pregnant_woman',  'bg' => 'bg-pink-100',    'text' => 'text-pink-700',    'badge' => 'badge-secondary'],
+      'FAQ'                 => ['icon' => 'help',           'bg' => 'bg-purple-100',  'text' => 'text-purple-700',  'badge' => 'badge-ghost'],
   ];
   $theme = $categoryThemes[$article->category] ?? ['icon' => 'article', 'bg' => 'bg-slate-100', 'text' => 'text-slate-700', 'badge' => 'badge-ghost'];
 @endphp
@@ -78,7 +80,32 @@
         <li><a href="{{ route('kontak') }}">Kontak</a></li>
       </ul>
     </div>
-    <div class="navbar-end">
+    <div class="navbar-end gap-2">
+      @guest
+        <a href="{{ route('login') }}" class="btn btn-outline border-emerald-600 text-emerald-700 hover:bg-emerald-50 rounded-full px-4 btn-sm font-semibold">
+          <span class="material-symbols-rounded text-sm">login</span>
+          Masuk
+        </a>
+      @endguest
+
+      @auth
+        <div class="hidden md:flex items-center gap-1 bg-slate-100 rounded-full px-2.5 py-1 text-xs font-semibold text-slate-600">
+          <span class="material-symbols-rounded text-base text-emerald-600">account_circle</span>
+          <span class="max-w-[70px] truncate">{{ Auth::user()->name }}</span>
+        </div>
+        @if(Auth::user()->isAdminWilayah() || Auth::user()->isKoordinatorCabang())
+          <a href="{{ route('admin.dashboard') }}" class="btn bg-slate-800 hover:bg-slate-900 text-white rounded-full px-4 btn-sm font-semibold border-0">
+            Dashboard
+          </a>
+        @endif
+        <form action="{{ route('logout') }}" method="POST" class="inline">
+          @csrf
+          <button type="submit" class="btn bg-red-50 hover:bg-red-100 text-red-600 rounded-full px-4 btn-sm font-semibold border-0">
+            Keluar
+          </button>
+        </form>
+      @endauth
+
       <a href="{{ route('edukasi') }}" class="btn btn-outline btn-primary rounded-full btn-sm px-4">
         <span class="material-symbols-rounded text-sm">arrow_back</span> Kembali ke Edukasi
       </a>
@@ -111,9 +138,15 @@
           </div>
         </div>
 
-        <!-- Featured Image Icon -->
-        <figure class="rounded-3xl overflow-hidden border border-slate-200 {{ $theme['bg'] }} h-64 flex items-center justify-center">
-          <span class="material-symbols-rounded text-[84px] {{ $theme['text'] }}">{{ $theme['icon'] }}</span>
+        <!-- Featured Image (Real Image or Fallback) -->
+        <figure class="rounded-3xl overflow-hidden border border-slate-200 h-80 relative">
+          @if($article->image)
+            <img src="{{ $article->image }}" alt="{{ $article->title }}" class="object-cover w-full h-full" />
+          @else
+            <div class="w-full h-full {{ $theme['bg'] }} flex items-center justify-center">
+              <span class="material-symbols-rounded text-[84px] {{ $theme['text'] }}">{{ $theme['icon'] }}</span>
+            </div>
+          @endif
         </figure>
 
         @if($article->summary)

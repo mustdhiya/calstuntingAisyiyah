@@ -60,15 +60,14 @@ class ArticleController extends Controller
             'content'          => 'required|string',
             'image'            => 'nullable|image|max:2048',
             'references'       => 'nullable|string',
-            'status'           => 'required|in:published,draft,scheduled',
-            'is_published'     => 'nullable|boolean',
             'show_on_homepage' => 'nullable|boolean',
             'is_featured'      => 'nullable|boolean',
             'meta_title'       => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
         ]);
 
-        $data['is_published']     = $request->boolean('is_published');
+        // Kondisi baru: Jika toggle "Terbitkan artikel" aktif (dicentang) -> published. Jika tidak -> scheduled.
+        $data['status']           = $request->boolean('is_published') ? 'published' : 'scheduled';
         $data['show_on_homepage'] = $request->boolean('show_on_homepage');
         $data['is_featured']      = $request->boolean('is_featured');
         $data['user_id']          = auth()->id();
@@ -107,15 +106,14 @@ class ArticleController extends Controller
             'content'          => 'required|string',
             'image'            => 'nullable|image|max:2048',
             'references'       => 'nullable|string',
-            'status'           => 'required|in:published,draft,scheduled',
-            'is_published'     => 'nullable|boolean',
             'show_on_homepage' => 'nullable|boolean',
             'is_featured'      => 'nullable|boolean',
             'meta_title'       => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
         ]);
 
-        $data['is_published']     = $request->boolean('is_published');
+        // Kondisi edit: Jika toggle "Terbitkan artikel" aktif (dicentang) -> published. Jika tidak -> draft.
+        $data['status']           = $request->boolean('is_published') ? 'published' : 'draft';
         $data['show_on_homepage'] = $request->boolean('show_on_homepage');
         $data['is_featured']      = $request->boolean('is_featured');
         $data['slug']             = $data['slug'] ?? Str::slug($data['title']);
@@ -134,7 +132,8 @@ class ArticleController extends Controller
      */
     public function archive(Article $article)
     {
-        $article->update(['is_published' => false]);
+        // Mengubah status ke draft saat diarsipkan
+        $article->update(['status' => 'draft']);
         return redirect()->route('admin.artikel.list')->with('success', 'Artikel berhasil diarsipkan.');
     }
 

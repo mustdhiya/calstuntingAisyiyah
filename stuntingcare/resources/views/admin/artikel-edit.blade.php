@@ -47,8 +47,6 @@
             @csrf
         @endif
 
-          <!-- Hidden default status -->
-          <input type="hidden" name="status" value="{{ $article?->status ?? 'draft' }}">
 
           <!-- Header card -->
           <div class="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
@@ -109,7 +107,7 @@
                     <span class="label-text text-sm font-medium text-slate-800">Kategori</span>
                   </label>
                   <select name="category" class="select select-bordered w-full text-sm @error('category') select-error @enderror" required>
-                    @foreach(['Gizi Anak','MPASI','ASI Eksklusif','FAQ'] as $cat)
+                    @foreach(['Gizi Anak', 'ASI Eksklusif', 'MPASI', 'Pencegahan Stunting', 'Kesehatan Ibu', 'FAQ'] as $cat)
                       <option value="{{ $cat }}" {{ old('category', $article?->category)===$cat ? 'selected' : '' }}>{{ $cat }}</option>
                     @endforeach
                   </select>
@@ -147,6 +145,37 @@
                 </div>
               </div>
 
+              <!-- Gambar Utama (Upload File) -->
+              <div class="form-control">
+                <label class="label pb-1">
+                  <span class="label-text text-sm font-medium text-slate-800">Gambar utama artikel</span>
+                </label>
+                <div class="flex flex-col md:flex-row gap-4 items-start md:items-center">
+                  @if($article?->image)
+                    <div class="w-24 h-24 rounded-xl overflow-hidden border border-slate-200 shrink-0">
+                      <img src="{{ Str::startsWith($article->image, 'http') ? $article->image : asset('storage/' . $article->image) }}" alt="Preview" class="object-cover w-full h-full" />
+                    </div>
+                  @endif
+                  <div class="w-full">
+                    <input type="file" name="image" class="file-input file-input-bordered file-input-sm w-full text-sm @error('image') file-input-error @enderror" accept="image/*" />
+                    <p class="text-[11px] text-slate-400 mt-1">Format gambar: JPG, PNG, WebP (maks. 2MB). Jika diisi, akan menggantikan gambar saat ini.</p>
+                  </div>
+                </div>
+                @error('image') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+              </div>
+
+              <!-- Referensi Artikel -->
+              <div class="form-control">
+                <label class="label pb-1">
+                  <span class="label-text text-sm font-medium text-slate-800">Referensi artikel (opsional)</span>
+                </label>
+                <textarea name="references" rows="3"
+                  class="textarea textarea-bordered w-full text-sm font-mono text-xs"
+                  placeholder="Contoh:&#10;1. WHO. (2020). Infant and young child feeding.&#10;2. Kementerian Kesehatan RI. (2021). Buku Saku Pemantauan Status Gizi.">{{ old('references', $article?->references) }}</textarea>
+                <p class="text-[11px] text-slate-400 mt-1">Tuliskan daftar referensi/jurnal medis pendukung. Pisahkan setiap baris dengan menekan Enter.</p>
+                @error('references') <p class="text-xs text-red-500 mt-1">{{ $message }}</p> @enderror
+              </div>
+
               <!-- Ringkasan -->
               <div class="form-control">
                 <label class="label pb-1">
@@ -181,12 +210,6 @@
               </div>
 
               <div class="flex flex-wrap gap-2 pt-2 border-t border-slate-100 items-center">
-                <button type="button" class="btn btn-outline btn-sm rounded-full text-slate-700 border-slate-300">
-                  <span class="material-symbols-rounded text-sm">image</span>Gambar utama
-                </button>
-                <button type="button" class="btn btn-outline btn-sm rounded-full text-slate-700 border-slate-300">
-                  <span class="material-symbols-rounded text-sm">link</span>Referensi
-                </button>
                 <button type="submit" class="btn btn-primary btn-sm rounded-full ml-auto">
                   <span class="material-symbols-rounded text-sm">save</span>Simpan perubahan
                 </button>
@@ -204,7 +227,7 @@
                     <span class="text-slate-600">Terbitkan artikel</span>
                     <input type="hidden" name="is_published" value="0">
                     <input type="checkbox" name="is_published" value="1" class="toggle toggle-success"
-                      {{ old('is_published', $article?->is_published) ? 'checked' : '' }} />
+                      {{ old('is_published', ($article && $article->status === 'published')) ? 'checked' : '' }} />
                   </label>
                   <label class="flex items-center justify-between gap-3 text-sm cursor-pointer">
                     <span class="text-slate-600">Tampilkan di beranda</span>

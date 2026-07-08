@@ -22,14 +22,12 @@ class Article extends Model
         'content',
         'image',
         'references',
-        'is_published',
         'status',
         'show_on_homepage',
         'is_featured',
         'meta_title',
         'meta_description',
         'views',
-        'shares',
         'user_id',
     ];
 
@@ -37,12 +35,10 @@ class Article extends Model
     {
         return [
             'published_date' => 'date',
-            'is_published'     => 'boolean',
             'status'           => 'string',
             'show_on_homepage' => 'boolean',
             'is_featured' => 'boolean',
             'views' => 'integer',
-            'shares' => 'integer',
         ];
     }
 
@@ -72,7 +68,7 @@ class Article extends Model
      */
     public function scopePublished($query)
     {
-        return $query->where('is_published', true);
+        return $query->where('status', 'published');
     }
 
     public function scopeFeatured($query)

@@ -18,14 +18,14 @@
             </p>
           </div>
           <div class="flex flex-wrap gap-2">
-            <button type="button" class="btn btn-outline btn-sm rounded-full">
+            <button type="button" class="btn btn-outline btn-sm rounded-full" onclick="window.location.reload()">
               <span class="material-symbols-rounded text-sm">refresh</span>
               Refresh
             </button>
-            <button type="button" class="btn btn-primary btn-sm rounded-full">
+            <a href="{{ route('admin.artikel.create') }}" class="btn btn-primary btn-sm rounded-full">
               <span class="material-symbols-rounded text-sm">add</span>
               Artikel baru
-            </button>
+            </a>
           </div>
         </div>
 
@@ -90,9 +90,9 @@
                 <span class="material-symbols-rounded text-sm text-slate-600">timeline</span>
                 Aktivitas terbaru
               </h2>
-              <button type="button" class="btn btn-ghost btn-xs rounded-full text-xs">
+              <a href="{{ route('admin.analisis') }}" class="btn btn-ghost btn-xs rounded-full text-xs">
                 Lihat semua
-              </button>
+              </a>
             </div>
 
             <ul class="divide-y divide-slate-100 text-sm">
