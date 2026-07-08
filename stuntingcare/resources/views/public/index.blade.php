@@ -553,68 +553,56 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
 
-      <!-- Article 1 -->
-      <article class="article-card">
-        <div class="article-thumb bg-emerald-50">
-          <span class="material-symbols-rounded text-[56px] text-emerald-300">restaurant</span>
-        </div>
-        <div class="article-body">
-          <span class="pill pill-green text-[11px] mb-3">Gizi Anak</span>
-          <h3 class="font-bold text-[15px] text-slate-800 leading-snug mb-2">Protein hewani harian untuk mendukung pertumbuhan anak</h3>
-          <p class="text-slate-500 text-[13px] leading-relaxed flex-1 mb-4">Penjelasan sederhana mengenai pentingnya asupan protein hewani setelah anak berusia 6 bulan.</p>
-          <div class="flex items-center justify-between pt-3 border-t border-slate-50">
-            <span class="text-[12px] text-slate-400 flex items-center gap-1">
-              <span class="material-symbols-rounded text-[13px]">calendar_today</span>
-              5 Jun 2026
-            </span>
-            <a href="{{ route('artikel.detail', 'protein-hewani-harian-untuk-pertumbuhan-optimal-anak') }}" class="text-[13px] font-semibold text-emerald-600 hover:underline flex items-center gap-0.5">
-              Baca <span class="material-symbols-rounded text-[16px]">arrow_forward</span>
-            </a>
+      @forelse($latestArticles as $article)
+        @php
+          $categoryThemes = [
+              'Gizi Anak'           => ['icon' => 'restaurant',     'bg' => 'bg-emerald-50',  'iconColor' => 'text-emerald-400',  'badge' => 'pill-green'],
+              'ASI Eksklusif'       => ['icon' => 'child_care',     'bg' => 'bg-sky-50',      'iconColor' => 'text-sky-400',      'badge' => 'pill-blue'],
+              'MPASI'               => ['icon' => 'lunch_dining',    'bg' => 'bg-amber-50',    'iconColor' => 'text-amber-400',    'badge' => 'pill-amber'],
+              'Pencegahan Stunting' => ['icon' => 'shield_with_heart','bg' => 'bg-indigo-50',   'iconColor' => 'text-indigo-400',   'badge' => 'pill-indigo'],
+              'Kesehatan Ibu'       => ['icon' => 'pregnant_woman',  'bg' => 'bg-pink-50',     'iconColor' => 'text-pink-400',     'badge' => 'pill-pink'],
+              'FAQ'                 => ['icon' => 'help',           'bg' => 'bg-purple-50',   'iconColor' => 'text-purple-400',   'badge' => 'pill-purple'],
+          ];
+          $theme = $categoryThemes[$article->category] ?? ['icon' => 'article', 'bg' => 'bg-slate-50', 'iconColor' => 'text-slate-400', 'badge' => 'pill-gray'];
+        @endphp
+        <article class="article-card flex flex-col justify-between h-full bg-white border border-slate-100 rounded-[2rem] overflow-hidden shadow-sm hover:shadow-md transition-all">
+          <div class="article-thumb h-48 overflow-hidden relative">
+            @if($article->image)
+              <img src="{{ Str::startsWith($article->image, 'http') ? $article->image : asset('storage/' . $article->image) }}" alt="{{ $article->title }}" class="object-cover w-full h-full transition-transform duration-300 hover:scale-105" />
+            @else
+              <div class="w-full h-full {{ $theme['bg'] }} flex items-center justify-center">
+                <span class="material-symbols-rounded text-[56px] {{ $theme['iconColor'] }}">{{ $theme['icon'] }}</span>
+              </div>
+            @endif
           </div>
-        </div>
-      </article>
-
-      <!-- Article 2 -->
-      <article class="article-card">
-        <div class="article-thumb bg-sky-50">
-          <span class="material-symbols-rounded text-[56px] text-sky-300">child_care</span>
-        </div>
-        <div class="article-body">
-          <span class="pill pill-blue text-[11px] mb-3">ASI Eksklusif</span>
-          <h3 class="font-bold text-[15px] text-slate-800 leading-snug mb-2">Mengapa ASI eksklusif 6 bulan sangat dianjurkan?</h3>
-          <p class="text-slate-500 text-[13px] leading-relaxed flex-1 mb-4">ASI eksklusif merupakan salah satu langkah terpenting dalam pencegahan stunting pada bayi.</p>
-          <div class="flex items-center justify-between pt-3 border-t border-slate-50">
-            <span class="text-[12px] text-slate-400 flex items-center gap-1">
-              <span class="material-symbols-rounded text-[13px]">calendar_today</span>
-              1 Jun 2026
-            </span>
-            <a href="{{ route('artikel.detail', 'asi-eksklusif-manfaat-dan-cara-pemberian-yang-benar') }}" class="text-[13px] font-semibold text-sky-600 hover:underline flex items-center gap-0.5">
-              Baca <span class="material-symbols-rounded text-[16px]">arrow_forward</span>
-            </a>
+          <div class="article-body p-6 flex flex-col justify-between flex-grow">
+            <div>
+              <span class="pill {{ $theme['badge'] }} text-[11px] mb-3 inline-block">{{ $article->category }}</span>
+              <h3 class="font-bold text-[15px] text-slate-800 leading-snug mb-2 hover:text-emerald-700">
+                <a href="{{ route('artikel.detail', $article->slug) }}">
+                  {{ $article->title }}
+                </a>
+              </h3>
+              <p class="text-slate-500 text-[13px] leading-relaxed flex-1 mb-4 line-clamp-2">
+                {{ $article->summary ?? Str::limit(strip_tags($article->content), 100) }}
+              </p>
+            </div>
+            <div class="flex items-center justify-between pt-3 border-t border-slate-50 mt-auto">
+              <span class="text-[12px] text-slate-400 flex items-center gap-1">
+                <span class="material-symbols-rounded text-[13px]">calendar_today</span>
+                {{ $article->published_date ? $article->published_date->format('d M Y') : $article->created_at->format('d M Y') }}
+              </span>
+              <a href="{{ route('artikel.detail', $article->slug) }}" class="text-[13px] font-semibold text-emerald-600 hover:underline flex items-center gap-0.5">
+                Baca <span class="material-symbols-rounded text-[16px]">arrow_forward</span>
+              </a>
+            </div>
           </div>
+        </article>
+      @empty
+        <div class="col-span-full text-center py-10 text-slate-400 text-sm">
+          Belum ada artikel edukasi yang dipublikasikan.
         </div>
-      </article>
-
-      <!-- Article 3 -->
-      <article class="article-card">
-        <div class="article-thumb bg-amber-50">
-          <span class="material-symbols-rounded text-[56px] text-amber-300">vaccines</span>
-        </div>
-        <div class="article-body">
-          <span class="pill pill-amber text-[11px] mb-3">Pencegahan</span>
-          <h3 class="font-bold text-[15px] text-slate-800 leading-snug mb-2">Kunjungan rutin Posyandu untuk pantau tumbuh kembang</h3>
-          <p class="text-slate-500 text-[13px] leading-relaxed flex-1 mb-4">Pemantauan berkala membantu deteksi dini masalah pertumbuhan sebelum menjadi serius.</p>
-          <div class="flex items-center justify-between pt-3 border-t border-slate-50">
-            <span class="text-[12px] text-slate-400 flex items-center gap-1">
-              <span class="material-symbols-rounded text-[13px]">calendar_today</span>
-              28 Mei 2026
-            </span>
-            <a href="{{ route('artikel.detail', 'pentingnya-posyandu-dalam-memantau-kesehatan-ibu-dan-anak') }}" class="text-[13px] font-semibold text-amber-600 hover:underline flex items-center gap-0.5">
-              Baca <span class="material-symbols-rounded text-[16px]">arrow_forward</span>
-            </a>
-          </div>
-        </div>
-      </article>
+      @endforelse
 
     </div>
   </div>

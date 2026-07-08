@@ -9,24 +9,36 @@ use App\Http\Controllers\KalkulatorController;
 use App\Http\Controllers\Admin\AnalisisController;
 use App\Http\Controllers\AuthController;
 
-// ── Auth Routes ────────────────────────────────────────────────
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.post');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+// ── Auth Routes ──────────────────────────────────────────────
+Route::controller(AuthController::class)->group(function () {
+    Route::get('/login', 'showLogin')->name('login');
+    Route::post('/login', 'login')->name('login.post');
+    Route::post('/logout', 'logout')->name('logout');
+});
 
 
 // ── Public Routes ──────────────────────────────────────────────
-Route::view('/', 'public.index')->name('home');
+Route::get('/', function () {
+    $latestArticles = \App\Models\Article::published()
+        ->latest('published_date')
+        ->limit(3)
+        ->get();
+    return view('public.index', compact('latestArticles'));
+})->name('home');
 Route::view('/tentang', 'public.tentang')->name('tentang');
 Route::view('/hasil', 'public.hasil')->name('hasil');
 Route::view('/faq', 'public.faq')->name('faq');
 Route::view('/kontak', 'public.kontak')->name('kontak');
 
-Route::get('/edukasi', [EdukasiController::class, 'index'])->name('edukasi');
-Route::get('/edukasi/{slug}', [EdukasiController::class, 'show'])->name('artikel.detail');
+Route::controller(EdukasiController::class)->group(function () {
+    Route::get('/edukasi', 'index')->name('edukasi');
+    Route::get('/edukasi/{slug}', 'show')->name('artikel.detail');
+});
 
-Route::get('/kalkulator', [KalkulatorController::class, 'index'])->name('kalkulator');
-Route::post('/kalkulator/hitung', [KalkulatorController::class, 'hitung'])->name('kalkulator.hitung');
+Route::controller(KalkulatorController::class)->group(function () {
+    Route::get('/kalkulator', 'index')->name('kalkulator');
+    Route::post('/kalkulator/hitung', 'hitung')->name('kalkulator.hitung');
+});
 
 // ── Admin Routes ───────────────────────────────────────────────
 Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
@@ -46,6 +58,7 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
         Route::get('/artikel/create',              'create')->name('artikel.create');
         Route::post('/artikel',                    'store')->name('artikel.store');
         Route::get('/artikel/{article}/edit',      'edit')->name('artikel.edit');
+        Route::get('/artikel/{article}/preview',   'preview')->name('artikel.preview');
         Route::put('/artikel/{article}',           'update')->name('artikel.update');
         Route::patch('/artikel/{article}/archive', 'archive')->name('artikel.archive');
         Route::delete('/artikel/{article}',        'destroy')->name('artikel.destroy');

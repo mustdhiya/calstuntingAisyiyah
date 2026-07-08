@@ -63,9 +63,18 @@
               </p>
             </div>
             <div class="flex flex-wrap gap-2 shrink-0">
-              <button type="button" class="btn btn-outline btn-sm rounded-full text-slate-700 border-slate-300">
-                <span class="material-symbols-rounded text-sm">visibility</span>Preview
-              </button>
+              <a href="{{ route('admin.artikel.list') }}" class="btn btn-outline btn-sm rounded-full text-slate-700 border-slate-300">
+                <span class="material-symbols-rounded text-sm">arrow_back</span>Kembali
+              </a>
+              @if($article)
+                <a href="{{ route('admin.artikel.preview', $article) }}" target="_blank" class="btn btn-outline btn-sm rounded-full text-slate-700 border-slate-300">
+                  <span class="material-symbols-rounded text-sm">visibility</span>Preview
+                </a>
+              @else
+                <button type="button" onclick="alert('Simpan artikel sebagai draf terlebih dahulu untuk melihat pratinjau halaman.')" class="btn btn-outline btn-sm rounded-full text-slate-700 border-slate-300 opacity-60">
+                  <span class="material-symbols-rounded text-sm">visibility</span>Preview
+                </button>
+              @endif
               <button type="submit" class="btn btn-primary btn-sm rounded-full">
                 <span class="material-symbols-rounded text-sm">save</span>Simpan
               </button>
@@ -151,13 +160,16 @@
                   <span class="label-text text-sm font-medium text-slate-800">Gambar utama artikel</span>
                 </label>
                 <div class="flex flex-col md:flex-row gap-4 items-start md:items-center">
-                  @if($article?->image)
-                    <div class="w-24 h-24 rounded-xl overflow-hidden border border-slate-200 shrink-0">
-                      <img src="{{ Str::startsWith($article->image, 'http') ? $article->image : asset('storage/' . $article->image) }}" alt="Preview" class="object-cover w-full h-full" />
-                    </div>
-                  @endif
+                  <div class="w-24 h-24 rounded-xl overflow-hidden border border-slate-200 shrink-0 bg-slate-100 flex items-center justify-center relative" id="preview-container">
+                    @if($article?->image)
+                      <img id="preview-img" src="{{ Str::startsWith($article->image, 'http') ? $article->image : asset('storage/' . $article->image) }}" alt="Preview" class="object-cover w-full h-full" />
+                    @else
+                      <span id="preview-placeholder" class="text-xs text-slate-400 font-medium">No Image</span>
+                      <img id="preview-img" class="object-cover w-full h-full hidden" alt="Preview" />
+                    @endif
+                  </div>
                   <div class="w-full">
-                    <input type="file" name="image" class="file-input file-input-bordered file-input-sm w-full text-sm @error('image') file-input-error @enderror" accept="image/*" />
+                    <input type="file" name="image" id="image-input" class="file-input file-input-bordered file-input-sm w-full text-sm @error('image') file-input-error @enderror" accept="image/*" />
                     <p class="text-[11px] text-slate-400 mt-1">Format gambar: JPG, PNG, WebP (maks. 2MB). Jika diisi, akan menggantikan gambar saat ini.</p>
                   </div>
                 </div>
@@ -318,6 +330,30 @@
       updatePreview();
       const i=document.getElementById('markdown-input');
       if(i) i.addEventListener('input',updatePreview);
+
+      // Live Image Preview lokal
+      const imageInput = document.getElementById('image-input');
+      const previewImg = document.getElementById('preview-img');
+      const previewPlaceholder = document.getElementById('preview-placeholder');
+
+      if (imageInput) {
+        imageInput.addEventListener('change', function() {
+          const file = this.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              if (previewImg) {
+                previewImg.src = e.target.result;
+                previewImg.classList.remove('hidden');
+              }
+              if (previewPlaceholder) {
+                previewPlaceholder.classList.add('hidden');
+              }
+            }
+            reader.readAsDataURL(file);
+          }
+        });
+      }
     });
   </script>
 @endsection

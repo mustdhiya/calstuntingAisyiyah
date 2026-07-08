@@ -44,8 +44,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{{ $article->title }} — SiCegah Stunting</title>
-  <meta name="description" content="{{ $article->summary ?? 'Detail artikel edukasi tentang pencegahan stunting.' }}" />
+  <title>[Pratinjau] {{ $article->title }} — SiCegah Stunting</title>
+  <meta name="description" content="Halaman pratinjau internal admin." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -57,10 +57,16 @@
 </head>
 <body class="bg-slate-50 text-slate-800">
 
-  <!-- Navbar -->
+  <!-- Banner Pratinjau Admin Khusus -->
+  <div class="bg-amber-500 text-white text-center py-2.5 px-4 text-xs font-semibold flex items-center justify-center gap-1.5 z-[100] relative shadow-sm" style="background-color: #f59e0b;">
+    <span class="material-symbols-rounded text-sm">visibility</span>
+    <span><strong>MODE PRATINJAU ADMIN</strong> — Artikel ini masih berstatus <strong>{{ strtoupper($article->status) }}</strong> (tidak terlihat oleh publik).</span>
+  </div>
+
+  <!-- Navbar Replikasi Publik -->
   <header class="navbar bg-white border-b border-slate-200 sticky top-0 z-50 px-4 lg:px-8">
     <div class="navbar-start">
-      <a href="{{ route('home') }}" class="flex items-center gap-3">
+      <div class="flex items-center gap-3 select-none">
         <div class="w-11 h-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center">
           <span class="material-symbols-rounded">health_and_safety</span>
         </div>
@@ -68,51 +74,33 @@
           <div class="font-extrabold text-emerald-700">SiCegah Stunting</div>
           <div class="text-xs text-slate-500">Edukasi dan Skrining Awal</div>
         </div>
-      </a>
+      </div>
     </div>
     <div class="navbar-center hidden lg:flex">
-      <ul class="menu menu-horizontal gap-1 font-medium">
-        <li><a href="{{ route('home') }}">Beranda</a></li>
-        <li><a href="{{ route('kalkulator') }}">Kalkulator</a></li>
-        <li><a class="text-emerald-700 font-semibold" href="{{ route('edukasi') }}">Edukasi</a></li>
-        <li><a href="{{ route('tentang') }}">Tentang</a></li>
-        <li><a href="{{ route('faq') }}">FAQ</a></li>
-        <li><a href="{{ route('kontak') }}">Kontak</a></li>
+      <ul class="menu menu-horizontal gap-1 font-medium disabled opacity-60 pointer-events-none">
+        <li><a>Beranda</a></li>
+        <li><a>Kalkulator</a></li>
+        <li><a class="text-emerald-700 font-semibold">Edukasi</a></li>
+        <li><a>Tentang</a></li>
+        <li><a>FAQ</a></li>
+        <li><a>Kontak</a></li>
       </ul>
     </div>
     <div class="navbar-end gap-2">
-      @guest
-        <a href="{{ route('login') }}" class="btn btn-outline border-emerald-600 text-emerald-700 hover:bg-emerald-50 rounded-full px-4 btn-sm font-semibold">
-          <span class="material-symbols-rounded text-sm">login</span>
-          Masuk
-        </a>
-      @endguest
-
-      @auth
-        <div class="hidden md:flex items-center gap-1 bg-slate-100 rounded-full px-2.5 py-1 text-xs font-semibold text-slate-600">
-          <span class="material-symbols-rounded text-base text-emerald-600">account_circle</span>
-          <span class="max-w-[70px] truncate">{{ Auth::user()->name }}</span>
-        </div>
-        @if(Auth::user()->isAdminWilayah() || Auth::user()->isKoordinatorCabang())
-          <a href="{{ route('admin.dashboard') }}" class="btn bg-slate-800 hover:bg-slate-900 text-white rounded-full px-4 btn-sm font-semibold border-0">
-            Dashboard
-          </a>
-        @endif
-        <form action="{{ route('logout') }}" method="POST" class="inline">
-          @csrf
-          <button type="submit" class="btn bg-red-50 hover:bg-red-100 text-red-600 rounded-full px-4 btn-sm font-semibold border-0">
-            Keluar
-          </button>
-        </form>
-      @endauth
-
-      <a href="{{ route('edukasi') }}" class="btn btn-outline btn-primary rounded-full btn-sm px-4">
-        <span class="material-symbols-rounded text-sm">arrow_back</span> Kembali ke Edukasi
-      </a>
+      <button onclick="window.close()" class="btn btn-neutral rounded-full btn-sm px-4">
+        <span class="material-symbols-rounded text-sm">close</span> Tutup Pratinjau
+      </button>
     </div>
   </header>
 
   <main class="max-w-6xl mx-auto px-4 lg:px-8 py-10">
+    <div class="alert alert-warning bg-amber-50 border-amber-200 text-amber-950 rounded-2xl p-4 flex gap-3 items-start mb-6 text-sm">
+      <span class="material-symbols-rounded text-amber-600 mt-0.5">info</span>
+      <div>
+        <span class="font-bold">Info Pratinjau:</span> Anda sedang melihat artikel ini dengan tampilan yang sama persis seperti yang akan dibaca oleh pengunjung umum. Gunakan tombol di pojok kanan atas untuk kembali.
+      </div>
+    </div>
+
     <article class="grid lg:grid-cols-3 gap-8">
       
       <!-- Left Column: Article Content -->
@@ -141,7 +129,7 @@
         <!-- Featured Image (Real Image or Fallback) -->
         <figure class="rounded-3xl overflow-hidden border border-slate-200 h-80 relative">
           @if($article->image)
-            <img src="{{ $article->image }}" alt="{{ $article->title }}" class="object-cover w-full h-full" />
+            <img src="{{ Str::startsWith($article->image, 'http') ? $article->image : asset('storage/' . $article->image) }}" alt="{{ $article->title }}" class="object-cover w-full h-full" />
           @else
             <div class="w-full h-full {{ $theme['bg'] }} flex items-center justify-center">
               <span class="material-symbols-rounded text-[84px] {{ $theme['text'] }}">{{ $theme['icon'] }}</span>
@@ -212,9 +200,9 @@
             <h2 class="card-title text-slate-800 text-sm font-bold">Artikel Terkait</h2>
             <div class="space-y-3 mt-3">
               @forelse($relatedArticles as $related)
-                <a href="{{ route('artikel.detail', $related->slug) }}" class="block p-3 rounded-2xl bg-slate-50 hover:bg-emerald-50 hover:text-emerald-800 transition-all font-medium text-xs text-slate-700">
+                <div class="block p-3 rounded-2xl bg-slate-50 font-medium text-xs text-slate-700 select-none">
                   {{ $related->title }}
-                </a>
+                </div>
               @empty
                 <p class="text-xs text-slate-400">Tidak ada artikel terkait.</p>
               @endforelse
@@ -227,25 +215,25 @@
     </article>
   </main>
 
-  <!-- Footer -->
-  <footer class="footer p-10 bg-slate-900 text-slate-200 mt-16">
+  <!-- Footer Replikasi Publik -->
+  <footer class="footer p-10 bg-slate-900 text-slate-200 mt-16 select-none">
     <nav>
       <h6 class="footer-title">Navigasi</h6>
-      <a class="link link-hover" href="{{ route('home') }}">Beranda</a>
-      <a class="link link-hover" href="{{ route('kalkulator') }}">Kalkulator</a>
-      <a class="link link-hover" href="{{ route('tentang') }}">Tentang</a>
+      <a class="link link-hover">Beranda</a>
+      <a class="link link-hover">Kalkulator</a>
+      <a class="link link-hover">Tentang</a>
     </nav>
     <nav>
       <h6 class="footer-title">Halaman</h6>
-      <a class="link link-hover" href="{{ route('edukasi') }}">Edukasi</a>
-      <a class="link link-hover" href="{{ route('faq') }}">FAQ</a>
-      <a class="link link-hover" href="{{ route('kontak') }}">Kontak</a>
+      <a class="link link-hover">Edukasi</a>
+      <a class="link link-hover">FAQ</a>
+      <a class="link link-hover">Kontak</a>
     </nav>
     <aside>
       <div class="flex items-center gap-2 text-white font-extrabold text-sm mb-2">
         <span class="material-symbols-rounded text-emerald-500">health_and_safety</span> SiCegah Stunting
       </div>
-      <p class="text-xs text-slate-400">� 2026 calstuntingAisyiyah. Hak Cipta Dilindungi.</p>
+      <p class="text-xs text-slate-400">© 2026 calstuntingAisyiyah. Hak Cipta Dilindungi.</p>
     </aside>
   </footer>
 

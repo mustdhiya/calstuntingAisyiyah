@@ -62,7 +62,7 @@
               </select>
               <select name="category" class="select select-bordered select-sm" onchange="this.form.submit()">
                 <option value="">Kategori: Semua</option>
-                @foreach(['Gizi Anak','MPASI','ASI Eksklusif','FAQ'] as $cat)
+                @foreach($categories as $cat)
                   <option value="{{ $cat }}" {{ request('category')===$cat ? 'selected' : '' }}>{{ $cat }}</option>
                 @endforeach
               </select>
