@@ -87,17 +87,34 @@ class KalkulatorController extends Controller
         $city = $cityMap[$data['lokasi_kalimantan']] ?? null;
 
         // ---------- Simpan ke tabel measurements ----------
-        Measurement::create([
-            'child_name'    => $data['nama_anak'] ?? 'Anak',
-            'gender'        => $gender,
-            'age_months'    => $usia,
-            'birth_date'    => $data['tanggal_lahir'] ?? null,
-            'height'        => $tb,
-            'weight'        => $bb,
-            'status_growth' => $statusGrowth,
-            'city'          => $city,
-            'asi_eksklusif' => 'Ya', // Default Ya
-        ]);
+        $childName = $data['nama_anak'] ?? 'Anak';
+        if ($childName !== 'Anak') {
+            Measurement::updateOrCreate(
+                ['child_name' => $childName],
+                [
+                    'gender'        => $gender,
+                    'age_months'    => $usia,
+                    'birth_date'    => $data['tanggal_lahir'] ?? null,
+                    'height'        => $tb,
+                    'weight'        => $bb,
+                    'status_growth' => $statusGrowth,
+                    'city'          => $city,
+                    'asi_eksklusif' => 'Ya',
+                ]
+            );
+        } else {
+            Measurement::create([
+                'child_name'    => 'Anak',
+                'gender'        => $gender,
+                'age_months'    => $usia,
+                'birth_date'    => $data['tanggal_lahir'] ?? null,
+                'height'        => $tb,
+                'weight'        => $bb,
+                'status_growth' => $statusGrowth,
+                'city'          => $city,
+                'asi_eksklusif' => 'Ya',
+            ]);
+        }
 
         $result = [
             'nama_anak'    => $data['nama_anak'] ?? 'Anak',

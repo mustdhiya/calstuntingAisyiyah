@@ -80,93 +80,115 @@ document.addEventListener("DOMContentLoaded", function () {
     const maxVal = values.length ? Math.max.apply(null, values) : 10;
 
     // ==================== 1. PETA KALIMANTAN TIMUR (ECharts) ====================
+    const embeddedGeoJson = {
+        "type": "FeatureCollection",
+        "name": "Kabupaten-Kota (Provinsi Kalimantan Timur)",
+        "crs": {
+            "type": "name",
+            "properties": {
+                "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+            }
+        },
+        "features": []
+    };
+
     const mapContainer = document.getElementById("kaltim-map");
-    if (mapContainer && typeof echarts !== "undefined" && geoJsonUrl) {
+    if (mapContainer && typeof echarts !== "undefined") {
         const mapChart = echarts.init(mapContainer);
 
-        fetch(geoJsonUrl)
-            .then(resp => resp.json())
-            .then(geoJson => {
-                echarts.registerMap("KaltimKab", geoJson);
+        function renderKaltimMap(geoJson) {
+            echarts.registerMap("KaltimKab", geoJson);
 
-                const seriesData = geoJson.features.map(f => {
-                    const rawName     = (f.properties.NAME_2 || f.properties.NAME || "").toUpperCase().trim();
-                    const displayName = nameMapping[rawName] || rawName;
+            const seriesData = geoJson.features.map(f => {
+                const rawName     = (f.properties.NAME_2 || f.properties.NAME || "").toUpperCase().trim();
+                const displayName = nameMapping[rawName] || rawName;
 
-                    // Match secara case-insensitive terhadap key kaltimData
-                    const dataKey = Object.keys(kaltimData).find(
-                        k => k.toLowerCase() === displayName.toLowerCase()
-                    );
-                    const val = dataKey ? kaltimData[dataKey] : 0;
-                    return { name: displayName, value: val };
-                });
+                // Match secara case-insensitive terhadap key kaltimData
+                const dataKey = Object.keys(kaltimData).find(
+                    k => k.toLowerCase() === displayName.toLowerCase()
+                );
+                const val = dataKey ? kaltimData[dataKey] : 0;
+                return { name: displayName, value: val };
+            });
 
-                const option = {
-                    tooltip: {
-                        trigger: "item",
-                        formatter: function (params) {
-                            const value = params.value || 0;
-                            const percentBase = maxVal || 1;
-                            const percent = ((value / percentBase) * 100).toFixed(1);
-                            return `
-                                <div style="font-size:12px;">
-                                    <strong>${params.name}</strong><br/>
-                                    Nilai: ${value}<br/>
-                                    Perbandingan: ${percent}% dari nilai tertinggi
-                                </div>
-                            `;
-                        }
+            const option = {
+                tooltip: {
+                    trigger: "item",
+                    formatter: function (params) {
+                        const value = params.value || 0;
+                        const percentBase = maxVal || 1;
+                        const percent = ((value / percentBase) * 100).toFixed(1);
+                        return `
+                            <div style="font-size:12px;">
+                                <strong>${params.name}</strong><br/>
+                                Nilai: ${value}<br/>
+                                Perbandingan: ${percent}% dari nilai tertinggi
+                            </div>
+                        `;
+                    }
+                },
+                visualMap: {
+                    min: minVal,
+                    max: maxVal,
+                    orient: "vertical",
+                    left: "left",
+                    top: "middle",
+                    text: ["Tinggi", "Rendah"],
+                    textStyle: { fontSize: 11, color: "#64748b" },
+                    inRange: {
+                        // Gradasi hijau modern (rendah -> tinggi)
+                        color: ["#ecfdf3", "#a7f3d0", "#22c55e", "#15803d"]
                     },
-                    visualMap: {
-                        min: minVal,
-                        max: maxVal,
-                        orient: "vertical",
-                        left: "left",
-                        top: "middle",
-                        text: ["Tinggi", "Rendah"],
-                        textStyle: { fontSize: 11, color: "#64748b" },
-                        inRange: {
-                            // Gradasi hijau modern (rendah -> tinggi)
-                            color: ["#ecfdf3", "#a7f3d0", "#22c55e", "#15803d"]
-                        },
-                        calculable: false,
-                        itemWidth: 10,
-                        itemHeight: 80
+                    calculable: false,
+                    itemWidth: 10,
+                    itemHeight: 80
+                },
+                series: [{
+                    type: "map",
+                    map: "KaltimKab",
+                    roam: true,
+                    zoom: 1.1,
+                    label: {
+                        show: true,
+                        fontSize: 10,
+                        color: "#0f172a"
                     },
-                    series: [{
-                        type: "map",
-                        map: "KaltimKab",
-                        roam: true,
-                        zoom: 1.1,
+                    emphasis: {
                         label: {
                             show: true,
-                            fontSize: 10,
+                            fontWeight: "600",
                             color: "#0f172a"
                         },
-                        emphasis: {
-                            label: {
-                                show: true,
-                                fontWeight: "600",
-                                color: "#0f172a"
-                            },
-                            itemStyle: {
-                                areaColor: "#bfdbfe"
-                            }
-                        },
                         itemStyle: {
-                            borderColor: "#e5e7eb",
-                            borderWidth: 1
-                        },
-                        data: seriesData
-                    }]
-                };
+                            areaColor: "#bfdbfe"
+                        }
+                    },
+                    itemStyle: {
+                        borderColor: "#e5e7eb",
+                        borderWidth: 1
+                    },
+                    data: seriesData
+                }]
+            };
 
-                mapChart.setOption(option);
-                window.addEventListener("resize", () => mapChart.resize());
-            })
-            .catch(err => {
-                console.error("Gagal memuat GeoJSON Kaltim:", err);
-            });
+            mapChart.setOption(option);
+            window.addEventListener("resize", () => mapChart.resize());
+        }
+
+        if (geoJsonUrl) {
+            fetch(geoJsonUrl)
+                .then(resp => {
+                    if (!resp.ok) throw new Error("GeoJSON tidak ditemukan");
+                    return resp.json();
+                })
+                .then(renderKaltimMap)
+                .catch(err => {
+                    console.warn("Gagal memuat GeoJSON dari url, pakai embedded:", err);
+                    renderKaltimMap(embeddedGeoJson);
+                });
+        } else {
+            renderKaltimMap(embeddedGeoJson);
+        }
     }
 
     // ==================== 2. PIE CHART KOMPOSISI STATUS ====================

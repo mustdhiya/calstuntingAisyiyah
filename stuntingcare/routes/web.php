@@ -49,6 +49,7 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
     // Analisis
     Route::controller(AnalisisController::class)->group(function () {
         Route::get('/analisis', 'index')->name('analisis');
+        Route::get('/analisis/peta', 'peta')->name('analisis.peta');
         Route::get('/analisis/export', 'exportCsv')->name('analisis.export');
     });
 

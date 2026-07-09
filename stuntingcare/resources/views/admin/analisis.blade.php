@@ -97,13 +97,6 @@
               </p>
               <p class="text-xl font-semibold text-amber-600">{{ $totalRisiko }}</p>
             </div>
-            <div class="bg-white border border-slate-200 rounded-2xl p-4">
-              <p class="text-xs text-slate-500 mb-1 flex items-center gap-1">
-                <span class="material-symbols-rounded text-sm">warning</span>
-                Stunting & Stunting Berat
-              </p>
-              <p class="text-xl font-semibold text-rose-600">{{ $totalStunting + $totalBerat }}</p>
-            </div>
           </div>
 
           <!-- Chart komposisi status -->
@@ -113,7 +106,7 @@
                 <span class="material-symbols-rounded text-sm text-slate-600">pie_chart</span>
                 Komposisi status risiko
               </h2>
-              <span class="text-[11px] text-slate-500">Data semua pemeriksaan</span>
+              <span class="text-[11px] text-slate-500">Data 30 hari terakhir</span>
             </div>
             <div class="h-56">
               <canvas id="statusChart"></canvas>
@@ -363,6 +356,12 @@
             </div>
           @endif
         </div>
+
+     <a href="{{ route('admin.analisis.peta') }}"
+       class="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-full bg-emerald-600 text-white text-xs md:text-sm font-semibold shadow-lg hover:bg-emerald-700 transition">
+      <span class="material-symbols-rounded text-base md:text-lg">map</span>
+      <span>Peta analisis per kab/kota</span>
+    </a>
 
 @endsection
 

@@ -291,7 +291,7 @@
               <div class="relative">
                 <span class="material-symbols-rounded absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xl pointer-events-none">person</span>
                 <input type="text" name="nama_anak" placeholder="Contoh: Aulia Rahma"
-                       value="{{ old('nama_anak', 'Aulia Rahma') }}"
+                       value="{{ old('nama_anak') }}"
                        class="input input-bordered w-full pl-10 focus:border-green-500 text-sm" />
               </div>
             </div>

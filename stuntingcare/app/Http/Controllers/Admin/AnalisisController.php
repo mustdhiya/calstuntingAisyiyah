@@ -33,12 +33,13 @@ class AnalisisController extends Controller
 
         $measurements = $query->paginate(10)->withQueryString();
 
-        // ----- Summary stats -----
-        $totalAll      = Measurement::count();
-        $totalNormal   = Measurement::where('status_growth', 'Normal')->count();
-        $totalRisiko   = Measurement::where('status_growth', 'Risiko')->count();
-        $totalStunting = Measurement::where('status_growth', 'Stunting')->count();
-        $totalBerat    = Measurement::where('status_growth', 'Stunting Berat')->count();
+        // ----- Summary stats (30 hari terakhir) -----
+        $thirtyDaysAgo = now()->subDays(30);
+        $totalAll      = Measurement::where('created_at', '>=', $thirtyDaysAgo)->count();
+        $totalNormal   = Measurement::where('status_growth', 'Normal')->where('created_at', '>=', $thirtyDaysAgo)->count();
+        $totalRisiko   = Measurement::where('status_growth', 'Risiko')->where('created_at', '>=', $thirtyDaysAgo)->count();
+        $totalStunting = Measurement::where('status_growth', 'Stunting')->where('created_at', '>=', $thirtyDaysAgo)->count();
+        $totalBerat    = Measurement::where('status_growth', 'Stunting Berat')->where('created_at', '>=', $thirtyDaysAgo)->count();
 
         // ----- Chart: Pie komposisi status -----
         $chartStatus = [
@@ -60,15 +61,16 @@ class AnalisisController extends Controller
         $chartAge = [];
         foreach ($ageGroups as $label => [$min, $max]) {
             $chartAge[$label] = [
-                'Normal'         => Measurement::where('status_growth', 'Normal')->whereBetween('age_months', [$min, $max])->count(),
-                'Risiko'         => Measurement::where('status_growth', 'Risiko')->whereBetween('age_months', [$min, $max])->count(),
-                'Stunting'       => Measurement::where('status_growth', 'Stunting')->whereBetween('age_months', [$min, $max])->count(),
-                'Stunting Berat' => Measurement::where('status_growth', 'Stunting Berat')->whereBetween('age_months', [$min, $max])->count(),
+                'Normal'         => Measurement::where('status_growth', 'Normal')->where('created_at', '>=', $thirtyDaysAgo)->whereBetween('age_months', [$min, $max])->count(),
+                'Risiko'         => Measurement::where('status_growth', 'Risiko')->where('created_at', '>=', $thirtyDaysAgo)->whereBetween('age_months', [$min, $max])->count(),
+                'Stunting'       => Measurement::where('status_growth', 'Stunting')->where('created_at', '>=', $thirtyDaysAgo)->whereBetween('age_months', [$min, $max])->count(),
+                'Stunting Berat' => Measurement::where('status_growth', 'Stunting Berat')->where('created_at', '>=', $thirtyDaysAgo)->whereBetween('age_months', [$min, $max])->count(),
             ];
         }
 
         // ----- Per kota (peta) -----
-        $perKota = Measurement::selectRaw('city, status_growth, count(*) as total')
+        $perKota = Measurement::where('created_at', '>=', $thirtyDaysAgo)
+            ->selectRaw('city, status_growth, count(*) as total')
             ->groupBy('city', 'status_growth')
             ->get()
             ->groupBy('city')
@@ -104,6 +106,11 @@ class AnalisisController extends Controller
             'ageMin',
             'ageMax'
         ));
+    }
+
+    public function peta()
+    {
+        return view('admin.analisis-peta');
     }
 
     public function exportCsv(Request $request)

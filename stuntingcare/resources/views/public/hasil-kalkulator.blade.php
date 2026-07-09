@@ -225,7 +225,7 @@
                 $alertBorder = str_replace('-50', '-100', $alertBorder);
               @endphp
               <div class="alert {{ $alertBg }} border {{ $alertBorder }}">
-                <span class="material-symbols-rounded {{ $rec['color'] }}">{{ $rec['icon'] }}</span>
+                <span class="material-symbols-rounded {{ $rec['color'] }}">check_circle</span>
                 <span><strong>{{ $rec['title'] }}:</strong> {{ $rec['desc'] }}</span>
               </div>
             @endforeach
