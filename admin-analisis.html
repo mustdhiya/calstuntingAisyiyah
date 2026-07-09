@@ -16,8 +16,10 @@
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Chart.js (ringan, 1 file) -->
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Apache ECharts -->
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 
   <style>
     body {
@@ -31,8 +33,15 @@
     .badge-status-risiko   { background-color: #FFF3E0; color:#E65100; }
     .badge-status-stunting { background-color:#FFEBEE; color:#C62828; }
     .badge-status-berat    { background-color:#FFEBEE; color:#B71C1C; }
+
+    /* Tombol mengambang di card peta */
+    .map-fab {
+      @apply btn btn-primary btn-sm rounded-full;
+      box-shadow: 0 8px 24px rgba(15,23,42,0.25);
+    }
   </style>
 </head>
+
 
 <body class="bg-slate-50 text-slate-800">
 
@@ -104,33 +113,70 @@
 
       <!-- Main content -->
       <section class="lg:col-span-9 space-y-4">
-      <!-- ====== PETA KALIMANTAN TIMUR (GEOCHART) ====== -->
-      <div class="bg-white border border-slate-200 rounded-2xl p-4">
-        <div class="flex items-center justify-between mb-2">
-          <h2 class="text-sm font-semibold text-slate-900 flex items-center gap-1.5">
-            <span class="material-symbols-rounded text-sm text-slate-600">map</span>
-            Peta sebaran risiko per kabupaten/kota (Kaltim)
-          </h2>
-          <span class="text-[11px] text-slate-500">
-            Warna lebih pekat = nilai lebih tinggi
-          </span>
-        </div>
 
-        <!-- Container peta -->
-        <div id="kaltim-map" class="w-full h-72 md:h-80 lg:h-96"></div>
-
-        <div class="mt-3 flex flex-wrap gap-3 text-[11px] text-slate-500">
-          <div class="flex items-center gap-1">
-            <span class="w-4 h-3 rounded-full"
-                  style="background: linear-gradient(to right,#ecfdf3,#22c55e);"></span>
-            <span>Level risiko (rendah → tinggi)</span>
+        <!-- ====== PETA KALIMANTAN TIMUR (ECharts) ====== -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-2">
+            <h2 class="text-sm font-semibold text-slate-900 flex items-center gap-1.5">
+              <span class="material-symbols-rounded text-sm text-slate-600">map</span>
+              Peta sebaran risiko per kabupaten/kota (Kaltim)
+            </h2>
+            <span class="text-[11px] text-slate-500">
+              Warna lebih pekat = nilai lebih tinggi
+            </span>
           </div>
-          <span class="flex items-center gap-1">
-            <span class="material-symbols-rounded text-sm">info</span>
-            Arahkan kursor ke kabupaten/kota untuk melihat detail nilai
-          </span>
+
+          <!-- Container peta -->
+          <div id="kaltim-map" class="relative w-full h-72 md:h-80 lg:h-96">
+            <!-- Floating info panel -->
+            <div id="info-panel"
+                 class="absolute top-3 right-3 z-20 w-60 rounded-2xl border border-slate-200 shadow-lg p-4 bg-white/95 backdrop-blur hidden">
+              <div class="flex items-center justify-between mb-2">
+                <span id="panel-status-badge" class="badge badge-sm rounded-full text-[10px] font-semibold px-2 py-2"></span>
+                <span id="panel-rank" class="text-[10px] text-slate-400 font-medium"></span>
+              </div>
+              <h3 id="panel-nama" class="text-sm font-bold text-slate-900 mb-2">—</h3>
+              <div class="space-y-1.5 text-xs">
+                <div class="flex justify-between">
+                  <span class="text-slate-500">Nilai</span>
+                  <span id="panel-nilai" class="font-semibold text-slate-800">—</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-500">Persentase</span>
+                  <span id="panel-persen" class="font-semibold text-slate-800">—</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-500">Kontribusi</span>
+                  <span id="panel-kontribusi" class="font-semibold text-slate-800">—</span>
+                </div>
+              </div>
+              <div class="mt-3 pt-2 border-t border-slate-100">
+                <progress id="panel-progress" class="progress progress-success w-full h-1.5" value="0" max="100"></progress>
+              </div>
+            </div>
+
+            <!-- Overlay status loading/error -->
+            <div id="map-status" class="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-slate-50/70">
+              <div class="flex items-center gap-2 text-slate-500 text-xs">
+                <span class="loading loading-spinner loading-xs"></span>
+                <span id="map-status-text">Memuat peta...</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-3 flex flex-wrap gap-3 text-[11px] text-slate-500">
+            <div class="flex items-center gap-1">
+              <span class="w-4 h-3 rounded-full"
+                    style="background: linear-gradient(to right,#ecfdf3,#22c55e);"></span>
+              <span>Level risiko (rendah → tinggi)</span>
+            </div>
+            <span class="flex items-center gap-1">
+              <span class="material-symbols-rounded text-sm">info</span>
+              Arahkan kursor ke kabupaten/kota untuk melihat detail nilai
+            </span>
+          </div>
         </div>
-      </div>
+
         <!-- Header -->
         <div class="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <div>
@@ -280,7 +326,6 @@
             <canvas id="ageChart"></canvas>
           </div>
         </div>
-        
 
         <!-- Tabel hasil -->
         <div class="bg-white border border-slate-200 rounded-2xl p-4">
@@ -305,7 +350,6 @@
                 </tr>
               </thead>
               <tbody class="text-xs">
-                <!-- Baris contoh 1 -->
                 <tr class="hover">
                   <td>1</td>
                   <td>
@@ -330,7 +374,6 @@
                   </td>
                 </tr>
 
-                <!-- Baris contoh 2 -->
                 <tr class="hover">
                   <td>2</td>
                   <td>
@@ -355,7 +398,6 @@
                   </td>
                 </tr>
 
-                <!-- Baris contoh 3 -->
                 <tr class="hover">
                   <td>3</td>
                   <td>
@@ -383,7 +425,6 @@
             </table>
           </div>
 
-          <!-- Pagination sederhana -->
           <div class="flex items-center justify-between mt-4">
             <p class="text-xs text-slate-500">Halaman 1 dari 13</p>
             <div class="join">
@@ -400,7 +441,7 @@
           </div>
         </div>
 
-        <!-- Panel detail (review cepat) -->
+        <!-- Panel detail -->
         <div class="bg-white border border-slate-200 rounded-2xl p-4">
           <div class="flex items-center justify-between mb-3">
             <h2 class="text-sm font-semibold text-slate-900 flex items-center gap-1.5">
@@ -462,37 +503,30 @@
       </section>
     </div>
   </main>
-    <!-- Apache ECharts (CDN) -->
+
+  <!-- Apache ECharts (CDN) -->
   <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
 
-  <!-- Script Chart.js & ECharts (dashboard) -->
   <script>
-    // === DATA DASHBOARD (SAMAKAN DENGAN DATA LAIN DI DASHBOARD) ===
-    // Nanti isi dari Django / backend, contoh:
-    // const totalNormal   = {{ total_normal }};
-    // const totalRisiko   = {{ total_risiko }};
-    // dst.
+    // === DATA DASHBOARD ===
     const totalNormal   = 74;
     const totalRisiko   = 32;
     const totalStunting = 18;
     const totalBerat    = 4;
 
-    // Data per kab/kota Kaltim – HARUS sinkron dengan dashboard Anda.
-    // Misal ini total kasus risiko tinggi per kabupaten.
     const kaltimData = {
-      "Samarinda":            18,
-      "Balikpapan":           12,
+      "Samarinda":             18,
+      "Balikpapan":            12,
       "Bontang":               7,
-      "Kutai Kartanegara":    25,
-      "Kutai Timur":          20,
-      "Kutai Barat":          15,
-      "Berau":                10,
-      "Paser":                14,
+      "Kutai Kartanegara":     25,
+      "Kutai Timur":           20,
+      "Kutai Barat":           15,
+      "Berau":                 10,
+      "Paser":                 14,
       "Penajam Paser Utara":   9,
       "Mahakam Ulu":           5
     };
 
-    // Mapping nama di GeoJSON -> nama yang dipakai di dashboard
     const nameMapping = {
       "KOTA SAMARINDA": "Samarinda",
       "KOTA BALIKPAPAN": "Balikpapan",
@@ -506,100 +540,116 @@
       "MAHAKAM ULU": "Mahakam Ulu"
     };
 
-    // Hitung min & max untuk visualMap
     const values = Object.values(kaltimData);
     const minVal = Math.min.apply(null, values);
     const maxVal = Math.max.apply(null, values);
 
+    // Embedded GeoJSON placeholder
+    const embeddedGeoJson = {
+      "type": "FeatureCollection",
+      "name": "Kabupaten-Kota (Provinsi Kalimantan Timur)",
+      "crs": {
+        "type": "name",
+        "properties": {
+          "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+        }
+      },
+      "features": [
+        /* isi lengkap geojson kamu di sini */
+      ]
+    };
+
     document.addEventListener("DOMContentLoaded", function () {
-      // ==================== 1. PETA KALIMANTAN TIMUR (ECharts) ====================
       const mapContainer = document.getElementById("kaltim-map");
       if (mapContainer && typeof echarts !== "undefined") {
         const mapChart = echarts.init(mapContainer);
 
-        // NOTE: sesuaikan path dengan setup Anda.
-        // Untuk Django: fetch("{% static 'maps/kalimantan-timur-kabkota.geojson' %}")
-        fetch("/static/maps/kalimantan-timur-kabkota.geojson")
-          .then(resp => resp.json())
-          .then(geoJson => {
-            echarts.registerMap("KaltimKab", geoJson);
+        function renderKaltimMap(geoJson) {
+          echarts.registerMap("KaltimKab", geoJson);
 
-            const seriesData = geoJson.features.map(f => {
-              const rawName = (f.properties.NAME_2 || f.properties.NAME || "").toUpperCase();
-              const displayName = nameMapping[rawName] || rawName;
-              const val = kaltimData[displayName] || 0;
-              return { name: displayName, value: val };
-            });
+          const seriesData = geoJson.features.map(f => {
+            const rawName = (f.properties.NAME_2 || f.properties.NAME || "").toUpperCase();
+            const displayName = nameMapping[rawName] || rawName;
+            const val = kaltimData[displayName] || 0;
+            return { name: displayName, value: val };
+          });
 
-            const option = {
-              tooltip: {
-                trigger: "item",
-                formatter: function (params) {
-                  const value = params.value || 0;
-                  const percentBase = maxVal || 1;
-                  const percent = ((value / percentBase) * 100).toFixed(1);
-                  return `
-                    <div style="font-size:12px;">
-                      <strong>${params.name}</strong><br/>
-                      Nilai: ${value}<br/>
-                      Perbandingan: ${percent}% dari nilai tertinggi
-                    </div>
-                  `;
-                }
+          const option = {
+            tooltip: {
+              trigger: "item",
+              formatter: function (params) {
+                const value = params.value || 0;
+                const percentBase = maxVal || 1;
+                const percent = ((value / percentBase) * 100).toFixed(1);
+                return `
+                  <div style="font-size:12px;">
+                    <strong>${params.name}</strong><br/>
+                    Nilai: ${value}<br/>
+                    Perbandingan: ${percent}% dari nilai tertinggi
+                  </div>
+                `;
+              }
+            },
+            visualMap: {
+              min: minVal,
+              max: maxVal,
+              orient: "vertical",
+              left: "left",
+              top: "middle",
+              text: ["Tinggi", "Rendah"],
+              textStyle: { fontSize: 11, color: "#64748b" },
+              inRange: {
+                color: ["#ecfdf3", "#a7f3d0", "#22c55e", "#15803d"]
               },
-              visualMap: {
-                min: minVal,
-                max: maxVal,
-                orient: "vertical",
-                left: "left",
-                top: "middle",
-                text: ["Tinggi", "Rendah"],
-                textStyle: { fontSize: 11, color: "#64748b" },
-                inRange: {
-                  // Gradasi hijau modern (rendah -> tinggi)
-                  color: ["#ecfdf3", "#a7f3d0", "#22c55e", "#15803d"]
-                },
-                calculable: false,
-                itemWidth: 10,
-                itemHeight: 80
+              calculable: false,
+              itemWidth: 10,
+              itemHeight: 80
+            },
+            series: [{
+              type: "map",
+              map: "KaltimKab",
+              roam: true,
+              zoom: 1.1,
+              label: {
+                show: true,
+                fontSize: 10,
+                color: "#0f172a"
               },
-              series: [{
-                type: "map",
-                map: "KaltimKab",
-                roam: true,
-                zoom: 1.1,
+              emphasis: {
                 label: {
                   show: true,
-                  fontSize: 10,
+                  fontWeight: "600",
                   color: "#0f172a"
                 },
-                emphasis: {
-                  label: {
-                    show: true,
-                    fontWeight: "600",
-                    color: "#0f172a"
-                  },
-                  itemStyle: {
-                    areaColor: "#bfdbfe"
-                  }
-                },
                 itemStyle: {
-                  borderColor: "#e5e7eb",
-                  borderWidth: 1
-                },
-                data: seriesData
-              }]
-            };
+                  areaColor: "#bfdbfe"
+                }
+              },
+              itemStyle: {
+                borderColor: "#e5e7eb",
+                borderWidth: 1
+              },
+              data: seriesData
+            }]
+          };
 
-            mapChart.setOption(option);
-            window.addEventListener("resize", () => mapChart.resize());
+          mapChart.setOption(option);
+          window.addEventListener("resize", () => mapChart.resize());
+        }
+
+        fetch("/static/maps/kalimantan-timur-kabkota.geojson")
+          .then(resp => {
+            if (!resp.ok) throw new Error("GeoJSON tidak ditemukan");
+            return resp.json();
           })
+          .then(renderKaltimMap)
           .catch(err => {
-            console.error("Gagal memuat GeoJSON Kaltim:", err);
+            console.warn("Gagal memuat GeoJSON dari /static, pakai embedded:", err);
+            renderKaltimMap(embeddedGeoJson);
           });
       }
 
-      // ==================== 2. PIE CHART KOMPOSISI STATUS ====================
+      // PIE chart
       const statusCtx = document.getElementById("statusChart");
       if (statusCtx) {
         new Chart(statusCtx, {
@@ -613,9 +663,7 @@
             }]
           },
           options: {
-            plugins: {
-              legend: { display: false }
-            },
+            plugins: { legend: { display: false } },
             cutout: "65%",
             responsive: true,
             maintainAspectRatio: false
@@ -623,7 +671,7 @@
         });
       }
 
-      // ==================== 3. BAR CHART DISTRIBUSI USIA ====================
+      // BAR chart
       const ageCtx = document.getElementById("ageChart");
       if (ageCtx) {
         new Chart(ageCtx, {
@@ -666,16 +714,19 @@
               }
             },
             plugins: {
-              legend: {
-                labels: { font: { size: 11 } }
-              }
+              legend: { labels: { font: { size: 11 } } }
             }
           }
         });
       }
     });
   </script>
-</body>
-</html>
+
+  <!-- === FLOATING ACTION BUTTON: menuju 1admin-analisis.html === -->
+  <a href="1admin-analisis.html"
+     class="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-full bg-emerald-600 text-white text-xs md:text-sm font-semibold shadow-lg hover:bg-emerald-700 transition">
+    <span class="material-symbols-rounded text-base md:text-lg">map</span>
+    <span>Peta analisis per kab/kota</span>
+  </a>
 </body>
 </html>
