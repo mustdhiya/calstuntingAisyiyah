@@ -29,9 +29,8 @@ class AdminMiddleware
                 ->withErrors(['email' => 'Akun Anda dinonaktifkan. Hubungi administrator.']);
         }
 
-        // Hanya admin_wilayah dan koordinator_cabang yang bisa akses panel admin
-        $allowedRoles = ['admin_wilayah', 'koordinator_cabang'];
-        if (! in_array($user->role, $allowedRoles)) {
+        // Hanya admin_wilayah yang bisa akses panel admin
+        if (! $user->isAdminWilayah()) {
             Auth::logout();
             return redirect()->route('login')
                 ->withErrors(['email' => 'Anda tidak memiliki akses ke panel admin.']);

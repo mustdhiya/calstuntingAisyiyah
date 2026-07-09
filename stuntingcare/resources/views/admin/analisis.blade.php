@@ -26,7 +26,7 @@
               Peta sebaran risiko per kabupaten/kota (Kaltim)
             </h2>
             <span class="text-[11px] text-slate-500">
-              Warna lebih pekat = jumlah stunting lebih tinggi
+              Warna lebih pekat = nilai lebih tinggi
             </span>
           </div>
 
@@ -37,7 +37,7 @@
             <div class="flex items-center gap-1">
               <span class="w-4 h-3 rounded-full"
                     style="background: linear-gradient(to right,#ecfdf3,#22c55e);"></span>
-              <span>Jumlah stunting (rendah ? tinggi)</span>
+              <span>Level risiko (rendah → tinggi)</span>
             </div>
             <span class="flex items-center gap-1">
               <span class="material-symbols-rounded text-sm">info</span>
@@ -61,11 +61,11 @@
             </p>
           </div>
           <div class="flex flex-wrap gap-2">
-            <a href="{{ route('admin.analisis.export') }}" class="btn btn-outline btn-sm rounded-full text-xs font-semibold">
+            <a href="{{ route('admin.analisis.export') }}" class="btn btn-outline btn-sm rounded-full">
               <span class="material-symbols-rounded text-sm">download</span>
               Ekspor CSV
             </a>
-            <a href="{{ route('admin.analisis') }}" class="btn btn-primary btn-sm rounded-full text-xs font-semibold">
+            <a href="{{ route('admin.analisis') }}" class="btn btn-primary btn-sm rounded-full">
               <span class="material-symbols-rounded text-sm">refresh</span>
               Segarkan data
             </a>
@@ -133,7 +133,7 @@
           <div class="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
             <!-- Nama / ID -->
             <div class="form-control">
-              <label class="label pb-1">
+              <label class="label">
                 <span class="label-text text-xs font-medium text-slate-700">Cari nama anak</span>
               </label>
               <div class="relative">
@@ -149,7 +149,7 @@
             </div>
             <!-- Status -->
             <div class="form-control">
-              <label class="label pb-1">
+              <label class="label">
                 <span class="label-text text-xs font-medium text-slate-700">Status risiko</span>
               </label>
               <select name="status" class="select select-bordered w-full text-sm h-10 min-h-10">
@@ -162,7 +162,7 @@
             </div>
             <!-- Rentang usia -->
             <div class="form-control">
-              <label class="label pb-1">
+              <label class="label">
                 <span class="label-text text-xs font-medium text-slate-700">Usia (bulan)</span>
               </label>
               <div class="flex gap-2">
@@ -173,11 +173,11 @@
           </div>
 
           <div class="flex gap-2 shrink-0">
-            <a href="{{ route('admin.analisis') }}" class="btn btn-ghost btn-sm rounded-full text-xs">
+            <a href="{{ route('admin.analisis') }}" class="btn btn-ghost btn-sm rounded-full">
               <span class="material-symbols-rounded text-sm">restart_alt</span>
               Reset
             </a>
-            <button type="submit" class="btn btn-primary btn-sm rounded-full text-xs">
+            <button type="submit" class="btn btn-primary btn-sm rounded-full">
               <span class="material-symbols-rounded text-sm">filter_alt</span>
               Terapkan
             </button>
@@ -228,7 +228,7 @@
                     <td>{{ $measurements->firstItem() + $index }}</td>
                     <td>
                       <span class="font-semibold text-slate-800">{{ $m->child_name }}</span>
-                      <div class="text-[10px] text-slate-400">{{ substr($m->id, 0, 8) }}</div>
+                      <div class="text-[11px] text-slate-400">{{ substr($m->id, 0, 8) }}</div>
                     </td>
                     <td>{{ $m->age_months }} bln</td>
                     <td>{{ $m->gender }}</td>
@@ -251,7 +251,7 @@
                     <td>{{ $m->created_at->format('d/m/Y') }}</td>
                     <td>
                       <button type="button" class="btn btn-ghost btn-xs rounded-full text-[10px] flex items-center gap-0.5" onclick="event.stopPropagation(); showQuickDetail({{ json_encode($m) }})">
-                        <span class="material-symbols-rounded text-xs">visibility</span>
+                        <span class="material-symbols-rounded text-xs">open_in_new</span>
                         Detail
                       </button>
                     </td>

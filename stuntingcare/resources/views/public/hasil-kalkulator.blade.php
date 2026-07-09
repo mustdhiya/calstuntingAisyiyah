@@ -49,7 +49,7 @@
           <span class="material-symbols-rounded text-sm text-emerald-600">account_circle</span>
           <span class="max-w-[100px] truncate">{{ Auth::user()->name }}</span>
         </div>
-        @if(Auth::user()->isAdminWilayah() || Auth::user()->isKoordinatorCabang())
+        @if(Auth::user()->isAdminWilayah())
           <a href="{{ route('admin.dashboard') }}" class="btn-hero-primary text-sm !py-2 !px-4 hidden sm:inline-flex bg-slate-800 hover:bg-slate-900 border-none">
             Dashboard
           </a>

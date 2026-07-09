@@ -13,8 +13,9 @@ class DashboardController extends Controller
     {
         $totalMeasurements = Measurement::count();
         $totalNormal       = Measurement::byStatus('Normal')->count();
-        $totalPendek       = Measurement::byStatus('Pendek')->count();
-        $totalSangatPendek = Measurement::byStatus('Sangat Pendek')->count();
+        $totalRisiko       = Measurement::byStatus('Risiko')->count();
+        $totalStunting     = Measurement::byStatus('Stunting')->count();
+        $totalBerat        = Measurement::byStatus('Stunting Berat')->count();
         $totalStunted      = Measurement::stunted()->count();
 
         $totalArticles   = Article::count();
@@ -31,17 +32,64 @@ class DashboardController extends Controller
             ->groupBy('city')
             ->pluck('total', 'city');
 
-        // Recent measurements for the activity feed
-        $recentMeasurements = Measurement::with('kader')
+        // Recent measurements
+        $recentMeasurements = Measurement::latest()->limit(5)->get()->map(function ($item) {
+            return [
+                'type' => 'measurement',
+                'title_prefix' => 'Skrining kalkulator',
+                'bold_text' => $item->child_name,
+                'description' => 'Status: ' . $item->status_growth . ' (' . ($item->city ?? '-') . ')',
+                'icon' => 'calculate',
+                'icon_color' => 'bg-indigo-50 text-indigo-600',
+                'time' => $item->created_at
+            ];
+        });
+
+        // Recent articles
+        $recentArticles = Article::latest()->limit(5)->get()->map(function ($item) {
+            return [
+                'type' => 'article',
+                'title_prefix' => 'Artikel baru',
+                'bold_text' => $item->title,
+                'description' => 'Dibuat oleh ' . ($item->author_name ?? 'Admin'),
+                'icon' => 'article',
+                'icon_color' => 'bg-emerald-50 text-emerald-600',
+                'time' => $item->created_at
+            ];
+        });
+
+        // Recent users (kader_lapangan / koordinator_cabang)
+        $recentUsers = User::whereIn('role', ['kader_lapangan', 'koordinator_cabang'])
             ->latest()
             ->limit(5)
-            ->get();
+            ->get()
+            ->map(function ($item) {
+                $roleName = $item->role === 'kader_lapangan' ? 'Kader' : 'Koordinator';
+                return [
+                    'type' => 'user',
+                    'title_prefix' => $roleName . ' baru bergabung',
+                    'bold_text' => $item->name,
+                    'description' => 'Wilayah: ' . ($item->city ?? '-'),
+                    'icon' => 'group',
+                    'icon_color' => 'bg-sky-50 text-sky-600',
+                    'time' => $item->created_at
+                ];
+            });
+
+        // Gabungkan semua aktivitas dan urutkan berdasarkan created_at descending, ambil 5 teratas
+        $recentActivities = collect()
+            ->merge($recentMeasurements)
+            ->merge($recentArticles)
+            ->merge($recentUsers)
+            ->sortByDesc('time')
+            ->take(5);
 
         return view('admin.dashboard', compact(
             'totalMeasurements',
             'totalNormal',
-            'totalPendek',
-            'totalSangatPendek',
+            'totalRisiko',
+            'totalStunting',
+            'totalBerat',
             'totalStunted',
             'totalArticles',
             'publishedArticles',
@@ -49,7 +97,7 @@ class DashboardController extends Controller
             'totalKader',
             'newUsers30d',
             'kaltimData',
-            'recentMeasurements',
+            'recentActivities',
         ));
     }
 }

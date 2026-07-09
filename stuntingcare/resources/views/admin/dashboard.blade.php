@@ -63,7 +63,7 @@
             </div>
             <p class="text-2xl font-bold text-slate-900">{{ $totalStunted }}</p>
             <p class="text-xs text-slate-500">
-              Kasus pendek & sangat pendek
+              Temuan risiko dari analisis
             </p>
           </div>
 
@@ -75,7 +75,7 @@
             </div>
             <p class="text-2xl font-bold text-slate-900">{{ $totalUsers }}</p>
             <p class="text-xs text-slate-500">
-              {{ $totalKader }} kader aktif
+              {{ $totalKader }} Kader / petugas yang aktif
             </p>
           </div>
         </div>
@@ -96,28 +96,22 @@
             </div>
 
             <ul class="divide-y divide-slate-100 text-sm">
-              @forelse ($recentMeasurements as $m)
+              @forelse ($recentActivities as $act)
               <li class="py-3 flex items-start gap-3">
-                <div class="w-8 h-8 rounded-full
-                  {{ $m->status_growth === 'Normal' ? 'bg-emerald-50 text-emerald-600' : ($m->status_growth === 'Pendek' ? 'bg-amber-50 text-amber-600' : 'bg-rose-50 text-rose-600') }}
-                  flex items-center justify-center">
-                  <span class="material-symbols-rounded text-base">calculate</span>
+                <div class="w-8 h-8 rounded-full {{ $act['icon_color'] }} flex items-center justify-center">
+                  <span class="material-symbols-rounded text-base">{{ $act['icon'] }}</span>
                 </div>
                 <div class="flex-1">
                   <p class="font-medium text-slate-800 text-sm">
-                    Skrining: <span class="font-semibold">{{ $m->child_name ?? 'Tanpa nama' }}</span>
-                    <span class="ml-1 text-xs font-normal
-                      {{ $m->status_growth === 'Normal' ? 'text-emerald-600' : ($m->status_growth === 'Pendek' ? 'text-amber-600' : 'text-rose-600') }}">
-                      · {{ $m->status_growth }}
-                    </span>
+                    {{ $act['title_prefix'] }}: <span class="font-semibold">{{ $act['bold_text'] ?? 'Tanpa nama' }}</span>
                   </p>
                   <p class="text-xs text-slate-500 mt-0.5">
-                    {{ $m->city ?? '-' }} · {{ $m->created_at->diffForHumans() }}
+                    {{ $act['description'] }} · {{ $act['time']->locale('id')->diffForHumans() }}
                   </p>
                 </div>
               </li>
               @empty
-              <li class="py-6 text-center text-slate-400 text-xs">Belum ada data pengukuran.</li>
+              <li class="py-6 text-center text-slate-400 text-xs">Belum ada aktivitas tercatat.</li>
               @endforelse
             </ul>
           </div>
@@ -168,9 +162,10 @@
               Ringkasan hasil analisis
             </h2>
             @php
-              $pctNormal  = $totalMeasurements > 0 ? round($totalNormal / $totalMeasurements * 100) : 0;
-              $pctPendek  = $totalMeasurements > 0 ? round($totalPendek / $totalMeasurements * 100) : 0;
-              $pctSangat  = $totalMeasurements > 0 ? round($totalSangatPendek / $totalMeasurements * 100) : 0;
+              $pctNormal   = $totalMeasurements > 0 ? round($totalNormal / $totalMeasurements * 100) : 0;
+              $pctRisiko   = $totalMeasurements > 0 ? round($totalRisiko / $totalMeasurements * 100) : 0;
+              $pctStunting = $totalMeasurements > 0 ? round($totalStunting / $totalMeasurements * 100) : 0;
+              $pctBerat    = $totalMeasurements > 0 ? round($totalBerat / $totalMeasurements * 100) : 0;
             @endphp
             <div class="space-y-3 text-sm">
               <div class="flex items-center justify-between">
@@ -183,25 +178,34 @@
                 </div>
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-slate-600">Pendek</span>
+                <span class="text-slate-600">Risiko</span>
                 <div class="flex items-center gap-2">
                   <div class="w-24 h-2 rounded-full bg-amber-100">
-                    <div class="h-2 rounded-full bg-amber-500" style="width: {{ $pctPendek }}%;"></div>
+                    <div class="h-2 rounded-full bg-amber-500" style="width: {{ $pctRisiko }}%;"></div>
                   </div>
-                  <span class="text-xs text-slate-500">{{ $pctPendek }}%</span>
+                  <span class="text-xs text-slate-500">{{ $pctRisiko }}%</span>
                 </div>
               </div>
               <div class="flex items-center justify-between">
-                <span class="text-slate-600">Sangat Pendek</span>
+                <span class="text-slate-600">Stunting</span>
+                <div class="flex items-center gap-2">
+                  <div class="w-24 h-2 rounded-full bg-orange-100">
+                    <div class="h-2 rounded-full bg-orange-500" style="width: {{ $pctStunting }}%;"></div>
+                  </div>
+                  <span class="text-xs text-slate-500">{{ $pctStunting }}%</span>
+                </div>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-slate-600">Stunting Berat</span>
                 <div class="flex items-center gap-2">
                   <div class="w-24 h-2 rounded-full bg-rose-100">
-                    <div class="h-2 rounded-full bg-rose-500" style="width: {{ $pctSangat }}%;"></div>
+                    <div class="h-2 rounded-full bg-rose-500" style="width: {{ $pctBerat }}%;"></div>
                   </div>
-                  <span class="text-xs text-slate-500">{{ $pctSangat }}%</span>
+                  <span class="text-xs text-slate-500">{{ $pctBerat }}%</span>
                 </div>
               </div>
               <p class="text-xs text-slate-500 mt-2">
-                Berdasarkan {{ $totalMeasurements }} data skrining yang tercatat. Detail dapat dilihat di menu "Analisis".
+                Berdasarkan {{ $totalMeasurements }} data skrining yang tercatat. Detail dapat dilihat di menu "Hasil analisis".
               </p>
             </div>
           </div>

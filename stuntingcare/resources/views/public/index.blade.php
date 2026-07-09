@@ -626,7 +626,7 @@
               <span class="material-symbols-rounded text-sm text-emerald-600">account_circle</span>
               <span class="max-w-[100px] truncate">{{ Auth::user()->name }}</span>
             </div>
-            @if(Auth::user()->isAdminWilayah() || Auth::user()->isKoordinatorCabang())
+            @if(Auth::user()->isAdminWilayah())
               <a href="{{ route('admin.dashboard') }}" class="btn-hero-primary text-sm !py-2.5 !px-5 hidden sm:inline-flex bg-slate-800 hover:bg-slate-900 border-none">
                 <span class="material-symbols-rounded text-[18px]">dashboard</span>
                 Dashboard
@@ -740,7 +740,7 @@
           @endguest
 
           @auth
-            @if(Auth::user()->isAdminWilayah() || Auth::user()->isKoordinatorCabang())
+            @if(Auth::user()->isAdminWilayah())
               <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-800 hover:bg-slate-50 transition-colors">
                 <span class="material-symbols-rounded text-base text-slate-500">dashboard</span>Dashboard Admin
               </a>

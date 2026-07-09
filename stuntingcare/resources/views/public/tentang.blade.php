@@ -150,7 +150,7 @@
             <span class="material-symbols-rounded text-sm text-brand-600 font-normal">account_circle</span>
             <span class="max-w-[80px] truncate">{{ Auth::user()->name }}</span>
           </div>
-          @if(Auth::user()->isAdminWilayah() || Auth::user()->isKoordinatorCabang())
+          @if(Auth::user()->isAdminWilayah())
             <a href="{{ route('admin.dashboard') }}" class="px-4 py-2 bg-slate-800 text-white text-sm font-semibold rounded-full hover:bg-slate-900 transition-all">
               Dashboard
             </a>
@@ -199,7 +199,7 @@
         @endguest
 
         @auth
-          @if(Auth::user()->isAdminWilayah() || Auth::user()->isKoordinatorCabang())
+          @if(Auth::user()->isAdminWilayah())
             <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-slate-700 hover:bg-slate-50 transition-colors"><span class="material-symbols-rounded text-base">dashboard</span>Dashboard Admin</a>
           @endif
           <form action="{{ route('logout') }}" method="POST" class="w-full">

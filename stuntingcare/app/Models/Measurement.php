@@ -56,6 +56,6 @@ class Measurement extends Model
 
     public function scopeStunted($query)
     {
-        return $query->whereIn('status_growth', ['Pendek', 'Sangat Pendek']);
+        return $query->whereIn('status_growth', ['Risiko', 'Stunting', 'Stunting Berat']);
     }
 }

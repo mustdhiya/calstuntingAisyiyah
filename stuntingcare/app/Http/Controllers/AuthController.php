@@ -42,14 +42,16 @@ class AuthController extends Controller
                     ->withErrors(['email' => 'Akun Anda dinonaktifkan. Hubungi administrator.']);
             }
 
-            $request->session()->regenerate();
-
-            // Pengguna umum (ditambahkan manual oleh admin) diarahkan ke halaman publik
-            if ($user->isPenggunaUmum()) {
-                return redirect()->intended(route('home'));
+            // Pastikan hanya role admin_wilayah yang diperbolehkan login
+            if (! $user->isAdminWilayah()) {
+                Auth::logout();
+                return back()
+                    ->withInput($request->only('email'))
+                    ->withErrors(['email' => 'Hanya Administrator yang diperbolehkan masuk.']);
             }
 
-            // Kader, koordinator, admin diarahkan ke panel admin
+            $request->session()->regenerate();
+
             return redirect()->intended(route('admin.dashboard'));
         }
 
