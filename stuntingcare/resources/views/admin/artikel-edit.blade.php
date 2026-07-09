@@ -2,6 +2,10 @@
 
 @section('title', $article ? 'Edit Artikel' : 'Tambah Artikel')
 
+@section('styles')
+  <link rel="stylesheet" href="{{ asset('css/admin/artikel.css') }}" />
+@endsection
+
 
 
 

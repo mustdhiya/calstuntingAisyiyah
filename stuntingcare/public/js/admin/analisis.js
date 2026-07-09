@@ -1,5 +1,5 @@
 /**
- * admin-analisis.js
+ * analisis.js
  * Logika visualisasi peta sebaran risiko stunting (ECharts), doughnut chart komposisi status,
  * dan bar chart distribusi usia (Chart.js) untuk dashboard analisis admin.
  */
@@ -58,7 +58,7 @@ function showQuickDetail(m) {
     if (m.status_growth === 'Normal') {
         recsEl.textContent = 'Pertumbuhan anak dalam batas normal berdasarkan standar WHO. Pertahankan asupan gizi seimbang, lanjutkan ASI/MPASI berkualitas, dan lakukan imunisasi rutin.';
     } else if (m.status_growth === 'Risiko') {
-        recsEl.textContent = 'Tinggi badan berdasarkan usia berada di kisaran risiko pendek. Perlu pemantauan gizi secara intensif dan evaluasi pertumbuhan berkala.';
+        recsEl.textContent = 'Tinggi badan berdasarkan usia berada di kisaran risiko pendek. Perlu pemantauan gizi secara intensif and evaluasi pertumbuhan berkala.';
     } else {
         recsEl.textContent = 'Tinggi badan berdasarkan usia berada di bawah -2 SD. Sarankan orang tua untuk konsultasi ke Posyandu/Puskesmas, evaluasi pola makan, dan pantau pertumbuhan tiap bulan.';
     }

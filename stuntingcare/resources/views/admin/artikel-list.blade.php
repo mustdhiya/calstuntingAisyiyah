@@ -2,6 +2,10 @@
 
 @section('title', 'Daftar Artikel — Admin')
 
+@section('styles')
+  <link rel="stylesheet" href="{{ asset('css/admin/artikel.css') }}" />
+@endsection
+
 @section('sidebar-extra')
         <div class="bg-amber-50 border border-amber-100 rounded-2xl p-4">
           <div class="flex items-start gap-3">

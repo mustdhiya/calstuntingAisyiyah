@@ -1,5 +1,5 @@
 /**
- * admin-users.js
+ * users.js
  * Script untuk manajemen form tambah/edit pengguna di panel admin.
  */
 

@@ -13,9 +13,7 @@ class AuthController extends Controller
     public function showLogin()
     {
         if (Auth::check()) {
-            return Auth::user()->isPenggunaUmum()
-                ? redirect()->route('home')
-                : redirect()->route('admin.dashboard');
+            return redirect()->route('admin.dashboard');
         }
 
         return view('auth.login');

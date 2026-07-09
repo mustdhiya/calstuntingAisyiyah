@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24..48,400,1,0" rel="stylesheet" />
-<link href="{{ asset('css/admin-analisis-peta.css') }}" rel="stylesheet" />
+<link href="{{ asset('css/admin/analisis-peta.css') }}" rel="stylesheet" />
 </head>
 <body class="bg-slate-200 relative">
 <header class="absolute top-0 left-0 z-30 p-4 flex items-center gap-2">
@@ -52,6 +52,6 @@
 <div id="map-status" class="absolute inset-0 z-40 flex items-center justify-center bg-slate-100/80">
   <div class="flex items-center gap-2 text-slate-500 text-sm"><span class="loading loading-spinner loading-sm"></span><span id="map-status-text">Memuat peta...</span></div>
 </div>
-<script src="{{ asset('js/admin-analisis-peta.js') }}"></script>
+<script src="{{ asset('js/admin/analisis-peta.js') }}"></script>
 </body>
 </html>

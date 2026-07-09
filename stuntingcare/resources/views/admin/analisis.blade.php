@@ -2,6 +2,10 @@
 
 @section('title', 'Hasil Analisis - Admin')
 
+@section('styles')
+  <link rel="stylesheet" href="{{ asset('css/admin/analisis.css') }}" />
+@endsection
+
 @section('sidebar-extra')
         <div class="bg-sky-50 border border-sky-100 rounded-2xl p-4">
           <div class="flex items-start gap-3">
@@ -384,5 +388,5 @@
       chartAgeData: @json($chartAge)
     };
   </script>
-  <script src="{{ asset('js/admin-analisis.js') }}"></script>
+  <script src="{{ asset('js/admin/analisis.js') }}"></script>
 @endsection

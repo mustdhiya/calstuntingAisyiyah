@@ -74,8 +74,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Custom Public CSS (External) -->
-  <link rel="stylesheet" href="{{ asset('css/public.css') }}" />
+  <link rel="stylesheet" href="{{ asset('css/user/global.css') }}" />
+  <link rel="stylesheet" href="{{ asset('css/user/edukasi.css') }}" />
 </head>
 <body class="bg-slate-50 text-slate-800">
 

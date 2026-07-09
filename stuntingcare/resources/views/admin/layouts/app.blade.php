@@ -16,8 +16,7 @@
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Custom Admin CSS (External) -->
-  <link rel="stylesheet" href="{{ asset('css/admin.css') }}" />
+  <link rel="stylesheet" href="{{ asset('css/admin/global.css') }}" />
   @yield('styles')
 </head>
 <body class="bg-slate-50 text-slate-800">
