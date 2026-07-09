@@ -1,8 +1,3 @@
-/**
- * tailwind-config.js
- * Konfigurasi kustom untuk Tailwind Play CDN & DaisyUI.
- */
-
 tailwind.config = {
   theme: {
     extend: {

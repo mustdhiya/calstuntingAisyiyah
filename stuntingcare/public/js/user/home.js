@@ -1,5 +1,5 @@
 /**
- * public-index.js
+ * home.js
  * Script untuk interaksi landing page (index) publik.
  */
 

@@ -13,100 +13,12 @@
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: { sans: ['Inter', 'sans-serif'] },
-          colors: {
-            brand: {
-              50:  '#f0fdf4',
-              100: '#dcfce7',
-              200: '#bbf7d0',
-              500: '#22c55e',
-              600: '#16a34a',
-              700: '#15803d',
-              800: '#166534',
-              900: '#14532d',
-            }
-          }
-        }
-      }
-    }
-  </script>
+  <!-- tailwind.config -->
+  <script src="{{ asset('js/user/tentang-config.js') }}"></script>
 
-  <style>
-    * { -webkit-font-smoothing: antialiased; }
-    body { font-family: 'Inter', sans-serif; }
-    .material-symbols-rounded {
-      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-      vertical-align: -0.125em;
-      line-height: 1;
-    }
-
-    /* Navbar scroll shadow */
-    .nav-shadow { box-shadow: 0 1px 3px 0 rgb(0 0 0 / .06), 0 1px 2px -1px rgb(0 0 0 / .06); }
-
-    /* Hero gradient blob */
-    .hero-blob {
-      background: radial-gradient(ellipse 80% 60% at 50% -10%, #dcfce7 0%, transparent 70%);
-    }
-
-    /* Card hover lift */
-    .card-lift {
-      transition: transform .2s ease, box-shadow .2s ease;
-    }
-    .card-lift:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 28px -8px rgb(0 0 0 / .10);
-    }
-
-    /* Timeline custom */
-    .step-line::after {
-      content: '';
-      position: absolute;
-      left: 50%;
-      top: 100%;
-      width: 2px;
-      height: 2rem;
-      background: linear-gradient(to bottom, #16a34a, #bbf7d0);
-      transform: translateX(-50%);
-    }
-
-    /* Smooth section entrance — pure CSS no JS needed */
-    @media (prefers-reduced-motion: no-preference) {
-      .fade-up {
-        animation: fadeUp .5s ease both;
-      }
-      @keyframes fadeUp {
-        from { opacity: 0; transform: translateY(16px); }
-        to   { opacity: 1; transform: translateY(0); }
-      }
-      .delay-1 { animation-delay: .08s; }
-      .delay-2 { animation-delay: .16s; }
-      .delay-3 { animation-delay: .24s; }
-      .delay-4 { animation-delay: .32s; }
-    }
-
-    /* Mobile menu transition */
-    #mobile-nav {
-      transition: max-height .3s ease, opacity .3s ease;
-      max-height: 0;
-      overflow: hidden;
-      opacity: 0;
-    }
-    #mobile-nav.open {
-      max-height: 500px;
-      opacity: 1;
-    }
-
-    /* Active nav */
-    .nav-active {
-      color: #16a34a;
-      background-color: #f0fdf4;
-      border-radius: .5rem;
-    }
-  </style>
+  <!-- css -->
+  <link rel="stylesheet" href="{{ asset('css/user/global.css') }}" />
+  <link rel="stylesheet" href="{{ asset('css/user/tentang.css') }}" />
 </head>
 
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
