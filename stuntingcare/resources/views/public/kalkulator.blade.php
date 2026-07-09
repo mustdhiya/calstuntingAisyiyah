@@ -6,12 +6,18 @@
   <title>Kalkulator Risiko Stunting — SiCegah Stunting</title>
   <meta name="description" content="Kalkulator skrining awal risiko stunting berbasis standar WHO untuk kader dan masyarakat." />
 
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+
+  <!-- DaisyUI + Tailwind -->
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Choices.js CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
 
   <script>
     tailwind.config = {
@@ -47,7 +53,7 @@
       background: #e2e8f0;
       z-index: 0;
     }
-    .step-item.done::after  { background: #16a34a; }
+    .step-item.done::after { background: #16a34a; }
     .step-item.active::after { background: linear-gradient(90deg, #16a34a 50%, #e2e8f0 50%); }
 
     .step-circle {
@@ -61,10 +67,10 @@
       color: #94a3b8;
       transition: all 0.25s;
     }
-    .step-item.done  .step-circle { background: #16a34a; border-color: #16a34a; color: #fff; }
+    .step-item.done .step-circle { background: #16a34a; border-color: #16a34a; color: #fff; }
     .step-item.active .step-circle { background: #fff; border-color: #16a34a; color: #16a34a; box-shadow: 0 0 0 4px #dcfce7; }
     .step-label { font-size: 11px; font-weight: 500; color: #94a3b8; text-align: center; }
-    .step-item.done  .step-label  { color: #16a34a; }
+    .step-item.done .step-label { color: #16a34a; }
     .step-item.active .step-label { color: #15803d; font-weight: 600; }
 
     /* Input focus ring */
@@ -95,15 +101,17 @@
     }
     .input-unit-wrap input { padding-right: 52px; }
 
-    /* Section card */
-    .form-section { background: #fff; border-radius: 20px; border: 1px solid #e2e8f0; overflow: hidden; }
+    /* Section card: HATI-HATI di sini supaya dropdown tidak ke-scroll di dalam card */
+    .form-section {
+      background: #fff;
+      border-radius: 20px;
+      border: 1px solid #e2e8f0;
+      /* jangan pakai overflow: hidden; supaya dropdown boleh keluar */
+      overflow: visible;
+      position: relative; /* agar dropdown absolute bisa refer ke card */
+    }
     .form-section-header { padding: 22px 28px 0; }
-    .form-section-body   { padding: 20px 28px 28px; }
-
-    /* Collapsible optional section */
-    #optional-section { transition: max-height 0.35s ease, opacity 0.3s ease; overflow: hidden; }
-    #optional-section.collapsed { max-height: 0; opacity: 0; }
-    #optional-section.expanded  { max-height: 800px; opacity: 1; }
+    .form-section-body { padding: 20px 28px 28px; }
 
     /* Sidebar card */
     .info-card { border-radius: 18px; padding: 20px; }
@@ -114,17 +122,55 @@
 
     /* Smooth scroll */
     html { scroll-behavior: smooth; }
+
+    /* === Choices.js + dropdown mengambang di luar card === */
+
+    /* wrapper supaya z-index cukup tinggi */
+    .choices {
+      width: 100%;
+      z-index: 10;   /* di atas isi card */
+      position: relative;
+    }
+
+    .choices__inner {
+      border-radius: 0.75rem;
+      border-color: #e2e8f0;
+      min-height: 2.75rem;
+      font-size: 0.875rem;
+    }
+    .choices__inner.is-focused,
+    .is-open .choices__inner {
+      border-color: #16a34a;
+      box-shadow: 0 0 0 3px #dcfce7;
+    }
+
+    .choices__list--dropdown {
+      position: absolute;       /* mengambang di bawah input */
+      top: 100%;
+      left: 0;
+      right: 0;
+      margin-top: 4px;
+      z-index: 50;              /* di atas card dan disclaimer */
+      max-height: 240px;
+      overflow-y: auto;
+      border-radius: 0.75rem;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.25);
+    }
+
+    .choices__list--dropdown .choices__item--selectable.is-highlighted {
+      background-color: #f0fdf4;
+      color: #15803d;
+    }
   </style>
 </head>
 
 <body class="bg-slate-50 min-h-screen text-slate-800">
 
-<!-- ══════════════════════════════════ NAVBAR ══════════════════════════════════ -->
+<!-- ═════════════════ NAVBAR ═════════════════ -->
 <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-100">
   <nav class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-
     <!-- Logo -->
-    <a href="{{ route('home') }}" class="flex items-center gap-2.5 select-none">
+    <a href="{{ url('/') }}" class="flex items-center gap-2.5 select-none">
       <div class="w-9 h-9 rounded-xl bg-green-600 flex items-center justify-center shadow-sm">
         <span class="material-symbols-rounded text-white text-xl">health_and_safety</span>
       </div>
@@ -136,39 +182,14 @@
 
     <!-- Desktop nav -->
     <div class="hidden lg:flex items-center gap-1">
-      <a href="{{ route('home') }}"      class="px-3 py-2 rounded-lg text-sm text-slate-600 hover:bg-slate-50 hover:text-green-700 transition-colors">Beranda</a>
+      <a href="{{ url('/') }}" class="px-3 py-2 rounded-lg text-sm text-slate-600 hover:bg-slate-50 hover:text-green-700 transition-colors">Beranda</a>
       <a href="{{ route('kalkulator') }}" class="px-3 py-2 rounded-lg text-sm text-green-700 font-semibold bg-green-50">Kalkulator</a>
-      <a href="{{ route('edukasi') }}"    class="px-3 py-2 rounded-lg text-sm text-slate-600 hover:bg-slate-50 hover:text-green-700 transition-colors">Edukasi</a>
-      <a href="{{ route('tentang') }}"    class="px-3 py-2 rounded-lg text-sm text-slate-600 hover:bg-slate-50 hover:text-green-700 transition-colors">Tentang</a>
-      <a href="{{ route('faq') }}"        class="px-3 py-2 rounded-lg text-sm text-slate-600 hover:bg-slate-50 hover:text-green-700 transition-colors">FAQ</a>
+      <a href="{{ route('edukasi') }}" class="px-3 py-2 rounded-lg text-sm text-slate-600 hover:bg-slate-50 hover:text-green-700 transition-colors">Edukasi</a>
+      <a href="{{ url('/tentang') }}" class="px-3 py-2 rounded-lg text-sm text-slate-600 hover:bg-slate-50 hover:text-green-700 transition-colors">Tentang</a>
+      <a href="{{ url('/faq') }}" class="px-3 py-2 rounded-lg text-sm text-slate-600 hover:bg-slate-50 hover:text-green-700 transition-colors">FAQ</a>
     </div>
 
     <div class="hidden lg:flex items-center gap-2">
-      @guest
-        <a href="{{ route('login') }}" class="px-4 py-2 border border-green-600 text-green-700 text-sm font-semibold rounded-full hover:bg-green-50 transition-colors">
-          <span class="material-symbols-rounded text-base">login</span>
-          Masuk
-        </a>
-      @endguest
-
-      @auth
-        <div class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 rounded-full text-xs text-slate-600 font-medium">
-          <span class="material-symbols-rounded text-sm text-green-600 font-normal">account_circle</span>
-          <span class="max-w-[80px] truncate">{{ Auth::user()->name }}</span>
-        </div>
-        @if(Auth::user()->isAdminWilayah() || Auth::user()->isKoordinatorCabang())
-          <a href="{{ route('admin.dashboard') }}" class="px-4 py-2 bg-slate-800 text-white text-sm font-semibold rounded-full hover:bg-slate-900 transition-colors">
-            Dashboard
-          </a>
-        @endif
-        <form action="{{ route('logout') }}" method="POST" class="inline">
-          @csrf
-          <button type="submit" class="px-4 py-2 bg-red-50 text-red-600 text-sm font-semibold rounded-full hover:bg-red-100 transition-colors">
-            Keluar
-          </button>
-        </form>
-      @endauth
-
       <a href="{{ route('hasil') }}" class="flex items-center gap-1.5 px-4 py-2 bg-green-600 text-white text-sm font-semibold rounded-full hover:bg-green-700 transition-colors shadow-sm">
         <span class="material-symbols-rounded text-base">bar_chart</span>
         Contoh Hasil
@@ -184,44 +205,23 @@
   <!-- Mobile menu -->
   <div id="nav-mobile" class="hidden lg:hidden border-t border-slate-100 bg-white px-4 pb-4">
     <div class="flex flex-col gap-1 pt-2">
-      @auth
-        <div class="px-3 py-2 mb-1 bg-slate-50 rounded-lg flex items-center gap-2 text-xs text-slate-600 font-medium">
-          <span class="material-symbols-rounded text-green-600">account_circle</span>
-          <span class="truncate">{{ Auth::user()->name }}</span>
-        </div>
-      @endauth
-
-      <a href="{{ route('home') }}"      class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-slate-700 hover:bg-slate-50"><span class="material-symbols-rounded text-base text-slate-400">home</span>Beranda</a>
+      <a href="{{ url('/') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-slate-700 hover:bg-slate-50"><span class="material-symbols-rounded text-base text-slate-400">home</span>Beranda</a>
       <a href="{{ route('kalkulator') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-green-700 font-semibold bg-green-50"><span class="material-symbols-rounded text-base">calculate</span>Kalkulator</a>
-      <a href="{{ route('edukasi') }}"    class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-slate-700 hover:bg-slate-50"><span class="material-symbols-rounded text-base text-slate-400">menu_book</span>Edukasi</a>
-      <a href="{{ route('tentang') }}"    class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-slate-700 hover:bg-slate-50"><span class="material-symbols-rounded text-base text-slate-400">info</span>Tentang</a>
-      <a href="{{ route('faq') }}"        class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-slate-700 hover:bg-slate-50"><span class="material-symbols-rounded text-base text-slate-400">help</span>FAQ</a>
-
-      @guest
-        <a href="{{ route('login') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-green-700 font-semibold hover:bg-green-50"><span class="material-symbols-rounded text-base">login</span>Masuk Akun</a>
-      @endguest
-
-      @auth
-        @if(Auth::user()->isAdminWilayah() || Auth::user()->isKoordinatorCabang())
-          <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-slate-700 hover:bg-slate-50"><span class="material-symbols-rounded text-base text-slate-400">dashboard</span>Dashboard Admin</a>
-        @endif
-        <form action="{{ route('logout') }}" method="POST" class="w-full">
-          @csrf
-          <button type="submit" class="flex w-full items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-red-600 font-semibold hover:bg-red-50"><span class="material-symbols-rounded text-base">logout</span>Keluar</button>
-        </form>
-      @endauth
+      <a href="{{ route('edukasi') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-slate-700 hover:bg-slate-50"><span class="material-symbols-rounded text-base text-slate-400">menu_book</span>Edukasi</a>
+      <a href="{{ url('/tentang') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-slate-700 hover:bg-slate-50"><span class="material-symbols-rounded text-base text-slate-400">info</span>Tentang</a>
+      <a href="{{ url('/faq') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-slate-700 hover:bg-slate-50"><span class="material-symbols-rounded text-base text-slate-400">help</span>FAQ</a>
     </div>
   </div>
 </header>
 
 
-<!-- ══════════════════════════════════ MAIN ══════════════════════════════════ -->
+<!-- ═════════════════ MAIN ═════════════════ -->
 <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
 
   <!-- Page header -->
   <div class="mb-8">
     <div class="flex items-center gap-2 mb-3">
-      <a href="{{ route('home') }}" class="text-slate-400 hover:text-green-600 transition-colors">
+      <a href="{{ url('/') }}" class="text-slate-400 hover:text-green-600 transition-colors">
         <span class="material-symbols-rounded text-xl">arrow_back</span>
       </a>
       <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-green-700 bg-green-50 border border-green-100 px-3 py-1.5 rounded-full">
@@ -231,29 +231,25 @@
     </div>
     <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">Skrining Awal Risiko Stunting</h1>
     <p class="text-slate-500 text-sm sm:text-base max-w-2xl leading-relaxed">
-      Isi data anak dan data ibu di bawah ini untuk mendapatkan gambaran awal risiko stunting berdasarkan standar pertumbuhan WHO.
+      Isi data anak dan lokasi di Kalimantan di bawah ini untuk mendapatkan gambaran awal risiko stunting berdasarkan standar pertumbuhan WHO.
     </p>
   </div>
 
-  <!-- ── STEP INDICATOR ── -->
+  <!-- STEP indicator -->
   <div class="bg-white rounded-2xl border border-slate-100 p-5 sm:p-6 mb-6 shadow-sm">
     <div class="flex items-start" id="step-tracker">
-      <!-- Step 1 -->
       <div class="step-item done" id="si-1">
         <div class="step-circle"><span class="material-symbols-rounded text-sm">check</span></div>
         <span class="step-label">Data Anak</span>
       </div>
-      <!-- Step 2 -->
       <div class="step-item active" id="si-2">
         <div class="step-circle">2</div>
-        <span class="step-label">Data Ibu</span>
+        <span class="step-label">Lokasi di Kalimantan</span>
       </div>
-      <!-- Step 3 -->
       <div class="step-item" id="si-3">
         <div class="step-circle">3</div>
         <span class="step-label">Analisis</span>
       </div>
-      <!-- Step 4 -->
       <div class="step-item" id="si-4">
         <div class="step-circle">4</div>
         <span class="step-label">Rekomendasi</span>
@@ -261,370 +257,302 @@
     </div>
   </div>
 
-
-  <!-- ── LAYOUT GRID ── -->
+  <!-- GRID layout -->
   <form id="kalkulator-form" action="{{ route('kalkulator.hitung') }}" method="POST" novalidate>
-  @csrf
-  <div class="grid lg:grid-cols-3 gap-6 items-start">
+    @csrf
+    <div class="grid lg:grid-cols-3 gap-6 items-start">
 
-    <!-- ════ LEFT: FORM ════ -->
-    <div class="lg:col-span-2 space-y-5">
+      <!-- LEFT: form -->
+      <div class="lg:col-span-2 space-y-5">
 
-      <!-- ── SECTION 1: Data Anak ── -->
-      <div class="form-section shadow-sm">
-        <div class="form-section-header flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center">
-              <span class="material-symbols-rounded text-green-600">child_care</span>
+        <!-- SECTION 1: Data Anak -->
+        <div class="form-section shadow-sm">
+          <div class="form-section-header flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center">
+                <span class="material-symbols-rounded text-green-600">child_care</span>
+              </div>
+              <div>
+                <h2 class="font-bold text-slate-800 text-base">Data Anak</h2>
+                <p class="text-xs text-slate-400 mt-0.5">Berdasarkan pengukuran terbaru</p>
+              </div>
             </div>
-            <div>
-              <h2 class="font-bold text-slate-800 text-base">Data Anak</h2>
-              <p class="text-xs text-slate-400 mt-0.5">Berdasarkan pengukuran terbaru</p>
-            </div>
-          </div>
-          <span class="text-xs font-semibold text-green-700 bg-green-50 px-2.5 py-1 rounded-full border border-green-100">Wajib</span>
-        </div>
-
-        <div class="form-section-body space-y-5">
-
-          <!-- Nama Anak -->
-          <div class="form-control">
-            <label class="label pb-1.5">
-              <span class="label-text font-semibold text-slate-700 text-sm">Nama Anak</span>
-              <span class="label-text-alt text-slate-400 text-xs">Opsional</span>
-            </label>
-            <div class="relative">
-              <span class="material-symbols-rounded absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xl pointer-events-none">person</span>
-              <input type="text" name="nama_anak" placeholder="Contoh: Aulia Rahma"
-                     class="input input-bordered w-full pl-10 focus:border-green-500 text-sm" />
-            </div>
+            <span class="text-xs font-semibold text-green-700 bg-green-50 px-2.5 py-1 rounded-full border border-green-100">Wajib</span>
           </div>
 
-          <!-- Kota / Kabupaten -->
-          <div class="form-control">
-            <label class="label pb-1.5">
-              <span class="label-text font-semibold text-slate-700 text-sm">Kota / Kabupaten</span>
-              <span class="label-text-alt text-slate-400 text-xs">Opsional</span>
-            </label>
-            <div class="relative">
-              <span class="material-symbols-rounded absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xl pointer-events-none">location_city</span>
-              <select name="kota" class="select select-bordered w-full pl-10 focus:border-green-500 text-sm">
-                <option value="">-- Pilih kota/kabupaten --</option>
-                <option value="Samarinda">Samarinda</option>
-                <option value="Balikpapan">Balikpapan</option>
-                <option value="Bontang">Bontang</option>
-                <option value="Kutai Kartanegara">Kutai Kartanegara</option>
-                <option value="Kutai Timur">Kutai Timur</option>
-                <option value="Kutai Barat">Kutai Barat</option>
-                <option value="Berau">Berau</option>
-                <option value="Paser">Paser</option>
-                <option value="Penajam Paser Utara">Penajam Paser Utara</option>
-                <option value="Mahakam Ulu">Mahakam Ulu</option>
-              </select>
-            </div>
-          </div>
+          <div class="form-section-body space-y-5">
 
-          <!-- Jenis Kelamin — Radio Card -->
-          <div class="form-control">
-            <label class="label pb-1.5">
-              <span class="label-text font-semibold text-slate-700 text-sm flex items-center gap-1">
-                Jenis Kelamin <span class="text-red-400">*</span>
-              </span>
-            </label>
-            <div class="grid grid-cols-2 gap-3">
-              <label class="radio-card">
-                <input type="radio" name="jenis_kelamin" value="L" />
-                <div class="rc-box">
-                  <span class="rc-icon material-symbols-rounded">boy</span>
-                  <span class="rc-label">Laki-laki</span>
+            <!-- Nama Anak -->
+            <div class="form-control">
+              <label class="label pb-1.5">
+                <span class="label-text font-semibold text-slate-700 text-sm">Nama Anak</span>
+                <span class="label-text-alt text-slate-400 text-xs">Opsional</span>
+              </label>
+              <div class="relative">
+                <span class="material-symbols-rounded absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xl pointer-events-none">person</span>
+                <input type="text" name="nama_anak" placeholder="Contoh: Aulia Rahma"
+                       value="{{ old('nama_anak', 'Aulia Rahma') }}"
+                       class="input input-bordered w-full pl-10 focus:border-green-500 text-sm" />
+              </div>
+            </div>
+
+            <!-- Jenis Kelamin -->
+            <div class="form-control">
+              <label class="label pb-1.5">
+                <span class="label-text font-semibold text-slate-700 text-sm flex items-center gap-1">
+                  Jenis Kelamin <span class="text-red-400">*</span>
+                </span>
+              </label>
+              <div class="grid grid-cols-2 gap-3">
+                <label class="radio-card">
+                  <input type="radio" name="jenis_kelamin" value="L" {{ old('jenis_kelamin') === 'L' ? 'checked' : '' }} />
+                  <div class="rc-box">
+                    <span class="rc-icon material-symbols-rounded">boy</span>
+                    <span class="rc-label">Laki-laki</span>
+                  </div>
+                </label>
+                <label class="radio-card">
+                  <input type="radio" name="jenis_kelamin" value="P" {{ old('jenis_kelamin', 'P') === 'P' ? 'checked' : '' }} />
+                  <div class="rc-box">
+                    <span class="rc-icon material-symbols-rounded">girl</span>
+                    <span class="rc-label">Perempuan</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Usia + Tanggal lahir -->
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div class="form-control">
+                <label class="label pb-1.5">
+                  <span class="label-text font-semibold text-slate-700 text-sm flex items-center gap-1">
+                    Usia <span class="text-red-400">*</span>
+                  </span>
+                  <span class="label-text-alt text-slate-400 text-xs">0–60 bulan</span>
+                </label>
+                <div class="input-unit-wrap">
+                  <input type="number" name="usia_bulan" id="usia_bulan" min="0" max="60"
+                         placeholder="24" value="{{ old('usia_bulan') }}"
+                         class="input input-bordered w-full focus:border-green-500 text-sm" required />
+                  <span class="unit-badge">bln</span>
                 </div>
-              </label>
-              <label class="radio-card">
-                <input type="radio" name="jenis_kelamin" value="P" checked />
-                <div class="rc-box">
-                  <span class="rc-icon material-symbols-rounded">girl</span>
-                  <span class="rc-label">Perempuan</span>
-                </div>
-              </label>
-            </div>
-          </div>
-
-          <!-- Usia + Lahir -->
-          <div class="grid sm:grid-cols-2 gap-4">
-            <div class="form-control">
-              <label class="label pb-1.5">
-                <span class="label-text font-semibold text-slate-700 text-sm flex items-center gap-1">
-                  Usia <span class="text-red-400">*</span>
-                </span>
-                <span class="label-text-alt text-slate-400 text-xs">0–60 bulan</span>
-              </label>
-              <div class="input-unit-wrap">
-                <input type="number" name="usia_bulan" id="usia_bulan" min="0" max="60"
-                       placeholder="24"
-                       class="input input-bordered w-full focus:border-green-500 text-sm" required />
-                <span class="unit-badge">bln</span>
               </div>
-            </div>
-            <div class="form-control">
-              <label class="label pb-1.5">
-                <span class="label-text font-semibold text-slate-700 text-sm">Tanggal Lahir</span>
-                <span class="label-text-alt text-slate-400 text-xs">Otomatis hitung usia</span>
-              </label>
-              <input type="date" id="tgl_lahir" name="tanggal_lahir"
-                     class="input input-bordered w-full focus:border-green-500 text-sm" />
-            </div>
-          </div>
-
-          <!-- TB + BB -->
-          <div class="grid sm:grid-cols-2 gap-4">
-            <div class="form-control">
-              <label class="label pb-1.5">
-                <span class="label-text font-semibold text-slate-700 text-sm flex items-center gap-1">
-                  Tinggi / Panjang Badan <span class="text-red-400">*</span>
-                </span>
-              </label>
-              <div class="input-unit-wrap">
-                <input type="number" name="tinggi_badan" min="40" max="130" step="0.1"
-                       placeholder="80.0" value="80"
-                       class="input input-bordered w-full focus:border-green-500 text-sm" required />
-                <span class="unit-badge">cm</span>
-              </div>
-              <label class="label pt-1">
-                <span class="label-text-alt text-slate-400 text-xs flex items-center gap-1">
-                  <span class="material-symbols-rounded text-xs">info</span>
-                  Berbaring jika usia &lt; 24 bln
-                </span>
-              </label>
-            </div>
-            <div class="form-control">
-              <label class="label pb-1.5">
-                <span class="label-text font-semibold text-slate-700 text-sm flex items-center gap-1">
-                  Berat Badan <span class="text-red-400">*</span>
-                </span>
-              </label>
-              <div class="input-unit-wrap">
-                <input type="number" name="berat_badan" min="1" max="50" step="0.1"
-                       placeholder="9.2" value="9.2"
-                       class="input input-bordered w-full focus:border-green-500 text-sm" required />
-                <span class="unit-badge">kg</span>
-              </div>
-            </div>
-          </div>
-
-        </div><!-- /form-section-body -->
-      </div><!-- /section data anak -->
-
-
-   {{--    <!-- ── SECTION 2: Data Ibu ── -->
-      <div class="form-section shadow-sm">
-        <!-- Toggle header -->
-        <button type="button" id="toggle-optional"
-                class="form-section-header w-full flex items-center justify-between py-5 px-7 cursor-pointer hover:bg-slate-50 transition-colors">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-              <span class="material-symbols-rounded text-blue-500">pregnant_woman</span>
-            </div>
-            <div class="text-left">
-              <h2 class="font-bold text-slate-800 text-base">Data Ibu</h2>
-              <p class="text-xs text-slate-400 mt-0.5">Membantu analisis faktor risiko tambahan</p>
-            </div>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="text-xs font-medium text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">Opsional</span>
-            <span class="material-symbols-rounded text-slate-400 text-xl transition-transform" id="toggle-icon">expand_more</span>
-          </div>
-        </button>
-
-        <!-- Collapsible body -->
-        <div id="optional-section" class="expanded px-7 pb-7 space-y-5">
-          <div class="grid sm:grid-cols-3 gap-4">
-
-            <div class="form-control">
-              <label class="label pb-1.5">
-                <span class="label-text font-semibold text-slate-700 text-sm">Tinggi Ibu</span>
-              </label>
-              <div class="input-unit-wrap">
-                <input type="number" name="tinggi_ibu" min="100" max="200" step="0.1"
-                       placeholder="155" value="149"
+              <div class="form-control">
+                <label class="label pb-1.5">
+                  <span class="label-text font-semibold text-slate-700 text-sm">Tanggal Lahir</span>
+                  <span class="label-text-alt text-slate-400 text-xs">Otomatis hitung usia</span>
+                </label>
+                <input type="date" id="tgl_lahir" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}"
                        class="input input-bordered w-full focus:border-green-500 text-sm" />
-                <span class="unit-badge">cm</span>
               </div>
             </div>
 
+            <!-- TB + BB -->
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div class="form-control">
+                <label class="label pb-1.5">
+                  <span class="label-text font-semibold text-slate-700 text-sm flex items-center gap-1">
+                    Tinggi / Panjang Badan <span class="text-red-400">*</span>
+                  </span>
+                </label>
+                <div class="input-unit-wrap">
+                  <input type="number" name="tinggi_badan" min="40" max="130" step="0.1"
+                         placeholder="80.0" value="{{ old('tinggi_badan', '80') }}"
+                         class="input input-bordered w-full focus:border-green-500 text-sm" required />
+                  <span class="unit-badge">cm</span>
+                </div>
+                <label class="label pt-1">
+                  <span class="label-text-alt text-slate-400 text-xs flex items-center gap-1">
+                    <span class="material-symbols-rounded text-xs">info</span>
+                    Berbaring jika usia &lt; 24 bln
+                  </span>
+                </label>
+              </div>
+              <div class="form-control">
+                <label class="label pb-1.5">
+                  <span class="label-text font-semibold text-slate-700 text-sm flex items-center gap-1">
+                    Berat Badan <span class="text-red-400">*</span>
+                  </span>
+                </label>
+                <div class="input-unit-wrap">
+                  <input type="number" name="berat_badan" min="1" max="50" step="0.1"
+                         placeholder="9.2" value="{{ old('berat_badan', '9.2') }}"
+                         class="input input-bordered w-full focus:border-green-500 text-sm" required />
+                  <span class="unit-badge">kg</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- SECTION 2: Lokasi Kalimantan (wajib, dropdown keluar card) -->
+        <div class="form-section shadow-sm">
+          <div class="form-section-header flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
+                <span class="material-symbols-rounded text-blue-500">location_on</span>
+              </div>
+              <div>
+                <h2 class="font-bold text-slate-800 text-base">Tempat Tinggal di Kalimantan</h2>
+                <p class="text-xs text-slate-400 mt-0.5">Gunakan pencarian untuk memilih lokasi</p>
+              </div>
+            </div>
+            <span class="text-xs font-semibold text-red-500 bg-red-50 px-2.5 py-1 rounded-full border border-red-200">
+              Wajib
+            </span>
+          </div>
+
+          <div class="form-section-body space-y-5">
             <div class="form-control">
               <label class="label pb-1.5">
-                <span class="label-text font-semibold text-slate-700 text-sm">Riwayat KEK</span>
+                <span class="label-text font-semibold text-slate-700 text-sm flex items-center gap-1">
+                  Lokasi di Kalimantan <span class="text-red-400">*</span>
+                </span>
+                <span class="label-text-alt text-slate-400 text-xs">Misal: Kota Samarinda</span>
               </label>
-              <select name="riwayat_kek" class="select select-bordered w-full focus:border-green-500 text-sm">
-                <option value="tidak">Tidak</option>
-                <option value="ya" selected>Ya</option>
+
+              <!-- Dropdown Choice.js -->
+              <select id="lokasi_kalimantan" name="lokasi_kalimantan"
+                      class="select select-bordered w-full text-sm"
+                      required>
+                <option value="">Pilih lokasi...</option>
+
+                <!-- Kalimantan Timur -->
+                <option value="samarinda" {{ old('lokasi_kalimantan') === 'samarinda' ? 'selected' : '' }}>Kota Samarinda (Kalimantan Timur)</option>
+                <option value="balikpapan" {{ old('lokasi_kalimantan') === 'balikpapan' ? 'selected' : '' }}>Kota Balikpapan (Kalimantan Timur)</option>
+                <option value="bontang" {{ old('lokasi_kalimantan') === 'bontang' ? 'selected' : '' }}>Kota Bontang (Kalimantan Timur)</option>
+                <option value="kutai_kartanegara" {{ old('lokasi_kalimantan') === 'kutai_kartanegara' ? 'selected' : '' }}>Kab. Kutai Kartanegara (Kalimantan Timur)</option>
+                <option value="kutai_timur" {{ old('lokasi_kalimantan') === 'kutai_timur' ? 'selected' : '' }}>Kab. Kutai Timur (Kalimantan Timur)</option>
+                <option value="berau" {{ old('lokasi_kalimantan') === 'berau' ? 'selected' : '' }}>Kab. Berau (Kalimantan Timur)</option>
+
+                <!-- contoh lain Kalimantan -->
+                <option value="banjarmasin" {{ old('lokasi_kalimantan') === 'banjarmasin' ? 'selected' : '' }}>Kota Banjarmasin (Kalimantan Selatan)</option>
+                <option value="pontianak" {{ old('lokasi_kalimantan') === 'pontianak' ? 'selected' : '' }}>Kota Pontianak (Kalimantan Barat)</option>
+                <option value="tarakan" {{ old('lokasi_kalimantan') === 'tarakan' ? 'selected' : '' }}>Kota Tarakan (Kalimantan Utara)</option>
               </select>
-            </div>
 
-            <div class="form-control">
-              <label class="label pb-1.5">
-                <span class="label-text font-semibold text-slate-700 text-sm">Pendidikan Ibu</span>
-              </label>
-              <select name="pendidikan_ibu" class="select select-bordered w-full focus:border-green-500 text-sm">
-                <option value="sd">SD</option>
-                <option value="smp">SMP</option>
-                <option value="sma" selected>SMA</option>
-                <option value="pt">Perguruan Tinggi</option>
-              </select>
-            </div>
-
-          </div>
-
-          <!-- ASI Eksklusif -->
-          <div class="form-control">
-            <label class="label pb-1.5">
-              <span class="label-text font-semibold text-slate-700 text-sm">ASI Eksklusif 6 Bulan?</span>
-            </label>
-            <div class="flex flex-wrap gap-3">
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input type="radio" name="asi" value="ya" class="radio radio-success radio-sm" />
-                <span class="text-sm text-slate-600">Ya</span>
-              </label>
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input type="radio" name="asi" value="tidak" class="radio radio-success radio-sm" />
-                <span class="text-sm text-slate-600">Tidak</span>
-              </label>
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input type="radio" name="asi" value="tidak_tahu" class="radio radio-success radio-sm" checked />
-                <span class="text-sm text-slate-600">Tidak tahu</span>
-              </label>
+              <span id="lokasi-error" class="mt-1 text-xs text-red-500 hidden">
+                Silakan pilih salah satu lokasi di Kalimantan.
+              </span>
             </div>
           </div>
-
-          <!-- Catatan -->
-          <div class="form-control">
-            <label class="label pb-1.5">
-              <span class="label-text font-semibold text-slate-700 text-sm">Catatan Tambahan</span>
-              <span class="label-text-alt text-slate-400 text-xs">Opsional</span>
-            </label>
-            <textarea name="catatan" rows="2"
-                      placeholder="Riwayat penyakit, kondisi khusus, dll."
-                      class="textarea textarea-bordered w-full focus:border-green-500 text-sm resize-none"></textarea>
-          </div>
         </div>
-      </div><!-- /section data ibu --> --}}
 
+        <!-- Disclaimer -->
+        <div class="flex gap-3 bg-amber-50 border border-amber-200 rounded-2xl p-4 text-sm text-amber-800">
+          <span class="material-symbols-rounded text-amber-500 shrink-0 mt-0.5">shield</span>
+          <span>
+            <strong>Catatan:</strong> Hasil skrining ini bersifat indikatif dan <strong>bukan diagnosis medis</strong>.
+            Gunakan data pengukuran terbaru agar hasil lebih relevan. Selalu konsultasikan ke tenaga kesehatan.
+          </span>
+        </div>
 
-      <!-- ── NOTICE: Disclaimer single ── -->
-      <div class="flex gap-3 bg-amber-50 border border-amber-200 rounded-2xl p-4 text-sm text-amber-800">
-        <span class="material-symbols-rounded text-amber-500 shrink-0 mt-0.5">shield</span>
-        <span>
-          <strong>Catatan:</strong> Hasil skrining ini bersifat indikatif dan <strong>bukan diagnosis medis</strong>.
-          Gunakan data pengukuran terbaru agar hasil lebih relevan. Selalu konsultasikan ke tenaga kesehatan.
-        </span>
+        <!-- ACTION buttons -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
+          <a href="{{ url('/') }}"
+             class="flex items-center gap-2 px-5 py-3 rounded-full border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-colors w-full sm:w-auto justify-center">
+            <span class="material-symbols-rounded text-base">arrow_back</span>
+            Kembali
+          </a>
+          <button type="submit"
+                  class="btn-submit-pulse flex items-center gap-2 px-8 py-3 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-full transition-all shadow-md w-full sm:w-auto justify-center">
+            <span class="material-symbols-rounded text-base">analytics</span>
+            Analisis Risiko Sekarang
+          </button>
+        </div>
+
       </div>
 
-      <!-- ── ACTIONS ── -->
-      <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
-        <a href="{{ route('home') }}"
-           class="flex items-center gap-2 px-5 py-3 rounded-full border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition-colors w-full sm:w-auto justify-center">
-          <span class="material-symbols-rounded text-base">arrow_back</span>
-          Kembali
-        </a>
-        <button type="submit"
-                class="btn-submit-pulse flex items-center gap-2 px-8 py-3 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-full transition-all shadow-md w-full sm:w-auto justify-center">
-          <span class="material-symbols-rounded text-base">analytics</span>
-          Analisis Risiko Sekarang
-        </button>
-      </div>
+      <!-- ════ RIGHT: SIDEBAR ════ -->
+      <aside class="space-y-4 lg:sticky lg:top-24">
 
-    </div><!-- /left col -->
-
-
-    <!-- ════ RIGHT: SIDEBAR ════ -->
-    <aside class="space-y-4 lg:sticky lg:top-24">
-
-      <!-- Panduan singkat -->
-      <div class="info-card bg-green-50 border border-green-100">
-        <div class="flex items-center gap-2 mb-4">
-          <span class="material-symbols-rounded text-green-600">help_center</span>
-          <h3 class="font-bold text-green-800 text-sm">Panduan Pengisian</h3>
-        </div>
-        <ul class="space-y-3 text-xs text-green-900">
-          <li class="flex gap-2.5">
-            <span class="material-symbols-rounded text-green-500 text-base shrink-0">looks_one</span>
-            <span>Isi <strong>usia</strong> dalam bulan, atau gunakan tanggal lahir untuk penghitungan otomatis.</span>
-          </li>
-          <li class="flex gap-2.5">
-            <span class="material-symbols-rounded text-green-500 text-base shrink-0">looks_two</span>
-            <span>Masukkan <strong>tinggi dan berat badan</strong> hasil pengukuran terbaru.</span>
-          </li>
-          <li class="flex gap-2.5">
-            <span class="material-symbols-rounded text-green-500 text-base shrink-0">looks_3</span>
-            <span>Data ibu <strong>opsional</strong> namun membantu analisis faktor risiko lebih lengkap.</span>
-          </li>
-          <li class="flex gap-2.5">
-            <span class="material-symbols-rounded text-green-500 text-base shrink-0">looks_4</span>
-            <span>Klik <strong>"Analisis Risiko"</strong> untuk melihat hasil dan rekomendasi.</span>
-          </li>
-        </ul>
-      </div>
-
-      <!-- Indikator WHO -->
-      <div class="info-card bg-blue-50 border border-blue-100">
-        <div class="flex items-center gap-2 mb-3">
-          <span class="material-symbols-rounded text-blue-500">monitoring</span>
-          <h3 class="font-bold text-blue-800 text-sm">Indikator WHO</h3>
-        </div>
-        <div class="space-y-2.5 text-xs text-blue-900">
-          <div class="flex items-start gap-2">
-            <span class="font-bold text-blue-600 shrink-0 mt-0.5 w-12">TB/U</span>
-            <span>Tinggi Badan per Usia — indikator utama stunting</span>
+        <!-- Panduan singkat -->
+        <div class="info-card bg-green-50 border border-green-100">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="material-symbols-rounded text-green-600">help_center</span>
+            <h3 class="font-bold text-green-800 text-sm">Panduan Pengisian</h3>
           </div>
-          <div class="flex items-start gap-2">
-            <span class="font-bold text-blue-600 shrink-0 mt-0.5 w-12">BB/U</span>
-            <span>Berat Badan per Usia — indikator berat badan</span>
+          <ul class="space-y-3 text-xs text-green-900">
+            <li class="flex gap-2.5">
+              <span class="material-symbols-rounded text-green-500 text-base shrink-0">looks_one</span>
+              <span>Isi <strong>usia</strong> dalam bulan, atau gunakan tanggal lahir untuk penghitungan otomatis.</span>
+            </li>
+            <li class="flex gap-2.5">
+              <span class="material-symbols-rounded text-green-500 text-base shrink-0">looks_two</span>
+              <span>Masukkan <strong>tinggi dan berat badan</strong> hasil pengukuran terbaru.</span>
+            </li>
+            <li class="flex gap-2.5">
+              <span class="material-symbols-rounded text-green-500 text-base shrink-0">looks_3</span>
+              <span>Lokasi Kalimantan <strong>opsional</strong> namun membantu konteks analisis.</span>
+            </li>
+            <li class="flex gap-2.5">
+              <span class="material-symbols-rounded text-green-500 text-base shrink-0">looks_4</span>
+              <span>Klik <strong>"Analisis Risiko"</strong> untuk melihat hasil dan rekomendasi.</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Indikator WHO -->
+        <div class="info-card bg-blue-50 border border-blue-100">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="material-symbols-rounded text-blue-500">monitoring</span>
+            <h3 class="font-bold text-blue-800 text-sm">Indikator WHO</h3>
           </div>
-          <div class="flex items-start gap-2">
-            <span class="font-bold text-blue-600 shrink-0 mt-0.5 w-12">BB/TB</span>
-            <span>Berat per Tinggi — indikator wasting</span>
+          <div class="space-y-2.5 text-xs text-blue-900">
+            <div class="flex items-start gap-2">
+              <span class="font-bold text-blue-600 shrink-0 mt-0.5 w-12">TB/U</span>
+              <span>Tinggi Badan per Usia — indikator utama stunting</span>
+            </div>
+            <div class="flex items-start gap-2">
+              <span class="font-bold text-blue-600 shrink-0 mt-0.5 w-12">BB/U</span>
+              <span>Berat Badan per Usia — indikator berat badan</span>
+            </div>
+            <div class="flex items-start gap-2">
+              <span class="font-bold text-blue-600 shrink-0 mt-0.5 w-12">BB/TB</span>
+              <span>Berat per Tinggi — indikator wasting</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Status legend -->
-      <div class="info-card bg-white border border-slate-100 shadow-sm">
-        <div class="flex items-center gap-2 mb-3">
-          <span class="material-symbols-rounded text-slate-500">legend_toggle</span>
-          <h3 class="font-bold text-slate-700 text-sm">Kategori Hasil</h3>
+        <!-- Status legend -->
+        <div class="info-card bg-white border border-slate-100 shadow-sm">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="material-symbols-rounded text-slate-500">legend_toggle</span>
+            <h3 class="font-bold text-slate-700 text-sm">Kategori Hasil</h3>
+          </div>
+          <div class="space-y-2 text-xs">
+            <div class="flex items-center gap-2.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-green-500 shrink-0"></span>
+              <span class="font-semibold text-green-700">Normal</span>
+              <span class="text-slate-500">TB/U &ge; -2 SD</span>
+            </div>
+            <div class="flex items-center gap-2.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-yellow-400 shrink-0"></span>
+              <span class="font-semibold text-yellow-700">Risiko</span>
+              <span class="text-slate-500">-3 SD s/d -2 SD</span>
+            </div>
+            <div class="flex items-center gap-2.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-orange-500 shrink-0"></span>
+              <span class="font-semibold text-orange-700">Stunting</span>
+              <span class="text-slate-500">&lt; -2 SD</span>
+            </div>
+            <div class="flex items-center gap-2.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-red-600 shrink-0"></span>
+              <span class="font-semibold text-red-700">Stunting Berat</span>
+              <span class="text-slate-500">&lt; -3 SD</span>
+            </div>
+          </div>
         </div>
-        <div class="space-y-2 text-xs">
-          <div class="flex items-center gap-2.5">
-            <span class="w-2.5 h-2.5 rounded-full bg-green-500 shrink-0"></span>
-            <span class="font-semibold text-green-700">Normal</span>
-            <span class="text-slate-500">TB/U ≥ -2 SD</span>
-          </div>
-          <div class="flex items-center gap-2.5">
-            <span class="w-2.5 h-2.5 rounded-full bg-yellow-400 shrink-0"></span>
-            <span class="font-semibold text-yellow-700">Risiko</span>
-            <span class="text-slate-500">-3 SD s/d -2 SD</span>
-          </div>
-          <div class="flex items-center gap-2.5">
-            <span class="w-2.5 h-2.5 rounded-full bg-orange-500 shrink-0"></span>
-            <span class="font-semibold text-orange-700">Stunting</span>
-            <span class="text-slate-500">&lt; -2 SD</span>
-          </div>
-          <div class="flex items-center gap-2.5">
-            <span class="w-2.5 h-2.5 rounded-full bg-red-600 shrink-0"></span>
-            <span class="font-semibold text-red-700">Stunting Berat</span>
-            <span class="text-slate-500">&lt; -3 SD</span>
-          </div>
-        </div>
-      </div>
 
-    </aside><!-- /sidebar -->
-  </div>
+      </aside><!-- /sidebar -->
+
+    </div>
   </form>
-
 </main>
 
 
-<!-- ══════════════════════════════════ FOOTER ══════════════════════════════════ -->
+<!-- ═════════════════ FOOTER ═════════════════ -->
 <footer class="bg-slate-900 text-slate-400 mt-14">
   <div class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
     <div class="grid sm:grid-cols-3 gap-8 mb-8">
@@ -642,17 +570,15 @@
       <div>
         <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-3">Navigasi</h4>
         <div class="flex flex-col gap-1.5 text-sm">
-          <a href="{{ route('home') }}"      class="hover:text-green-400 transition-colors">Beranda</a>
+          <a href="{{ url('/') }}" class="hover:text-green-400 transition-colors">Beranda</a>
           <a href="{{ route('kalkulator') }}" class="hover:text-green-400 transition-colors">Kalkulator</a>
-          <a href="{{ route('hasil') }}"      class="hover:text-green-400 transition-colors">Contoh Hasil</a>
         </div>
       </div>
       <div>
         <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-3">Edukasi</h4>
         <div class="flex flex-col gap-1.5 text-sm">
           <a href="{{ route('edukasi') }}" class="hover:text-green-400 transition-colors">Artikel</a>
-          <a href="{{ route('faq') }}"     class="hover:text-green-400 transition-colors">FAQ</a>
-          <a href="{{ route('kontak') }}"  class="hover:text-green-400 transition-colors">Kontak</a>
+          <a href="{{ url('/faq') }}" class="hover:text-green-400 transition-colors">FAQ</a>
         </div>
       </div>
     </div>
@@ -667,99 +593,93 @@
 </footer>
 
 
-<!-- ══════════════════════════════════ SCRIPTS ══════════════════════════════════ -->
+<!-- ═════════════════ SCRIPTS ═════════════════ -->
+
+<!-- Choices.js JS -->
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
 <script>
-// Mobile nav toggle
-const navToggle = document.getElementById('nav-toggle');
-const navMobile = document.getElementById('nav-mobile');
-const navIcon   = document.getElementById('nav-icon');
-if (navToggle && navMobile && navIcon) {
-  navToggle.addEventListener('click', () => {
-    navMobile.classList.toggle('hidden');
-    navIcon.textContent = navMobile.classList.contains('hidden') ? 'menu' : 'close';
-  });
-}
-
-// Collapsible data ibu
-const toggleBtn  = document.getElementById('toggle-optional');
-const optSection = document.getElementById('optional-section');
-const toggleIcon = document.getElementById('toggle-icon');
-if (toggleBtn && optSection && toggleIcon) {
-  toggleBtn.addEventListener('click', () => {
-    const isExpanded = optSection.classList.contains('expanded');
-    optSection.classList.toggle('expanded', !isExpanded);
-    optSection.classList.toggle('collapsed', isExpanded);
-    toggleIcon.style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(180deg)';
-  });
-}
-
-// Auto-hitung usia dari tanggal lahir
-function calculateAge(event) {
-  const target = event ? event.target : document.getElementById('tgl_lahir');
-  if (!target || !target.value) return;
-  
-  const born = new Date(target.value);
-  const now = new Date();
-  
-  let years = now.getFullYear() - born.getFullYear();
-  let months = now.getMonth() - born.getMonth();
-  let days = now.getDate() - born.getDate();
-  
-  let totalMonths = (years * 12) + months;
-  if (days < 0) {
-    totalMonths--;
+  // Mobile nav toggle
+  const navToggle = document.getElementById('nav-toggle');
+  const navMobile = document.getElementById('nav-mobile');
+  const navIcon = document.getElementById('nav-icon');
+  if (navToggle) {
+    navToggle.addEventListener('click', () => {
+      navMobile.classList.toggle('hidden');
+      navIcon.textContent = navMobile.classList.contains('hidden') ? 'menu' : 'close';
+    });
   }
-  
-  const usiaEl = document.getElementById('usia_bulan');
-  if (usiaEl) {
-    if (totalMonths >= 0 && totalMonths <= 60) {
-      usiaEl.value = totalMonths;
-    } else if (totalMonths > 60) {
-      usiaEl.value = 60;
-    } else {
-      usiaEl.value = 0;
+
+  // Auto-hitung usia dari tanggal lahir
+  const tglLahirEl = document.getElementById('tgl_lahir');
+  if (tglLahirEl) {
+    tglLahirEl.addEventListener('change', function() {
+      if (!this.value) return;
+      const born = new Date(this.value);
+      const now = new Date();
+      const months = Math.floor((now - born) / (1000 * 60 * 60 * 24 * 30.44));
+      const usiaEl = document.getElementById('usia_bulan');
+      if (months >= 0 && months <= 60) {
+        usiaEl.value = months;
+        usiaEl.dispatchEvent(new Event('input'));
+      }
+    });
+  }
+
+  // Form validation (termasuk lokasi wajib)
+  const form = document.getElementById('kalkulator-form');
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      const gender = document.querySelector('input[name="jenis_kelamin"]:checked');
+      const usia = document.getElementById('usia_bulan').value;
+      const tb = document.querySelector('input[name="tinggi_badan"]').value;
+      const bb = document.querySelector('input[name="berat_badan"]').value;
+      const lokasi = document.getElementById('lokasi_kalimantan').value;
+
+      let errors = [];
+      if (!gender) errors.push('Pilih jenis kelamin anak.');
+      if (!usia) errors.push('Isi usia anak.');
+      if (!tb || tb<40||tb>130) errors.push('Tinggi badan tidak valid (40–130 cm).');
+      if (!bb || bb<1 || bb>50) errors.push('Berat badan tidak valid (1–50 kg).');
+      if (!lokasi) errors.push('Pilih lokasi tempat tinggal di Kalimantan.');
+
+      const lokasiErrorEl = document.getElementById('lokasi-error');
+      if (lokasiErrorEl) {
+        if (!lokasi) lokasiErrorEl.classList.remove('hidden');
+        else lokasiErrorEl.classList.add('hidden');
+      }
+
+      if (errors.length) {
+        e.preventDefault();
+        showToast(errors[0]);
+      }
+    });
+  }
+
+  function showToast(msg) {
+    const old = document.getElementById('sc-toast');
+    if (old) old.remove();
+    const t = document.createElement('div');
+    t.id = 'sc-toast';
+    t.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-[999] bg-slate-800 text-white text-sm px-5 py-3 rounded-full shadow-xl flex items-center gap-2';
+    t.innerHTML = `<span class="material-symbols-rounded text-yellow-400 text-base">warning</span>${msg}`;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3500);
+  }
+
+  // Inisialisasi Choices.js
+  document.addEventListener('DOMContentLoaded', function () {
+    const lokasiSelect = document.getElementById('lokasi_kalimantan');
+    if (lokasiSelect) {
+      const lokasiChoices = new Choices(lokasiSelect, {
+        searchEnabled: true,
+        searchPlaceholderValue: 'Cari kota/kabupaten di Kalimantan...',
+        shouldSort: false,
+        itemSelectText: '',
+        removeItemButton: false
+      });
     }
-    usiaEl.dispatchEvent(new Event('input', { bubbles: true }));
-    usiaEl.dispatchEvent(new Event('change', { bubbles: true }));
-  }
-}
-
-const tglLahirEl = document.getElementById('tgl_lahir');
-if (tglLahirEl) {
-  tglLahirEl.addEventListener('change', calculateAge);
-  tglLahirEl.addEventListener('input', calculateAge);
-}
-
-// Form validation
-document.getElementById('kalkulator-form').addEventListener('submit', function(e) {
-  const gender = document.querySelector('input[name="jenis_kelamin"]:checked');
-  const usia   = document.getElementById('usia_bulan').value;
-  const tb     = document.querySelector('input[name="tinggi_badan"]').value;
-  const bb     = document.querySelector('input[name="berat_badan"]').value;
-
-  let errors = [];
-  if (!gender)              errors.push('Pilih jenis kelamin anak.');
-  if (!usia)                errors.push('Isi usia anak.');
-  if (!tb || tb<40||tb>130) errors.push('Tinggi badan tidak valid (40–130 cm).');
-  if (!bb || bb<1 || bb>50) errors.push('Berat badan tidak valid (1–50 kg).');
-
-  if (errors.length) {
-    e.preventDefault();
-    showToast(errors[0]);
-  }
-});
-
-function showToast(msg) {
-  const old = document.getElementById('sc-toast');
-  if (old) old.remove();
-  const t = document.createElement('div');
-  t.id = 'sc-toast';
-  t.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-[999] bg-slate-800 text-white text-sm px-5 py-3 rounded-full shadow-xl flex items-center gap-2';
-  t.innerHTML = `<span class="material-symbols-rounded text-yellow-400 text-base">warning</span>${msg}`;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 3500);
-}
+  });
 </script>
-
 </body>
 </html>

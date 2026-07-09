@@ -21,17 +21,13 @@ class KalkulatorController extends Controller
     public function hitung(Request $request)
     {
         $data = $request->validate([
-            'nama_anak'     => 'nullable|string|max:100',
-            'jenis_kelamin' => 'required|in:L,P',
-            'usia_bulan'    => 'required|integer|min:0|max:60',
-            'tanggal_lahir' => 'nullable|date',
-            'tinggi_badan'  => 'required|numeric|min:40|max:130',
-            'berat_badan'   => 'required|numeric|min:1|max:50',
-            // Optional maternal data
-            'tb_ibu'        => 'nullable|numeric|min:100|max:200',
-            'bb_ibu'        => 'nullable|numeric|min:30|max:150',
-            'asi_eksklusif' => 'nullable|in:ya,tidak',
-            'bpjs'          => 'nullable|in:ya,tidak',
+            'nama_anak'          => 'nullable|string|max:100',
+            'jenis_kelamin'      => 'required|in:L,P',
+            'usia_bulan'         => 'required|integer|min:0|max:60',
+            'tanggal_lahir'      => 'nullable|date',
+            'tinggi_badan'       => 'required|numeric|min:40|max:130',
+            'berat_badan'        => 'required|numeric|min:1|max:50',
+            'lokasi_kalimantan'  => 'required|string|max:100',
         ]);
 
         $gender = $data['jenis_kelamin'];   // L or P
@@ -67,13 +63,28 @@ class KalkulatorController extends Controller
         $ideal_bb = $this->getIdealBB($gender, $usia);
 
         // ---------- Tentukan status_growth untuk disimpan ke DB ----------
-        // Mapping dari code TB/U ke label yang disimpan
+        // Mapping dari code TB/U ke label yang disimpan (4 status baru)
         $statusGrowthMap = [
             'normal'        => 'Normal',
-            'stunting'      => 'Pendek',
-            'stunting_berat'=> 'Sangat Pendek',
+            'risiko'        => 'Risiko',
+            'stunting'      => 'Stunting',
+            'stunting_berat'=> 'Stunting Berat',
         ];
         $statusGrowth = $statusGrowthMap[$status_tbu['code']] ?? 'Normal';
+
+        // Petakan lokasi_kalimantan lowercase ke nama kota database
+        $cityMap = [
+            'samarinda'         => 'Samarinda',
+            'balikpapan'        => 'Balikpapan',
+            'bontang'           => 'Bontang',
+            'kutai_kartanegara' => 'Kutai Kartanegara',
+            'kutai_timur'       => 'Kutai Timur',
+            'berau'             => 'Berau',
+            'banjarmasin'       => 'Banjarmasin',
+            'pontianak'         => 'Pontianak',
+            'tarakan'           => 'Tarakan',
+        ];
+        $city = $cityMap[$data['lokasi_kalimantan']] ?? null;
 
         // ---------- Simpan ke tabel measurements ----------
         Measurement::create([
@@ -84,8 +95,8 @@ class KalkulatorController extends Controller
             'height'        => $tb,
             'weight'        => $bb,
             'status_growth' => $statusGrowth,
-            'city'          => $request->input('kota') ?? null,
-            'asi_eksklusif' => ($request->input('asi_eksklusif') === 'tidak') ? 'Tidak' : 'Ya',
+            'city'          => $city,
+            'asi_eksklusif' => 'Ya', // Default Ya
         ]);
 
         $result = [
@@ -94,6 +105,7 @@ class KalkulatorController extends Controller
             'usia'         => $usia,
             'tb'           => $tb,
             'bb'           => $bb,
+            'city'         => $city ?? '—',
 
             'zscore_tbu'   => round($zscore_tbu, 2),
             'zscore_bbu'   => round($zscore_bbu, 2),
@@ -112,8 +124,8 @@ class KalkulatorController extends Controller
             'recommendations' => $recommendations,
 
             // Extra
-            'asi_eksklusif' => $data['asi_eksklusif'] ?? null,
-            'tb_ibu'        => $data['tb_ibu'] ?? null,
+            'asi_eksklusif' => 'Ya',
+            'tb_ibu'        => null,
         ];
 
         return view('public.hasil-kalkulator', compact('result'));
@@ -160,10 +172,12 @@ class KalkulatorController extends Controller
     {
         if ($z >= -2) {
             return ['label' => 'Normal', 'color' => 'green', 'badge' => 'badge-success', 'code' => 'normal'];
+        } elseif ($z >= -2.5) {
+            return ['label' => 'Risiko', 'color' => 'yellow', 'badge' => 'badge-warning', 'code' => 'risiko'];
         } elseif ($z >= -3) {
-            return ['label' => 'Pendek (Stunting)', 'color' => 'orange', 'badge' => 'badge-warning', 'code' => 'stunting'];
+            return ['label' => 'Stunting', 'color' => 'orange', 'badge' => 'badge-warning bg-orange-500 border-orange-500 text-white', 'code' => 'stunting'];
         } else {
-            return ['label' => 'Sangat Pendek (Stunting Berat)', 'color' => 'red', 'badge' => 'badge-error', 'code' => 'stunting_berat'];
+            return ['label' => 'Stunting Berat', 'color' => 'red', 'badge' => 'badge-error', 'code' => 'stunting_berat'];
         }
     }
 
@@ -195,30 +209,18 @@ class KalkulatorController extends Controller
 
     private function calcRiskScore(float $zscore_tbu, float $zscore_bbu, array $data): float
     {
-        // Z-score TB/U is primary indicator (weight 60%)
-        $tbu_score = $this->zscoreToRisk($zscore_tbu) * 0.60;
+        // Z-score TB/U is primary indicator (weight 75%)
+        $tbu_score = $this->zscoreToRisk($zscore_tbu) * 0.75;
 
         // Z-score BB/U secondary (weight 25%)
         $bbu_score = $this->zscoreToRisk($zscore_bbu) * 0.25;
 
-        // Additional risk factors (weight 15%)
-        $extra = 0;
-        $asi   = $data['asi_eksklusif'] ?? null;
-        if ($asi === 'tidak') $extra += 5;
-
-        $tb_ibu = isset($data['tb_ibu']) ? (float) $data['tb_ibu'] : null;
-        if ($tb_ibu && $tb_ibu < 150) $extra += 5;
-
-        $bpjs = $data['bpjs'] ?? null;
-        if ($bpjs === 'tidak') $extra += 5;
-
-        return min(100, $tbu_score + $bbu_score + $extra);
+        return min(100, $tbu_score + $bbu_score);
     }
 
     private function zscoreToRisk(float $z): float
     {
         // Map Z-score to 0–100 risk range (lower Z = higher risk)
-        // Normal ≥ -2, Risk -3 to -2, High < -3
         if ($z >= -1)  return max(0, 30 - ($z * 10));
         if ($z >= -2)  return 30 + ((-1 - $z) * 20);
         if ($z >= -3)  return 50 + ((-2 - $z) * 30);
@@ -262,7 +264,7 @@ class KalkulatorController extends Controller
             ];
         }
 
-        if ($usia < 6 && ($data['asi_eksklusif'] ?? 'ya') === 'tidak') {
+        if ($usia < 6) {
             $recs[] = [
                 'icon'  => 'child_care',
                 'color' => 'text-sky-600',
@@ -287,16 +289,6 @@ class KalkulatorController extends Controller
             'title' => 'Rutin ke Posyandu setiap bulan',
             'desc'  => 'Pemantauan pertumbuhan rutin memungkinkan deteksi dini masalah gizi sebelum berkembang menjadi stunting permanen.',
         ];
-
-        if (isset($data['tb_ibu']) && (float)$data['tb_ibu'] < 150) {
-            $recs[] = [
-                'icon'  => 'pregnant_woman',
-                'color' => 'text-pink-600',
-                'bg'    => 'bg-pink-50',
-                'title' => 'Perhatikan faktor ibu',
-                'desc'  => 'Tinggi badan ibu yang pendek adalah faktor risiko genetik stunting. Pastikan ibu mendapat asupan gizi yang baik, terutama saat kehamilan berikutnya.',
-            ];
-        }
 
         return $recs;
     }

@@ -35,12 +35,15 @@ function showQuickDetail(m) {
     if (m.status_growth === 'Normal') {
         statusLabel = 'Normal';
         statusBadge.classList.add('badge-status-normal');
-    } else if (m.status_growth === 'Pendek') {
-        statusLabel = 'Risiko stunting';
+    } else if (m.status_growth === 'Risiko') {
+        statusLabel = 'Risiko';
         statusBadge.classList.add('badge-status-risiko');
-    } else {
-        statusLabel = 'Stunting berat';
+    } else if (m.status_growth === 'Stunting') {
+        statusLabel = 'Stunting';
         statusBadge.classList.add('badge-status-stunting');
+    } else {
+        statusLabel = 'Stunting Berat';
+        statusBadge.classList.add('bg-red-100', 'text-red-700');
     }
     statusBadge.textContent = statusLabel;
     
@@ -54,6 +57,8 @@ function showQuickDetail(m) {
     const recsEl = document.getElementById('det-recs');
     if (m.status_growth === 'Normal') {
         recsEl.textContent = 'Pertumbuhan anak dalam batas normal berdasarkan standar WHO. Pertahankan asupan gizi seimbang, lanjutkan ASI/MPASI berkualitas, dan lakukan imunisasi rutin.';
+    } else if (m.status_growth === 'Risiko') {
+        recsEl.textContent = 'Tinggi badan berdasarkan usia berada di kisaran risiko pendek. Perlu pemantauan gizi secara intensif dan evaluasi pertumbuhan berkala.';
     } else {
         recsEl.textContent = 'Tinggi badan berdasarkan usia berada di bawah -2 SD. Sarankan orang tua untuk konsultasi ke Posyandu/Puskesmas, evaluasi pola makan, dan pantau pertumbuhan tiap bulan.';
     }
@@ -210,24 +215,35 @@ document.addEventListener("DOMContentLoaded", function () {
                     {
                         label: "Risiko",
                         data: [
-                            chartAgeData['0-6'] ? chartAgeData['0-6']['Pendek'] : 0,
-                            chartAgeData['7-12'] ? chartAgeData['7-12']['Pendek'] : 0,
-                            chartAgeData['13-24'] ? chartAgeData['13-24']['Pendek'] : 0,
-                            chartAgeData['25-36'] ? chartAgeData['25-36']['Pendek'] : 0,
-                            chartAgeData['37-60'] ? chartAgeData['37-60']['Pendek'] : 0
+                            chartAgeData['0-6'] ? chartAgeData['0-6']['Risiko'] : 0,
+                            chartAgeData['7-12'] ? chartAgeData['7-12']['Risiko'] : 0,
+                            chartAgeData['13-24'] ? chartAgeData['13-24']['Risiko'] : 0,
+                            chartAgeData['25-36'] ? chartAgeData['25-36']['Risiko'] : 0,
+                            chartAgeData['37-60'] ? chartAgeData['37-60']['Risiko'] : 0
                         ],
                         backgroundColor: "#fb923c"
                     },
                     {
                         label: "Stunting",
                         data: [
-                            chartAgeData['0-6'] ? chartAgeData['0-6']['Sangat Pendek'] : 0,
-                            chartAgeData['7-12'] ? chartAgeData['7-12']['Sangat Pendek'] : 0,
-                            chartAgeData['13-24'] ? chartAgeData['13-24']['Sangat Pendek'] : 0,
-                            chartAgeData['25-36'] ? chartAgeData['25-36']['Sangat Pendek'] : 0,
-                            chartAgeData['37-60'] ? chartAgeData['37-60']['Sangat Pendek'] : 0
+                            chartAgeData['0-6'] ? chartAgeData['0-6']['Stunting'] : 0,
+                            chartAgeData['7-12'] ? chartAgeData['7-12']['Stunting'] : 0,
+                            chartAgeData['13-24'] ? chartAgeData['13-24']['Stunting'] : 0,
+                            chartAgeData['25-36'] ? chartAgeData['25-36']['Stunting'] : 0,
+                            chartAgeData['37-60'] ? chartAgeData['37-60']['Stunting'] : 0
                         ],
                         backgroundColor: "#fb7185"
+                    },
+                    {
+                        label: "Stunting Berat",
+                        data: [
+                            chartAgeData['0-6'] ? chartAgeData['0-6']['Stunting Berat'] : 0,
+                            chartAgeData['7-12'] ? chartAgeData['7-12']['Stunting Berat'] : 0,
+                            chartAgeData['13-24'] ? chartAgeData['13-24']['Stunting Berat'] : 0,
+                            chartAgeData['25-36'] ? chartAgeData['25-36']['Stunting Berat'] : 0,
+                            chartAgeData['37-60'] ? chartAgeData['37-60']['Stunting Berat'] : 0
+                        ],
+                        backgroundColor: "#b91c1c"
                     }
                 ]
             },

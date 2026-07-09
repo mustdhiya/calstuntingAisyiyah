@@ -36,15 +36,16 @@ class AnalisisController extends Controller
         // ----- Summary stats -----
         $totalAll      = Measurement::count();
         $totalNormal   = Measurement::where('status_growth', 'Normal')->count();
-        $totalPendek   = Measurement::where('status_growth', 'Pendek')->count();
-        $totalSgtPendek= Measurement::where('status_growth', 'Sangat Pendek')->count();
-        $totalStunting = $totalPendek + $totalSgtPendek; // Risiko + Stunting Berat
+        $totalRisiko   = Measurement::where('status_growth', 'Risiko')->count();
+        $totalStunting = Measurement::where('status_growth', 'Stunting')->count();
+        $totalBerat    = Measurement::where('status_growth', 'Stunting Berat')->count();
 
         // ----- Chart: Pie komposisi status -----
         $chartStatus = [
             'Normal'         => $totalNormal,
-            'Pendek'         => $totalPendek,
-            'Sangat Pendek'  => $totalSgtPendek,
+            'Risiko'         => $totalRisiko,
+            'Stunting'       => $totalStunting,
+            'Stunting Berat' => $totalBerat,
         ];
 
         // ----- Chart: Bar distribusi usia per status -----
@@ -59,9 +60,10 @@ class AnalisisController extends Controller
         $chartAge = [];
         foreach ($ageGroups as $label => [$min, $max]) {
             $chartAge[$label] = [
-                'Normal'        => Measurement::where('status_growth', 'Normal')->whereBetween('age_months', [$min, $max])->count(),
-                'Pendek'        => Measurement::where('status_growth', 'Pendek')->whereBetween('age_months', [$min, $max])->count(),
-                'Sangat Pendek' => Measurement::where('status_growth', 'Sangat Pendek')->whereBetween('age_months', [$min, $max])->count(),
+                'Normal'         => Measurement::where('status_growth', 'Normal')->whereBetween('age_months', [$min, $max])->count(),
+                'Risiko'         => Measurement::where('status_growth', 'Risiko')->whereBetween('age_months', [$min, $max])->count(),
+                'Stunting'       => Measurement::where('status_growth', 'Stunting')->whereBetween('age_months', [$min, $max])->count(),
+                'Stunting Berat' => Measurement::where('status_growth', 'Stunting Berat')->whereBetween('age_months', [$min, $max])->count(),
             ];
         }
 
@@ -74,7 +76,7 @@ class AnalisisController extends Controller
                 $stunting = 0;
                 $normal   = 0;
                 foreach ($rows as $row) {
-                    if (in_array($row->status_growth, ['Pendek', 'Sangat Pendek'])) {
+                    if (in_array($row->status_growth, ['Stunting', 'Stunting Berat'])) {
                         $stunting += $row->total;
                     } else {
                         $normal += $row->total;
@@ -90,7 +92,9 @@ class AnalisisController extends Controller
             'measurements',
             'totalAll',
             'totalNormal',
+            'totalRisiko',
             'totalStunting',
+            'totalBerat',
             'chartStatus',
             'chartAge',
             'mapData',

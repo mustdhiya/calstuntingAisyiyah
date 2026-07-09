@@ -92,10 +92,17 @@
             </div>
             <div class="bg-white border border-slate-200 rounded-2xl p-4">
               <p class="text-xs text-slate-500 mb-1 flex items-center gap-1">
-                <span class="material-symbols-rounded text-sm">warning</span>
-                Risiko & stunting
+                <span class="material-symbols-rounded text-sm">info</span>
+                Risiko Stunting
               </p>
-              <p class="text-xl font-semibold text-amber-600">{{ $totalStunting }}</p>
+              <p class="text-xl font-semibold text-amber-600">{{ $totalRisiko }}</p>
+            </div>
+            <div class="bg-white border border-slate-200 rounded-2xl p-4">
+              <p class="text-xs text-slate-500 mb-1 flex items-center gap-1">
+                <span class="material-symbols-rounded text-sm">warning</span>
+                Stunting & Stunting Berat
+              </p>
+              <p class="text-xl font-semibold text-rose-600">{{ $totalStunting + $totalBerat }}</p>
             </div>
           </div>
 
@@ -111,15 +118,18 @@
             <div class="h-56">
               <canvas id="statusChart"></canvas>
             </div>
-            <div class="mt-3 flex flex-wrap gap-2 text-[11px] text-slate-600">
+            <div class="mt-3 flex flex-wrap gap-3 text-[11px] text-slate-600">
               <span class="inline-flex items-center gap-1">
-                <span class="w-3 h-3 rounded-full bg-emerald-500"></span> Normal
+                <span class="w-3 h-3 rounded-full bg-[#22c55e]"></span> Normal
               </span>
               <span class="inline-flex items-center gap-1">
-                <span class="w-3 h-3 rounded-full bg-amber-400"></span> Pendek (Stunting)
+                <span class="w-3 h-3 rounded-full bg-[#fb923c]"></span> Risiko
               </span>
               <span class="inline-flex items-center gap-1">
-                <span class="w-3 h-3 rounded-full bg-rose-500"></span> Sangat Pendek (Stunting Berat)
+                <span class="w-3 h-3 rounded-full bg-[#fb7185]"></span> Stunting
+              </span>
+              <span class="inline-flex items-center gap-1">
+                <span class="w-3 h-3 rounded-full bg-[#b91c1c]"></span> Stunting berat
               </span>
             </div>
           </div>
@@ -152,8 +162,9 @@
               <select name="status" class="select select-bordered w-full text-sm h-10 min-h-10">
                 <option value="">Semua status</option>
                 <option value="Normal" {{ $status === 'Normal' ? 'selected' : '' }}>Normal</option>
-                <option value="Pendek" {{ $status === 'Pendek' ? 'selected' : '' }}>Pendek (Stunting)</option>
-                <option value="Sangat Pendek" {{ $status === 'Sangat Pendek' ? 'selected' : '' }}>Sangat Pendek (Stunting Berat)</option>
+                <option value="Risiko" {{ $status === 'Risiko' ? 'selected' : '' }}>Risiko</option>
+                <option value="Stunting" {{ $status === 'Stunting' ? 'selected' : '' }}>Stunting</option>
+                <option value="Stunting Berat" {{ $status === 'Stunting Berat' ? 'selected' : '' }}>Stunting Berat</option>
               </select>
             </div>
             <!-- Rentang usia -->
@@ -231,10 +242,11 @@
                     <td>
                       @php
                         $badgeClass = match($m->status_growth) {
-                          'Normal' => 'badge-status-normal',
-                          'Pendek' => 'badge-status-risiko',
-                          'Sangat Pendek' => 'badge-status-stunting',
-                          default => 'badge-status-normal'
+                          'Normal'         => 'badge-status-normal',
+                          'Risiko'         => 'badge-status-risiko',
+                          'Stunting'       => 'badge-status-stunting',
+                          'Stunting Berat' => 'badge-status-stunting bg-red-100 text-red-700',
+                          default          => 'badge-status-normal'
                         };
                       @endphp
                       <span class="badge {{ $badgeClass }} border-none px-2 py-0.5 text-[10px] rounded-full">
@@ -304,17 +316,13 @@
                 <p class="text-slate-500 mb-1">Status</p>
                 @php
                   $defaultBadge = match($defaultDetail->status_growth) {
-                    'Normal'       => 'badge-status-normal',
-                    'Pendek'       => 'badge-status-risiko',
-                    'Sangat Pendek'=> 'badge-status-stunting',
-                    default        => 'badge-status-normal'
+                    'Normal'         => 'badge-status-normal',
+                    'Risiko'         => 'badge-status-risiko',
+                    'Stunting'       => 'badge-status-stunting',
+                    'Stunting Berat' => 'badge-status-stunting bg-red-100 text-red-700',
+                    default          => 'badge-status-normal'
                   };
-                  $statusLabel = match($defaultDetail->status_growth) {
-                    'Normal'       => 'Normal',
-                    'Pendek'       => 'Risiko stunting',
-                    'Sangat Pendek'=> 'Stunting berat',
-                    default        => $defaultDetail->status_growth
-                  };
+                  $statusLabel = $defaultDetail->status_growth;
                 @endphp
                 <span class="badge {{ $defaultBadge }} border-none px-2 py-1 text-[11px] rounded-full" id="det-status-badge">
                   {{ $statusLabel }}
@@ -337,9 +345,11 @@
             <div class="mt-4 border-t border-slate-100 pt-3 text-xs">
               <p class="text-slate-500 mb-1">Catatan &amp; rekomendasi sistem</p>
               <p class="text-slate-700 leading-relaxed" id="det-recs">
-                @if(in_array($defaultDetail->status_growth, ['Pendek', 'Sangat Pendek']))
+                @if(in_array($defaultDetail->status_growth, ['Stunting', 'Stunting Berat']))
                   Tinggi badan berdasarkan usia berada di bawah -2 SD. Sarankan orang tua untuk konsultasi ke Posyandu/Puskesmas,
                   evaluasi pola makan, dan pantau pertumbuhan tiap bulan.
+                @elseif($defaultDetail->status_growth === 'Risiko')
+                  Tinggi badan berdasarkan usia berada di kisaran risiko pendek. Perlu pemantauan gizi secara intensif dan evaluasi pertumbuhan berkala.
                 @else
                   Pertumbuhan anak dalam batas normal berdasarkan standar WHO. Pertahankan asupan gizi seimbang,
                   lanjutkan ASI/MPASI berkualitas, dan lakukan imunisasi rutin.
@@ -367,9 +377,9 @@
   <script>
     window.analisisData = {
       totalNormal: {{ $totalNormal }},
-      totalRisiko: {{ $chartStatus['Pendek'] }},
-      totalStunting: {{ $chartStatus['Sangat Pendek'] }},
-      totalBerat: 0, // Nilai default stunting berat
+      totalRisiko: {{ $totalRisiko }},
+      totalStunting: {{ $totalStunting }},
+      totalBerat: {{ $totalBerat }},
       kaltimData: @json($mapData),
       geoJsonUrl: "{{ asset('static/maps/kalimantan-timur-kabkota.geojson') }}",
       chartAgeData: @json($chartAge)
