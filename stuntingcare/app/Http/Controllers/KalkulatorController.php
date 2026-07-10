@@ -16,24 +16,19 @@ class KalkulatorController extends Controller
     }
 
     /**
-     * Process the calculator form and show results.
+     * Get result data calculated from Z-scores.
      */
-    public function hitung(Request $request)
+    public function getResultData($gender, $usia, $tb, $bb, $namaAnak = 'Anak', $lokasi = 'samarinda', $tglLahir = null)
     {
-        $data = $request->validate([
-            'nama_anak'          => 'nullable|string|max:100',
-            'jenis_kelamin'      => 'required|in:L,P',
-            'usia_bulan'         => 'required|integer|min:0|max:60',
-            'tanggal_lahir'      => 'nullable|date',
-            'tinggi_badan'       => 'required|numeric|min:40|max:130',
-            'berat_badan'        => 'required|numeric|min:1|max:50',
-            'lokasi_kalimantan'  => 'required|string|max:100',
-        ]);
-
-        $gender = $data['jenis_kelamin'];   // L or P
-        $usia   = (int) $data['usia_bulan'];
-        $tb     = (float) $data['tinggi_badan'];
-        $bb     = (float) $data['berat_badan'];
+        $data = [
+            'nama_anak'          => $namaAnak,
+            'jenis_kelamin'      => $gender,
+            'usia_bulan'         => $usia,
+            'tanggal_lahir'      => $tglLahir,
+            'tinggi_badan'       => $tb,
+            'berat_badan'        => $bb,
+            'lokasi_kalimantan'  => $lokasi,
+        ];
 
         // ---------- Z-score calculations ----------
         $zscore_tbu  = $this->calcZscoreTBU($gender, $usia, $tb);
@@ -62,16 +57,6 @@ class KalkulatorController extends Controller
         $ideal_tb = $this->getIdealTB($gender, $usia);
         $ideal_bb = $this->getIdealBB($gender, $usia);
 
-        // ---------- Tentukan status_growth untuk disimpan ke DB ----------
-        // Mapping dari code TB/U ke label yang disimpan (4 status baru)
-        $statusGrowthMap = [
-            'normal'        => 'Normal',
-            'risiko'        => 'Risiko',
-            'stunting'      => 'Stunting',
-            'stunting_berat'=> 'Stunting Berat',
-        ];
-        $statusGrowth = $statusGrowthMap[$status_tbu['code']] ?? 'Normal';
-
         // Petakan lokasi_kalimantan lowercase ke nama kota database
         $cityMap = [
             'samarinda'         => 'Samarinda',
@@ -84,40 +69,10 @@ class KalkulatorController extends Controller
             'pontianak'         => 'Pontianak',
             'tarakan'           => 'Tarakan',
         ];
-        $city = $cityMap[$data['lokasi_kalimantan']] ?? null;
+        $city = $cityMap[strtolower($lokasi)] ?? $lokasi;
 
-        // ---------- Simpan ke tabel measurements ----------
-        $childName = $data['nama_anak'] ?? 'Anak';
-        if ($childName !== 'Anak') {
-            Measurement::updateOrCreate(
-                ['child_name' => $childName],
-                [
-                    'gender'        => $gender,
-                    'age_months'    => $usia,
-                    'birth_date'    => $data['tanggal_lahir'] ?? null,
-                    'height'        => $tb,
-                    'weight'        => $bb,
-                    'status_growth' => $statusGrowth,
-                    'city'          => $city,
-                    'asi_eksklusif' => 'Ya',
-                ]
-            );
-        } else {
-            Measurement::create([
-                'child_name'    => 'Anak',
-                'gender'        => $gender,
-                'age_months'    => $usia,
-                'birth_date'    => $data['tanggal_lahir'] ?? null,
-                'height'        => $tb,
-                'weight'        => $bb,
-                'status_growth' => $statusGrowth,
-                'city'          => $city,
-                'asi_eksklusif' => 'Ya',
-            ]);
-        }
-
-        $result = [
-            'nama_anak'    => $data['nama_anak'] ?? 'Anak',
+        return [
+            'nama_anak'    => $namaAnak,
             'gender'       => $gender,
             'usia'         => $usia,
             'tb'           => $tb,
@@ -144,6 +99,69 @@ class KalkulatorController extends Controller
             'asi_eksklusif' => 'Ya',
             'tb_ibu'        => null,
         ];
+    }
+
+    /**
+     * Process the calculator form and show results.
+     */
+    public function hitung(Request $request)
+    {
+        $data = $request->validate([
+            'nama_anak'          => 'nullable|string|max:100',
+            'jenis_kelamin'      => 'required|in:L,P',
+            'usia_bulan'         => 'required|integer|min:0|max:60',
+            'tanggal_lahir'      => 'nullable|date',
+            'tinggi_badan'       => 'required|numeric|min:40|max:130',
+            'berat_badan'        => 'required|numeric|min:1|max:50',
+            'lokasi_kalimantan'  => 'required|string|max:100',
+        ]);
+
+        $gender = $data['jenis_kelamin'];   // L or P
+        $usia   = (int) $data['usia_bulan'];
+        $tb     = (float) $data['tinggi_badan'];
+        $bb     = (float) $data['berat_badan'];
+
+        $result = $this->getResultData($gender, $usia, $tb, $bb, $data['nama_anak'] ?? 'Anak', $data['lokasi_kalimantan'], $data['tanggal_lahir'] ?? null);
+
+        // ---------- Tentukan status_growth untuk disimpan ke DB ----------
+        // Mapping dari code TB/U ke label yang disimpan (4 status baru)
+        $statusGrowthMap = [
+            'normal'        => 'Normal',
+            'risiko'        => 'Risiko',
+            'stunting'      => 'Stunting',
+            'stunting_berat'=> 'Stunting Berat',
+        ];
+        $statusGrowth = $statusGrowthMap[$result['status_tbu']['code']] ?? 'Normal';
+
+        // ---------- Simpan ke tabel measurements ----------
+        $childName = $data['nama_anak'] ?? 'Anak';
+        if ($childName !== 'Anak') {
+            Measurement::updateOrCreate(
+                ['child_name' => $childName],
+                [
+                    'gender'        => $gender,
+                    'age_months'    => $usia,
+                    'birth_date'    => $data['tanggal_lahir'] ?? null,
+                    'height'        => $tb,
+                    'weight'        => $bb,
+                    'status_growth' => $statusGrowth,
+                    'city'          => $result['city'],
+                    'asi_eksklusif' => 'Ya',
+                ]
+            );
+        } else {
+            Measurement::create([
+                'child_name'    => 'Anak',
+                'gender'        => $gender,
+                'age_months'    => $usia,
+                'birth_date'    => $data['tanggal_lahir'] ?? null,
+                'height'        => $tb,
+                'weight'        => $bb,
+                'status_growth' => $statusGrowth,
+                'city'          => $result['city'],
+                'asi_eksklusif' => 'Ya',
+            ]);
+        }
 
         return view('public.hasil-kalkulator', compact('result'));
     }

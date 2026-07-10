@@ -144,4 +144,20 @@ class AnalisisController extends Controller
 
         return response()->stream($callback, 200, $headers);
     }
+
+    public function detailHasil(Measurement $measurement)
+    {
+        $kalkulator = new \App\Http\Controllers\KalkulatorController();
+        $result = $kalkulator->getResultData(
+            $measurement->gender,
+            $measurement->age_months,
+            $measurement->height,
+            $measurement->weight,
+            $measurement->child_name,
+            $measurement->city ?? 'samarinda',
+            $measurement->birth_date
+        );
+
+        return view('public.hasil-kalkulator', compact('result'));
+    }
 }

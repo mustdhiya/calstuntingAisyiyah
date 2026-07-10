@@ -136,14 +136,14 @@
 
   <main class="max-w-7xl mx-auto px-4 lg:px-8 py-10">
     <section class="mb-8">
-      <div class="badge badge-info badge-outline border-sky-300 text-sky-700 bg-sky-50 rounded-full px-3 py-2.5 mb-3 font-semibold text-[11px]">Pusat Edukasi</div>
-      <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight">Artikel edukasi untuk orang tua dan kader kesehatan</h1>
-      <p class="text-slate-500 mt-2 text-sm max-w-3xl leading-relaxed">Konten disusun dengan bahasa formal yang mudah dipahami agar dapat digunakan sebagai media literasi digital dan bahan komunikasi kesehatan.</p>
+      <div class="badge badge-info badge-outline mb-3">Pusat Edukasi</div>
+      <h1 class="text-3xl md:text-4xl font-extrabold text-slate-900">Artikel edukasi untuk orang tua dan kader kesehatan</h1>
+      <p class="text-slate-600 mt-3 text-sm max-w-3xl">Konten disusun dengan bahasa formal yang mudah dipahami agar dapat digunakan sebagai media literasi digital dan bahan komunikasi kesehatan.</p>
     </section>
 
     <!-- Search and Filter Section -->
     <section class="card bg-white border border-slate-200 shadow-sm mb-8">
-      <div class="card-body gap-4 p-5">
+      <div class="card-body gap-4">
         <form method="GET" action="{{ route('edukasi') }}" class="form-control">
           <label class="input input-bordered flex items-center gap-2">
             <span class="material-symbols-rounded text-slate-500">search</span>

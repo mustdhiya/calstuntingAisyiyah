@@ -62,6 +62,11 @@ function showQuickDetail(m) {
     } else {
         recsEl.textContent = 'Tinggi badan berdasarkan usia berada di bawah -2 SD. Sarankan orang tua untuk konsultasi ke Posyandu/Puskesmas, evaluasi pola makan, dan pantau pertumbuhan tiap bulan.';
     }
+
+    const btnHalamanLengkap = document.getElementById('btn-halaman-lengkap');
+    if (btnHalamanLengkap) {
+        btnHalamanLengkap.href = `/admin/analisis/${m.id}/hasil`;
+    }
 }
 
 document.addEventListener("DOMContentLoaded", function () {

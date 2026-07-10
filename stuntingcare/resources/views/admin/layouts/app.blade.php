@@ -84,6 +84,10 @@
               <span class="material-symbols-rounded text-sm">analytics</span>
               Hasil analisis
             </a>
+            <a href="{{ route('admin.hasil-analisis-risiko') }}" class="flex items-center gap-2 px-3 py-2 rounded-xl {{ request()->routeIs('admin.hasil-analisis-risiko') ? $activeClass : $inactiveClass }}">
+              <span class="material-symbols-rounded text-sm">tune</span>
+              Simulasi Risiko
+            </a>
             <a href="{{ route('admin.pengguna') }}" class="flex items-center gap-2 px-3 py-2 rounded-xl {{ request()->routeIs('admin.pengguna') ? $activeClass : $inactiveClass }}">
               <span class="material-symbols-rounded text-sm">group</span>
               Data pengguna

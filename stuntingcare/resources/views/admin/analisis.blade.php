@@ -254,10 +254,10 @@
                     <td>{{ $m->weight }} kg</td>
                     <td>{{ $m->created_at->format('d/m/Y') }}</td>
                     <td>
-                      <button type="button" class="btn btn-ghost btn-xs rounded-full text-[10px] flex items-center gap-0.5" onclick="event.stopPropagation(); showQuickDetail({{ json_encode($m) }})">
-                        <span class="material-symbols-rounded text-xs">open_in_new</span>
+                      <a href="{{ route('admin.analisis.detail-hasil', $m->id) }}" target="_blank" class="btn btn-ghost btn-xs rounded-full text-[11px]" onclick="event.stopPropagation();">
+                        <span class="material-symbols-rounded text-sm">open_in_new</span>
                         Detail
-                      </button>
+                      </a>
                     </td>
                   </tr>
                 @empty
@@ -283,10 +283,10 @@
               <span class="material-symbols-rounded text-sm text-slate-600">visibility</span>
               Detail singkat pemeriksaan terpilih
             </h2>
-            <button class="btn btn-ghost btn-xs rounded-full text-[11px]">
+            <a href="{{ $defaultDetail ? route('admin.analisis.detail-hasil', $defaultDetail->id) : '#' }}" id="btn-halaman-lengkap" target="_blank" class="btn btn-ghost btn-xs rounded-full text-[11px]">
               <span class="material-symbols-rounded text-sm">open_in_new</span>
               Buka halaman lengkap
-            </button>
+            </a>
           </div>
 
           @if($defaultDetail)
