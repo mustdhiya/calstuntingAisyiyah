@@ -254,10 +254,10 @@
                     <td>{{ $m->weight }} kg</td>
                     <td>{{ $m->created_at->format('d/m/Y') }}</td>
                     <td>
-                      <a href="{{ route('admin.analisis.detail-hasil', $m->id) }}" target="_blank" class="btn btn-ghost btn-xs rounded-full text-[11px]" onclick="event.stopPropagation();">
+                      <button type="button" class="btn btn-ghost btn-xs rounded-full text-[11px]" onclick="event.stopPropagation(); showQuickDetail({{ json_encode($m) }})">
                         <span class="material-symbols-rounded text-sm">open_in_new</span>
                         Detail
-                      </a>
+                      </button>
                     </td>
                   </tr>
                 @empty
