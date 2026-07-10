@@ -1,0 +1,17 @@
+/* Growth status badges */
+.badge-status-normal {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+.badge-status-risiko {
+    background-color: #fff3e0;
+    color: #e65100;
+}
+.badge-status-stunting {
+    background-color: #ffebee;
+    color: #c62828;
+}
+.badge-status-berat {
+    background-color: #ffebee;
+    color: #b71c1c;
+}
