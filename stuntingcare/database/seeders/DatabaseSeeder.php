@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             ArticleSeeder::class,
             MeasurementSeeder::class,
+            RiskRecommendationSeeder::class,
         ]);
     }
 }

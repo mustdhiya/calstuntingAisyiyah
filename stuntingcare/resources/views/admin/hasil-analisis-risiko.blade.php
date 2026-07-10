@@ -51,6 +51,12 @@
   </header>
 
   <main class="max-w-6xl mx-auto px-4 lg:px-8 py-8">
+    @if(session('success'))
+      <div class="alert alert-success shadow-sm mb-6 bg-emerald-50 border-emerald-200 text-emerald-950 text-xs py-3 px-4 rounded-xl flex gap-2 items-center">
+        <span class="material-symbols-rounded text-emerald-600 text-[20px]">check_circle</span>
+        <span>{{ session('success') }}</span>
+      </div>
+    @endif
     <!-- Header -->
     <section class="mb-6">
       <p class="text-xs font-semibold text-emerald-700 mb-1 flex items-center gap-1">
@@ -79,7 +85,11 @@
               Isi parameter di bawah ini. Tekan tombol "Perbarui pratinjau" untuk melihat perubahan pada panel hasil.
             </p>
 
-            <form id="paramForm" class="space-y-4">
+            <form id="paramForm" action="{{ route('admin.hasil-analisis-risiko.simpan') }}" method="POST" class="space-y-4">
+              @csrf
+              <input type="hidden" name="factors_json" id="factorsJson" value="[]">
+              <input type="hidden" name="recommendations_json" id="recommendationsJson" value="[]">
+
               <!-- Status risiko -->
               <div class="form-control">
                 <label class="label">
@@ -87,7 +97,7 @@
                     Status risiko
                   </span>
                 </label>
-                <select id="status" class="select select-bordered select-sm w-full">
+                <select id="status" name="status" class="select select-bordered select-sm w-full">
                   <option value="normal">Normal</option>
                   <option value="rendah">Risiko rendah</option>
                   <option value="sedang" selected>Risiko sedang</option>
@@ -154,6 +164,7 @@
                   </span>
                 </label>
                 <textarea id="catatan"
+                          name="custom_note"
                           class="textarea textarea-bordered textarea-xs w-full"
                           rows="3"
                           placeholder="Contoh: fokus ke pola makan, pemantauan berkala, dan konsultasi bila ada infeksi berulang."></textarea>
@@ -161,7 +172,7 @@
 
               <!-- Tombol -->
               <div class="flex gap-2 pt-2">
-                <button type="button"
+                <button type="submit"
                         id="btnUpdate"
                         class="btn btn-primary btn-sm rounded-full flex-1">
                   <span class="material-symbols-rounded text-sm">refresh</span>
@@ -280,6 +291,8 @@
   </footer>
 
   <script>
+    const dbConfig = @json($dbRecommendations);
+
     const rekomendasiDefault = {
       normal: [
         {
@@ -336,6 +349,13 @@
         }
       ]
     };
+
+    // Sinkronkan data dari database ke variabel rekomendasiDefault jika ada
+    Object.keys(dbConfig).forEach(key => {
+      if (dbConfig[key].recommendations && dbConfig[key].recommendations.length > 0) {
+        rekomendasiDefault[key] = dbConfig[key].recommendations;
+      }
+    });
 
     function getBadgeConfig(status) {
       switch (status) {
@@ -483,16 +503,22 @@
       const hasilTimeline = document.getElementById("hasilTimeline");
       const hasilRekomendasi = document.getElementById("hasilRekomendasi");
 
-      skorInput.addEventListener("input", () => {
-        let val = Number(skorInput.value || 0);
-        if (val < 0) val = 0;
-        if (val > 100) val = 100;
-        skorInput.value = val;
-        labelSkor.textContent = `Posisi saat ini: ${val}`;
-        skorProgress.value = val;
-      });
+      // Fungsi untuk meng-update isian form berdasarkan status yang dipilih dari DB
+      function updateFormFields(status) {
+        const config = dbConfig[status];
+        if (config) {
+          // Update checkbox faktor yang dicentang
+          const checkboxes = form.querySelectorAll('input[type="checkbox"]');
+          checkboxes.forEach(cb => {
+            cb.checked = config.factors ? config.factors.includes(cb.value) : false;
+          });
 
-      document.getElementById("btnUpdate").addEventListener("click", () => {
+          // Update catatan kustom
+          document.getElementById("catatan").value = config.custom_note || "";
+        }
+      }
+
+      function updatePreview() {
         const status = statusSelect.value;
         const skor = Number(skorInput.value || 0);
         const badgeCfg = getBadgeConfig(status);
@@ -537,10 +563,39 @@
 
         const catatan = document.getElementById("catatan").value;
         renderRekomendasi(hasilRekomendasi, status, catatan);
+      }
+
+      // Inisialisasi awal form sesuai dropdown status saat ini
+      updateFormFields(statusSelect.value);
+      updatePreview();
+
+      // Event listener saat dropdown status diubah
+      statusSelect.addEventListener("change", () => {
+        updateFormFields(statusSelect.value);
+        updatePreview();
       });
 
-      const event = new Event("click");
-      document.getElementById("btnUpdate").dispatchEvent(event);
+      // Event listener saat form disubmit ke database
+      form.addEventListener("submit", (e) => {
+        const status = statusSelect.value;
+        const checkboxes = form.querySelectorAll('input[type="checkbox"]');
+        const selectedFactors = Array.from(checkboxes)
+          .filter(cb => cb.checked)
+          .map(cb => cb.value);
+
+        document.getElementById("factorsJson").value = JSON.stringify(selectedFactors);
+        document.getElementById("recommendationsJson").value = JSON.stringify(rekomendasiDefault[status] || []);
+      });
+
+      skorInput.addEventListener("input", () => {
+        let val = Number(skorInput.value || 0);
+        if (val < 0) val = 0;
+        if (val > 100) val = 100;
+        skorInput.value = val;
+        labelSkor.textContent = `Posisi saat ini: ${val}`;
+        skorProgress.value = val;
+        updatePreview();
+      });
     });
   </script>
 </body>

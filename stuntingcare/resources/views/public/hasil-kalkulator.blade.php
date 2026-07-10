@@ -160,56 +160,38 @@
       <div class="card bg-white shadow-md border border-slate-200">
         <div class="card-body">
           <h2 class="card-title text-slate-800">Faktor yang memengaruhi</h2>
-          <ul class="timeline timeline-vertical">
-            @php
-              $zTbu  = $result['zscore_tbu'];
-              $zBbu  = $result['zscore_bbu'];
-              $zBbtb = $result['zscore_bbtb'];
-
-              $descTbu  = $zTbu  >= -1 ? "Tinggi badan anak sesuai usia, pertahankan pola gizi saat ini."
-                        : ($zTbu  >= -2 ? "Tinggi badan anak sedikit di bawah rata-rata, perlu pemantauan."
-                        : "Tinggi badan anak berisiko stunting, segera konsultasikan ke tenaga kesehatan.");
-              $descBbu  = $zBbu  >= -1 ? "Berat badan anak sesuai usia, pertahankan asupan nutrisi."
-                        : ($zBbu  >= -2 ? "Berat badan perlu dipantau agar sesuai dengan pertumbuhan usia."
-                        : "Berat badan anak rendah untuk usianya, waspadai risiko gizi kurang.");
-              $descBbtb = $zBbtb >= -1 ? "Proporsi berat terhadap tinggi badan anak baik."
-                        : ($zBbtb >= -2 ? "Berat badan anak sedikit rendah terhadap tinggi, pantau perkembangannya."
-                        : "Proporsi berat terhadap tinggi berisiko, konsultasikan ke dokter atau ahli gizi.");
-
-              $colorTbu  = $zTbu  >= -1 ? 'text-emerald-600' : ($zTbu  >= -2 ? 'text-amber-500' : 'text-red-500');
-              $colorBbu  = $zBbu  >= -1 ? 'text-emerald-600' : ($zBbu  >= -2 ? 'text-cyan-600'  : 'text-red-500');
-              $colorBbtb = $zBbtb >= -1 ? 'text-emerald-600' : ($zBbtb >= -2 ? 'text-amber-500' : 'text-red-500');
-              $hrTbu     = $zTbu  >= -2 ? 'bg-emerald-500' : 'bg-amber-400';
-              $hrBbu     = $zBbu  >= -2 ? 'bg-cyan-500'    : 'bg-amber-400';
-            @endphp
-            <li>
-              <div class="timeline-start timeline-box bg-slate-50 text-slate-700 border-slate-200">
-                <span class="font-semibold">TB/U (Z: {{ $zTbu }})</span><br>{{ $descTbu }}
-              </div>
-              <div class="timeline-middle {{ $colorTbu }}">
-                <span class="material-symbols-rounded">straighten</span>
-              </div>
-              <hr class="{{ $hrTbu }}" />
-            </li>
-            <li>
-              <hr class="{{ $hrTbu }}" />
-              <div class="timeline-start timeline-box bg-slate-50 text-slate-700 border-slate-200">
-                <span class="font-semibold">BB/U (Z: {{ $zBbu }})</span><br>{{ $descBbu }}
-              </div>
-              <div class="timeline-middle {{ $colorBbu }}">
-                <span class="material-symbols-rounded">monitor_weight</span>
-              </div>
-              <hr class="{{ $hrBbu }}" />
-            </li>
-            <li>
-              <hr class="{{ $hrBbu }}" />
-              <div class="timeline-start timeline-box bg-slate-50 text-slate-700 border-slate-200">
-                <span class="font-semibold">BB/TB (Z: {{ $zBbtb }})</span><br>{{ $descBbtb }}
-              </div>
-              <div class="timeline-middle {{ $colorBbtb }}">
-                <span class="material-symbols-rounded">family_home</span>
-              </div>
-            </li>
+          <ul class="timeline timeline-vertical text-sm mt-3">
+            @if(empty($result['factors']))
+              <li>
+                <div class="timeline-start timeline-box text-xs">
+                  Tidak ada faktor risiko tambahan yang diidentifikasi oleh admin untuk status ini.
+                </div>
+                <div class="timeline-middle text-slate-500">
+                  <span class="material-symbols-rounded">info</span>
+                </div>
+              </li>
+            @else
+              @foreach($result['factors'] as $idx => $factor)
+                @php
+                  $isLast = $idx === count($result['factors']) - 1;
+                  $lineClass = $factor['lineClass'] ?? 'bg-emerald-500';
+                @endphp
+                <li>
+                  @if($idx > 0)
+                    <hr class="{{ $lineClass }}" />
+                  @endif
+                  <div class="timeline-start timeline-box bg-slate-50 text-slate-700 border-slate-200 text-[13px] leading-relaxed max-w-[280px] sm:max-w-md">
+                    {{ $factor['text'] }}
+                  </div>
+                  <div class="timeline-middle {{ $factor['color'] }}">
+                    <span class="material-symbols-rounded text-lg">{{ $factor['icon'] }}</span>
+                  </div>
+                  @if(!$isLast)
+                    <hr class="{{ $lineClass }}" />
+                  @endif
+                </li>
+              @endforeach
+            @endif
           </ul>
         </div>
       </div>

@@ -12,58 +12,74 @@ const nameMapping = {
     "KUTAI KARTANEGARA": "Kutai Kartanegara",
     "KUTAI TIMUR": "Kutai Timur",
     "KUTAI BARAT": "Kutai Barat",
-    "BERAU": "Berau",
-    "PASER": "Paser",
+    BERAU: "Berau",
+    PASER: "Paser",
     "PENAJAM PASER UTARA": "Penajam Paser Utara",
-    "MAHAKAM ULU": "Mahakam Ulu"
+    "MAHAKAM ULU": "Mahakam Ulu",
 };
 
 // JavaScript to handle quick detail review panel
 function showQuickDetail(m) {
-    document.getElementById('det-name').textContent = m.child_name || 'Anak';
-    document.getElementById('det-id').textContent = 'ID: ' + (m.id ? m.id.substring(0, 8).toUpperCase() : '—');
-    document.getElementById('det-age-gender').textContent = m.age_months + ' bulan \u00B7 ' + (m.gender === 'L' ? 'Laki-laki' : 'Perempuan');
-    
+    document.getElementById("det-name").textContent = m.child_name || "Anak";
+    document.getElementById("det-id").textContent =
+        "ID: " + (m.id ? m.id.substring(0, 8).toUpperCase() : "—");
+    document.getElementById("det-age-gender").textContent =
+        m.age_months +
+        " bulan \u00B7 " +
+        (m.gender === "L" ? "Laki-laki" : "Perempuan");
+
     const createdDate = new Date(m.created_at);
-    const formattedDate = createdDate.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
-    document.getElementById('det-date').textContent = formattedDate;
-    
-    const statusBadge = document.getElementById('det-status-badge');
+    const formattedDate = createdDate.toLocaleDateString("id-ID", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+    });
+    document.getElementById("det-date").textContent = formattedDate;
+
+    const statusBadge = document.getElementById("det-status-badge");
     let statusLabel = m.status_growth;
-    
-    statusBadge.className = 'badge border-none px-2 py-1 text-[11px] rounded-full';
-    if (m.status_growth === 'Normal') {
-        statusLabel = 'Normal';
-        statusBadge.classList.add('badge-status-normal');
-    } else if (m.status_growth === 'Risiko') {
-        statusLabel = 'Risiko';
-        statusBadge.classList.add('badge-status-risiko');
-    } else if (m.status_growth === 'Stunting') {
-        statusLabel = 'Stunting';
-        statusBadge.classList.add('badge-status-stunting');
+
+    statusBadge.className =
+        "badge border-none px-2 py-1 text-[11px] rounded-full";
+    if (m.status_growth === "Normal") {
+        statusLabel = "Normal";
+        statusBadge.classList.add("badge-status-normal");
+    } else if (m.status_growth === "Risiko") {
+        statusLabel = "Risiko";
+        statusBadge.classList.add("badge-status-risiko");
+    } else if (m.status_growth === "Stunting") {
+        statusLabel = "Stunting";
+        statusBadge.classList.add("badge-status-stunting");
     } else {
-        statusLabel = 'Stunting Berat';
-        statusBadge.classList.add('bg-red-100', 'text-red-700');
+        statusLabel = "Stunting Berat";
+        statusBadge.classList.add("bg-red-100", "text-red-700");
     }
     statusBadge.textContent = statusLabel;
-    
-    const tbVal = parseFloat(m.height || 0).toFixed(1).replace('.', ',');
-    const bbVal = parseFloat(m.weight || 0).toFixed(1).replace('.', ',');
-    
-    document.getElementById('det-tb').textContent = tbVal + ' cm';
-    document.getElementById('det-bb').textContent = bbVal + ' kg';
-    document.getElementById('det-asi').textContent = m.asi_eksklusif || 'Ya';
-    
-    const recsEl = document.getElementById('det-recs');
-    if (m.status_growth === 'Normal') {
-        recsEl.textContent = 'Pertumbuhan anak dalam batas normal berdasarkan standar WHO. Pertahankan asupan gizi seimbang, lanjutkan ASI/MPASI berkualitas, dan lakukan imunisasi rutin.';
-    } else if (m.status_growth === 'Risiko') {
-        recsEl.textContent = 'Tinggi badan berdasarkan usia berada di kisaran risiko pendek. Perlu pemantauan gizi secara intensif and evaluasi pertumbuhan berkala.';
+
+    const tbVal = parseFloat(m.height || 0)
+        .toFixed(1)
+        .replace(".", ",");
+    const bbVal = parseFloat(m.weight || 0)
+        .toFixed(1)
+        .replace(".", ",");
+
+    document.getElementById("det-tb").textContent = tbVal + " cm";
+    document.getElementById("det-bb").textContent = bbVal + " kg";
+    document.getElementById("det-asi").textContent = m.asi_eksklusif || "Ya";
+
+    const recsEl = document.getElementById("det-recs");
+    if (m.status_growth === "Normal") {
+        recsEl.textContent =
+            "Pertumbuhan anak dalam batas normal berdasarkan standar WHO. Pertahankan asupan gizi seimbang, lanjutkan ASI/MPASI berkualitas, dan lakukan imunisasi rutin.";
+    } else if (m.status_growth === "Risiko") {
+        recsEl.textContent =
+            "Tinggi badan berdasarkan usia berada di kisaran risiko pendek. Perlu pemantauan gizi secara intensif and evaluasi pertumbuhan berkala.";
     } else {
-        recsEl.textContent = 'Tinggi badan berdasarkan usia berada di bawah -2 SD. Sarankan orang tua untuk konsultasi ke Posyandu/Puskesmas, evaluasi pola makan, dan pantau pertumbuhan tiap bulan.';
+        recsEl.textContent =
+            "Tinggi badan berdasarkan usia berada di bawah -2 SD. Sarankan orang tua untuk konsultasi ke Posyandu/Puskesmas, evaluasi pola makan, dan pantau pertumbuhan tiap bulan.";
     }
 
-    const btnHalamanLengkap = document.getElementById('btn-halaman-lengkap');
+    const btnHalamanLengkap = document.getElementById("btn-halaman-lengkap");
     if (btnHalamanLengkap) {
         btnHalamanLengkap.href = `/admin/analisis/${m.id}/hasil`;
     }
@@ -71,13 +87,13 @@ function showQuickDetail(m) {
 
 document.addEventListener("DOMContentLoaded", function () {
     // Ambil data dashboard dari global window object
-    const totalNormal   = window.analisisData.totalNormal;
-    const totalRisiko   = window.analisisData.totalRisiko;
+    const totalNormal = window.analisisData.totalNormal;
+    const totalRisiko = window.analisisData.totalRisiko;
     const totalStunting = window.analisisData.totalStunting;
-    const totalBerat    = window.analisisData.totalBerat || 0;
-    const kaltimData    = window.analisisData.kaltimData;
-    const geoJsonUrl    = window.analisisData.geoJsonUrl;
-    const chartAgeData  = window.analisisData.chartAgeData;
+    const totalBerat = window.analisisData.totalBerat || 0;
+    const kaltimData = window.analisisData.kaltimData;
+    const geoJsonUrl = window.analisisData.geoJsonUrl;
+    const chartAgeData = window.analisisData.chartAgeData;
 
     // Hitung min & max untuk visualMap
     const values = Object.values(kaltimData);
@@ -86,15 +102,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // ==================== 1. PETA KALIMANTAN TIMUR (ECharts) ====================
     const embeddedGeoJson = {
-        "type": "FeatureCollection",
-        "name": "Kabupaten-Kota (Provinsi Kalimantan Timur)",
-        "crs": {
-            "type": "name",
-            "properties": {
-                "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
-            }
+        type: "FeatureCollection",
+        name: "Kabupaten-Kota (Provinsi Kalimantan Timur)",
+        crs: {
+            type: "name",
+            properties: {
+                name: "urn:ogc:def:crs:OGC:1.3:CRS84",
+            },
         },
-        "features": []
+        features: [],
     };
 
     const mapContainer = document.getElementById("kaltim-map");
@@ -104,13 +120,15 @@ document.addEventListener("DOMContentLoaded", function () {
         function renderKaltimMap(geoJson) {
             echarts.registerMap("KaltimKab", geoJson);
 
-            const seriesData = geoJson.features.map(f => {
-                const rawName     = (f.properties.NAME_2 || f.properties.NAME || "").toUpperCase().trim();
+            const seriesData = geoJson.features.map((f) => {
+                const rawName = (f.properties.NAME_2 || f.properties.NAME || "")
+                    .toUpperCase()
+                    .trim();
                 const displayName = nameMapping[rawName] || rawName;
 
                 // Match secara case-insensitive terhadap key kaltimData
                 const dataKey = Object.keys(kaltimData).find(
-                    k => k.toLowerCase() === displayName.toLowerCase()
+                    (k) => k.toLowerCase() === displayName.toLowerCase(),
                 );
                 const val = dataKey ? kaltimData[dataKey] : 0;
                 return { name: displayName, value: val };
@@ -122,7 +140,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     formatter: function (params) {
                         const value = params.value || 0;
                         const percentBase = maxVal || 1;
-                        const percent = ((value / percentBase) * 100).toFixed(1);
+                        const percent = ((value / percentBase) * 100).toFixed(
+                            1,
+                        );
                         return `
                             <div style="font-size:12px;">
                                 <strong>${params.name}</strong><br/>
@@ -130,7 +150,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 Perbandingan: ${percent}% dari nilai tertinggi
                             </div>
                         `;
-                    }
+                    },
                 },
                 visualMap: {
                     min: minVal,
@@ -142,38 +162,40 @@ document.addEventListener("DOMContentLoaded", function () {
                     textStyle: { fontSize: 11, color: "#64748b" },
                     inRange: {
                         // Gradasi hijau modern (rendah -> tinggi)
-                        color: ["#ecfdf3", "#a7f3d0", "#22c55e", "#15803d"]
+                        color: ["#ecfdf3", "#a7f3d0", "#22c55e", "#15803d"],
                     },
                     calculable: false,
                     itemWidth: 10,
-                    itemHeight: 80
+                    itemHeight: 80,
                 },
-                series: [{
-                    type: "map",
-                    map: "KaltimKab",
-                    roam: true,
-                    zoom: 1.1,
-                    label: {
-                        show: true,
-                        fontSize: 10,
-                        color: "#0f172a"
-                    },
-                    emphasis: {
+                series: [
+                    {
+                        type: "map",
+                        map: "KaltimKab",
+                        roam: true,
+                        zoom: 1.1,
                         label: {
                             show: true,
-                            fontWeight: "600",
-                            color: "#0f172a"
+                            fontSize: 10,
+                            color: "#0f172a",
+                        },
+                        emphasis: {
+                            label: {
+                                show: true,
+                                fontWeight: "600",
+                                color: "#0f172a",
+                            },
+                            itemStyle: {
+                                areaColor: "#bfdbfe",
+                            },
                         },
                         itemStyle: {
-                            areaColor: "#bfdbfe"
-                        }
+                            borderColor: "#e5e7eb",
+                            borderWidth: 1,
+                        },
+                        data: seriesData,
                     },
-                    itemStyle: {
-                        borderColor: "#e5e7eb",
-                        borderWidth: 1
-                    },
-                    data: seriesData
-                }]
+                ],
             };
 
             mapChart.setOption(option);
@@ -182,13 +204,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (geoJsonUrl) {
             fetch(geoJsonUrl)
-                .then(resp => {
+                .then((resp) => {
                     if (!resp.ok) throw new Error("GeoJSON tidak ditemukan");
                     return resp.json();
                 })
                 .then(renderKaltimMap)
-                .catch(err => {
-                    console.warn("Gagal memuat GeoJSON dari url, pakai embedded:", err);
+                .catch((err) => {
+                    console.warn(
+                        "Gagal memuat GeoJSON dari url, pakai embedded:",
+                        err,
+                    );
                     renderKaltimMap(embeddedGeoJson);
                 });
         } else {
@@ -203,20 +228,32 @@ document.addEventListener("DOMContentLoaded", function () {
             type: "doughnut",
             data: {
                 labels: ["Normal", "Risiko", "Stunting", "Stunting berat"],
-                datasets: [{
-                    data: [totalNormal, totalRisiko, totalStunting, totalBerat],
-                    backgroundColor: ["#22c55e", "#fb923c", "#fb7185", "#b91c1c"],
-                    borderWidth: 0
-                }]
+                datasets: [
+                    {
+                        data: [
+                            totalNormal,
+                            totalRisiko,
+                            totalStunting,
+                            totalBerat,
+                        ],
+                        backgroundColor: [
+                            "#22c55e",
+                            "#fb923c",
+                            "#fb7185",
+                            "#b91c1c",
+                        ],
+                        borderWidth: 0,
+                    },
+                ],
             },
             options: {
                 plugins: {
-                    legend: { display: false }
+                    legend: { display: false },
                 },
                 cutout: "65%",
                 responsive: true,
-                maintainAspectRatio: false
-            }
+                maintainAspectRatio: false,
+            },
         });
     }
 
@@ -231,48 +268,88 @@ document.addEventListener("DOMContentLoaded", function () {
                     {
                         label: "Normal",
                         data: [
-                            chartAgeData['0-6'] ? chartAgeData['0-6']['Normal'] : 0,
-                            chartAgeData['7-12'] ? chartAgeData['7-12']['Normal'] : 0,
-                            chartAgeData['13-24'] ? chartAgeData['13-24']['Normal'] : 0,
-                            chartAgeData['25-36'] ? chartAgeData['25-36']['Normal'] : 0,
-                            chartAgeData['37-60'] ? chartAgeData['37-60']['Normal'] : 0
+                            chartAgeData["0-6"]
+                                ? chartAgeData["0-6"]["Normal"]
+                                : 0,
+                            chartAgeData["7-12"]
+                                ? chartAgeData["7-12"]["Normal"]
+                                : 0,
+                            chartAgeData["13-24"]
+                                ? chartAgeData["13-24"]["Normal"]
+                                : 0,
+                            chartAgeData["25-36"]
+                                ? chartAgeData["25-36"]["Normal"]
+                                : 0,
+                            chartAgeData["37-60"]
+                                ? chartAgeData["37-60"]["Normal"]
+                                : 0,
                         ],
-                        backgroundColor: "#22c55e"
+                        backgroundColor: "#22c55e",
                     },
                     {
                         label: "Risiko",
                         data: [
-                            chartAgeData['0-6'] ? chartAgeData['0-6']['Risiko'] : 0,
-                            chartAgeData['7-12'] ? chartAgeData['7-12']['Risiko'] : 0,
-                            chartAgeData['13-24'] ? chartAgeData['13-24']['Risiko'] : 0,
-                            chartAgeData['25-36'] ? chartAgeData['25-36']['Risiko'] : 0,
-                            chartAgeData['37-60'] ? chartAgeData['37-60']['Risiko'] : 0
+                            chartAgeData["0-6"]
+                                ? chartAgeData["0-6"]["Risiko"]
+                                : 0,
+                            chartAgeData["7-12"]
+                                ? chartAgeData["7-12"]["Risiko"]
+                                : 0,
+                            chartAgeData["13-24"]
+                                ? chartAgeData["13-24"]["Risiko"]
+                                : 0,
+                            chartAgeData["25-36"]
+                                ? chartAgeData["25-36"]["Risiko"]
+                                : 0,
+                            chartAgeData["37-60"]
+                                ? chartAgeData["37-60"]["Risiko"]
+                                : 0,
                         ],
-                        backgroundColor: "#fb923c"
+                        backgroundColor: "#fb923c",
                     },
                     {
                         label: "Stunting",
                         data: [
-                            chartAgeData['0-6'] ? chartAgeData['0-6']['Stunting'] : 0,
-                            chartAgeData['7-12'] ? chartAgeData['7-12']['Stunting'] : 0,
-                            chartAgeData['13-24'] ? chartAgeData['13-24']['Stunting'] : 0,
-                            chartAgeData['25-36'] ? chartAgeData['25-36']['Stunting'] : 0,
-                            chartAgeData['37-60'] ? chartAgeData['37-60']['Stunting'] : 0
+                            chartAgeData["0-6"]
+                                ? chartAgeData["0-6"]["Stunting"]
+                                : 0,
+                            chartAgeData["7-12"]
+                                ? chartAgeData["7-12"]["Stunting"]
+                                : 0,
+                            chartAgeData["13-24"]
+                                ? chartAgeData["13-24"]["Stunting"]
+                                : 0,
+                            chartAgeData["25-36"]
+                                ? chartAgeData["25-36"]["Stunting"]
+                                : 0,
+                            chartAgeData["37-60"]
+                                ? chartAgeData["37-60"]["Stunting"]
+                                : 0,
                         ],
-                        backgroundColor: "#fb7185"
+                        backgroundColor: "#fb7185",
                     },
                     {
                         label: "Stunting Berat",
                         data: [
-                            chartAgeData['0-6'] ? chartAgeData['0-6']['Stunting Berat'] : 0,
-                            chartAgeData['7-12'] ? chartAgeData['7-12']['Stunting Berat'] : 0,
-                            chartAgeData['13-24'] ? chartAgeData['13-24']['Stunting Berat'] : 0,
-                            chartAgeData['25-36'] ? chartAgeData['25-36']['Stunting Berat'] : 0,
-                            chartAgeData['37-60'] ? chartAgeData['37-60']['Stunting Berat'] : 0
+                            chartAgeData["0-6"]
+                                ? chartAgeData["0-6"]["Stunting Berat"]
+                                : 0,
+                            chartAgeData["7-12"]
+                                ? chartAgeData["7-12"]["Stunting Berat"]
+                                : 0,
+                            chartAgeData["13-24"]
+                                ? chartAgeData["13-24"]["Stunting Berat"]
+                                : 0,
+                            chartAgeData["25-36"]
+                                ? chartAgeData["25-36"]["Stunting Berat"]
+                                : 0,
+                            chartAgeData["37-60"]
+                                ? chartAgeData["37-60"]["Stunting Berat"]
+                                : 0,
                         ],
-                        backgroundColor: "#b91c1c"
-                    }
-                ]
+                        backgroundColor: "#b91c1c",
+                    },
+                ],
             },
             options: {
                 responsive: true,
@@ -280,23 +357,23 @@ document.addEventListener("DOMContentLoaded", function () {
                 scales: {
                     x: {
                         stacked: true,
-                        ticks: { font: { size: 11 } }
+                        ticks: { font: { size: 11 } },
                     },
                     y: {
                         stacked: true,
                         ticks: {
                             stepSize: 5,
-                            font: { size: 11 }
+                            font: { size: 11 },
                         },
-                        beginAtZero: true
-                    }
+                        beginAtZero: true,
+                    },
                 },
                 plugins: {
                     legend: {
-                        labels: { font: { size: 11 } }
-                    }
-                }
-            }
+                        labels: { font: { size: 11 } },
+                    },
+                },
+            },
         });
     }
 });

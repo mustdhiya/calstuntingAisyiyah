@@ -18,6 +18,7 @@ class Measurement extends Model
         'height',
         'weight',
         'status_growth',
+        'risk_level',
         'city',
         'asi_eksklusif',
         'kader_id',

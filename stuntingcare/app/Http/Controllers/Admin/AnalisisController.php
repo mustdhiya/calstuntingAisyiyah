@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Measurement;
+use App\Models\RiskRecommendation;
 use Illuminate\Http\Request;
 
 class AnalisisController extends Controller
@@ -155,9 +156,44 @@ class AnalisisController extends Controller
             $measurement->weight,
             $measurement->child_name,
             $measurement->city ?? 'samarinda',
-            $measurement->birth_date
+            $measurement->birth_date,
+            $measurement->risk_level
         );
 
         return view('public.hasil-kalkulator', compact('result'));
+    }
+
+    public function hasilAnalisisRisikoForm()
+    {
+        $dbRecommendations = RiskRecommendation::all()->keyBy('status_key');
+        return view('admin.hasil-analisis-risiko', compact('dbRecommendations'));
+    }
+
+    public function saveRecommendations(Request $request)
+    {
+        $status = $request->input('status');
+        $factors = json_decode($request->input('factors_json', '[]'), true);
+        $recommendations = json_decode($request->input('recommendations_json', '[]'), true);
+        $customNote = $request->input('custom_note');
+
+        $statusLabelMap = [
+            'normal'        => 'Normal',
+            'rendah'        => 'Risiko rendah',
+            'sedang'        => 'Risiko sedang',
+            'tinggi'        => 'Risiko tinggi',
+            'sangat_tinggi' => 'Stunting / risiko sangat tinggi',
+        ];
+
+        RiskRecommendation::updateOrCreate(
+            ['status_key' => $status],
+            [
+                'status_label'    => $statusLabelMap[$status] ?? ucfirst($status),
+                'factors'         => $factors,
+                'recommendations' => $recommendations,
+                'custom_note'     => $customNote,
+            ]
+        );
+
+        return redirect()->back()->with('success', 'Konfigurasi parameter hasil analisis risiko berhasil disimpan ke database!');
     }
 }

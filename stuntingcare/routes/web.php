@@ -52,7 +52,8 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
         Route::get('/analisis/peta', 'peta')->name('analisis.peta');
         Route::get('/analisis/export', 'exportCsv')->name('analisis.export');
         Route::get('/analisis/{measurement}/hasil', 'detailHasil')->name('analisis.detail-hasil');
-        Route::view('/hasil-analisis-risiko', 'admin.hasil-analisis-risiko')->name('hasil-analisis-risiko');
+        Route::get('/hasil-analisis-risiko', 'hasilAnalisisRisikoForm')->name('hasil-analisis-risiko');
+        Route::post('/hasil-analisis-risiko/simpan', 'saveRecommendations')->name('hasil-analisis-risiko.simpan');
     });
 
     // Artikel CRUD

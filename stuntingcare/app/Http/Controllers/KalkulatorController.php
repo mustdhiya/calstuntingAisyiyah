@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Measurement;
+use App\Models\RiskRecommendation;
 use Illuminate\Http\Request;
 
 class KalkulatorController extends Controller
@@ -18,7 +19,7 @@ class KalkulatorController extends Controller
     /**
      * Get result data calculated from Z-scores.
      */
-    public function getResultData($gender, $usia, $tb, $bb, $namaAnak = 'Anak', $lokasi = 'samarinda', $tglLahir = null)
+    public function getResultData($gender, $usia, $tb, $bb, $namaAnak = 'Anak', $lokasi = 'samarinda', $tglLahir = null, $overrideRiskLevel = null)
     {
         $data = [
             'nama_anak'          => $namaAnak,
@@ -48,10 +49,106 @@ class KalkulatorController extends Controller
         $risk_score = $this->calcRiskScore($zscore_tbu, $zscore_bbu, $data);
 
         // ---------- Risk level ----------
-        $risk_level = $this->classifyRisk($risk_score);
+        if ($overrideRiskLevel) {
+            $risk_level = $this->classifyRiskForCode($overrideRiskLevel);
+            // Sesuaikan skor risiko ke nilai median representatif kategori jika di-override
+            $scoreMap = [
+                'normal'        => 10,
+                'rendah'        => 25,
+                'sedang'        => 45,
+                'tinggi'        => 70,
+                'sangat_tinggi' => 90,
+            ];
+            $risk_score = $scoreMap[$overrideRiskLevel] ?? $risk_score;
+        } else {
+            $risk_level = $this->classifyRisk($risk_score);
+        }
 
-        // ---------- Recommendations ----------
-        $recommendations = $this->getRecommendations($status_tbu, $status_bbu, $status_bbtb, $usia, $gender, $data);
+        // ---------- Recommendations & Factors Dinamis dari Database ----------
+        $dbConfig = RiskRecommendation::where('status_key', $risk_level['code'])->first();
+
+        // 1. Tentukan Rekomendasi
+        if ($dbConfig && is_array($dbConfig->recommendations) && count($dbConfig->recommendations) > 0) {
+            $recommendations = [];
+            foreach ($dbConfig->recommendations as $rec) {
+                $tone = $rec['tone'] ?? 'emerald';
+                $colorMap = [
+                    'emerald' => 'text-emerald-600',
+                    'cyan'    => 'text-sky-600',
+                    'amber'   => 'text-amber-600',
+                    'rose'    => 'text-red-600'
+                ];
+                $bgMap = [
+                    'emerald' => 'bg-emerald-50',
+                    'cyan'    => 'bg-sky-50',
+                    'amber'   => 'bg-amber-50',
+                    'rose'    => 'bg-red-50'
+                ];
+                $recommendations[] = [
+                    'icon'  => 'check_circle',
+                    'color' => $colorMap[$tone] ?? 'text-emerald-600',
+                    'bg'    => $bgMap[$tone] ?? 'bg-emerald-50',
+                    'title' => 'Rekomendasi',
+                    'desc'  => $rec['text'] ?? ''
+                ];
+            }
+
+            // Tambahkan Catatan Kustom jika diisi admin
+            if (!empty($dbConfig->custom_note)) {
+                $recommendations[] = [
+                    'icon'  => 'edit',
+                    'color' => 'text-slate-600',
+                    'bg'    => 'bg-slate-50',
+                    'title' => 'Catatan Tambahan',
+                    'desc'  => $dbConfig->custom_note
+                ];
+            }
+        } else {
+            // Fallback default rekomendasi medis jika database kosong
+            $recommendations = $this->getRecommendations($status_tbu, $status_bbu, $status_bbtb, $usia, $gender, $data);
+        }
+
+        // 2. Tentukan Faktor yang Memengaruhi
+        $factorsConfig = [
+            'tinggi_rendah' => [
+                'icon' => 'straighten',
+                'color' => 'text-emerald-600',
+                'lineClass' => 'bg-emerald-500',
+                'text' => 'Tinggi badan anak relatif rendah untuk kelompok usia yang dinilai.'
+            ],
+            'berat_pantau' => [
+                'icon' => 'monitor_weight',
+                'color' => 'text-cyan-600',
+                'lineClass' => 'bg-cyan-500',
+                'text' => 'Berat badan perlu dipantau agar mengikuti pola pertumbuhan yang sehat.'
+            ],
+            'tinggi_ibu_rendah' => [
+                'icon' => 'family_home',
+                'color' => 'text-amber-600',
+                'lineClass' => 'bg-amber-500',
+                'text' => 'Tinggi ibu dan riwayat kondisi gizi dapat menjadi faktor tambahan dalam skrining risiko.'
+            ]
+        ];
+
+        $factors = [];
+        if ($dbConfig && is_array($dbConfig->factors)) {
+            foreach ($dbConfig->factors as $factorKey) {
+                if (isset($factorsConfig[$factorKey])) {
+                    $factors[] = $factorsConfig[$factorKey];
+                }
+            }
+        } else {
+            // Fallback default faktor berdasarkan Z-score riil anak
+            if (in_array($status_tbu['code'], ['stunting', 'stunting_berat'])) {
+                $factors[] = $factorsConfig['tinggi_rendah'];
+            }
+            if (in_array($status_bbu['code'], ['kurang', 'sangat_kurang'])) {
+                $factors[] = $factorsConfig['berat_pantau'];
+            }
+            if (isset($data['tinggi_ibu']) && (float)$data['tinggi_ibu'] < 150) {
+                $factors[] = $factorsConfig['tinggi_ibu_rendah'];
+            }
+        }
 
         // ---------- Ideal ranges for display ----------
         $ideal_tb = $this->getIdealTB($gender, $usia);
@@ -94,6 +191,8 @@ class KalkulatorController extends Controller
             'ideal_bb'     => $ideal_bb,
 
             'recommendations' => $recommendations,
+            'factors'      => $factors,
+            'birth_date'   => $tglLahir,
 
             // Extra
             'asi_eksklusif' => 'Ya',
@@ -123,15 +222,16 @@ class KalkulatorController extends Controller
 
         $result = $this->getResultData($gender, $usia, $tb, $bb, $data['nama_anak'] ?? 'Anak', $data['lokasi_kalimantan'], $data['tanggal_lahir'] ?? null);
 
-        // ---------- Tentukan status_growth untuk disimpan ke DB ----------
-        // Mapping dari code TB/U ke label yang disimpan (4 status baru)
+        // ---------- Tentukan status_growth & risk_level untuk disimpan ke DB ----------
+        // Mapping dari risk_level['code'] ke label status_growth yang disimpan (4 status)
         $statusGrowthMap = [
             'normal'        => 'Normal',
-            'risiko'        => 'Risiko',
-            'stunting'      => 'Stunting',
-            'stunting_berat'=> 'Stunting Berat',
+            'rendah'        => 'Normal',
+            'sedang'        => 'Risiko',
+            'tinggi'        => 'Stunting',
+            'sangat_tinggi' => 'Stunting Berat',
         ];
-        $statusGrowth = $statusGrowthMap[$result['status_tbu']['code']] ?? 'Normal';
+        $statusGrowth = $statusGrowthMap[$result['risk_level']['code']] ?? 'Normal';
 
         // ---------- Simpan ke tabel measurements ----------
         $childName = $data['nama_anak'] ?? 'Anak';
@@ -145,6 +245,7 @@ class KalkulatorController extends Controller
                     'height'        => $tb,
                     'weight'        => $bb,
                     'status_growth' => $statusGrowth,
+                    'risk_level'    => $result['risk_level']['code'],
                     'city'          => $result['city'],
                     'asi_eksklusif' => 'Ya',
                 ]
@@ -158,6 +259,7 @@ class KalkulatorController extends Controller
                 'height'        => $tb,
                 'weight'        => $bb,
                 'status_growth' => $statusGrowth,
+                'risk_level'    => $result['risk_level']['code'],
                 'city'          => $result['city'],
                 'asi_eksklusif' => 'Ya',
             ]);
@@ -264,7 +366,9 @@ class KalkulatorController extends Controller
 
     private function classifyRisk(float $score): array
     {
-        if ($score < 30) {
+        if ($score <= 20) {
+            return ['label' => 'Normal', 'color' => 'green', 'badge' => 'badge-success', 'code' => 'normal', 'progress' => 'progress-success'];
+        } elseif ($score <= 30) {
             return ['label' => 'Risiko Rendah', 'color' => 'green', 'badge' => 'badge-success', 'code' => 'rendah', 'progress' => 'progress-success'];
         } elseif ($score < 60) {
             return ['label' => 'Risiko Sedang', 'color' => 'yellow', 'badge' => 'badge-warning', 'code' => 'sedang', 'progress' => 'progress-warning'];
@@ -272,6 +376,24 @@ class KalkulatorController extends Controller
             return ['label' => 'Risiko Tinggi', 'color' => 'orange', 'badge' => 'badge-error', 'code' => 'tinggi', 'progress' => 'progress-error'];
         } else {
             return ['label' => 'Risiko Sangat Tinggi', 'color' => 'red', 'badge' => 'badge-error', 'code' => 'sangat_tinggi', 'progress' => 'progress-error'];
+        }
+    }
+
+    private function classifyRiskForCode(string $code): array
+    {
+        switch ($code) {
+            case 'normal':
+                return ['label' => 'Normal', 'color' => 'green', 'badge' => 'badge-success', 'code' => 'normal', 'progress' => 'progress-success'];
+            case 'rendah':
+                return ['label' => 'Risiko Rendah', 'color' => 'green', 'badge' => 'badge-success', 'code' => 'rendah', 'progress' => 'progress-success'];
+            case 'sedang':
+                return ['label' => 'Risiko Sedang', 'color' => 'yellow', 'badge' => 'badge-warning', 'code' => 'sedang', 'progress' => 'progress-warning'];
+            case 'tinggi':
+                return ['label' => 'Risiko Tinggi', 'color' => 'orange', 'badge' => 'badge-error', 'code' => 'tinggi', 'progress' => 'progress-error'];
+            case 'sangat_tinggi':
+                return ['label' => 'Risiko Sangat Tinggi', 'color' => 'red', 'badge' => 'badge-error', 'code' => 'sangat_tinggi', 'progress' => 'progress-error'];
+            default:
+                return ['label' => 'Normal', 'color' => 'green', 'badge' => 'badge-success', 'code' => 'normal', 'progress' => 'progress-success'];
         }
     }
 
