@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\KalkulatorController;
 use App\Models\Measurement;
 use App\Models\RiskRecommendation;
 use Illuminate\Http\Request;
@@ -159,6 +160,7 @@ class AnalisisController extends Controller
             $measurement->birth_date,
             null // Ubah menjadi null agar dinamis mengikuti parameter DB terbaru
         );
+        $result['isAdminView'] = true;
 
         return view('public.hasil-kalkulator', compact('result'));
     }
@@ -196,6 +198,54 @@ class AnalisisController extends Controller
             ]
         );
 
+        // Sinkronisasi massal: hitung ulang risk_level & status_growth semua anak
+        $this->syncAllMeasurements();
+
         return redirect()->back()->with('success', 'Konfigurasi parameter hasil analisis risiko berhasil disimpan ke database!');
+    }
+
+    /**
+     * Sinkronisasi massal: hitung ulang risk_level dan status_growth
+     * seluruh data anak berdasarkan parameter threshold terbaru dari database.
+     */
+    private function syncAllMeasurements(): void
+    {
+        $kalkulator = new KalkulatorController();
+
+        $statusGrowthMap = [
+            'normal'        => 'Normal',
+            'rendah'        => 'Normal',
+            'sedang'        => 'Risiko',
+            'tinggi'        => 'Stunting',
+            'sangat_tinggi' => 'Stunting Berat',
+        ];
+
+        $measurements = Measurement::all();
+
+        foreach ($measurements as $m) {
+            try {
+                // Hitung ulang Z-score
+                $zscore_tbu = $kalkulator->calcZscoreTBU($m->gender, (int) $m->age_months, (float) $m->height);
+                $zscore_bbu = $kalkulator->calcZscoreBBU($m->gender, (int) $m->age_months, (float) $m->weight);
+
+                // Hitung skor risiko (0-100)
+                $risk_score = $kalkulator->calcRiskScore($zscore_tbu, $zscore_bbu, []);
+
+                // Tentukan risk_level dinamis berdasarkan threshold DB terbaru
+                $risk_level = $kalkulator->classifyRisk($risk_score);
+
+                // Petakan ke status_growth (4 status admin)
+                $status_growth = $statusGrowthMap[$risk_level['code']] ?? 'Normal';
+
+                // Update baris data anak
+                $m->update([
+                    'risk_level'    => $risk_level['code'],
+                    'status_growth' => $status_growth,
+                ]);
+            } catch (\Throwable $e) {
+                // Lewati anak yang datanya bermasalah (misal usia atau tinggi tidak valid)
+                continue;
+            }
+        }
     }
 }

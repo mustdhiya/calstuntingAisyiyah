@@ -275,13 +275,13 @@ class KalkulatorController extends Controller
     // WHO Z-score: Height/Length-for-Age (TB/U)
     // Uses LMS method reference from WHO 2006 Growth Standards
     // =========================================================================
-    private function calcZscoreTBU(string $gender, int $usia, float $tb): float
+    public function calcZscoreTBU(string $gender, int $usia, float $tb): float
     {
         $lms = $this->getLmsTBU($gender, $usia);
         return $this->calcZscore($tb, $lms['L'], $lms['M'], $lms['S']);
     }
 
-    private function calcZscoreBBU(string $gender, int $usia, float $bb): float
+    public function calcZscoreBBU(string $gender, int $usia, float $bb): float
     {
         $lms = $this->getLmsBBU($gender, $usia);
         return $this->calcZscore($bb, $lms['L'], $lms['M'], $lms['S']);
@@ -347,7 +347,7 @@ class KalkulatorController extends Controller
         }
     }
 
-    private function calcRiskScore(float $zscore_tbu, float $zscore_bbu, array $data): float
+    public function calcRiskScore(float $zscore_tbu, float $zscore_bbu, array $data): float
     {
         // Z-score TB/U is primary indicator (weight 75%)
         $tbu_score = $this->zscoreToRisk($zscore_tbu) * 0.75;
@@ -367,7 +367,7 @@ class KalkulatorController extends Controller
         return min(100, 80 + ((-3 - $z) * 10));
     }
 
-    private function classifyRisk(float $score): array
+    public function classifyRisk(float $score): array
     {
         // Ambil skor representatif dari database untuk menghitung threshold dinamis (midpoint)
         $configs = RiskRecommendation::select('status_key', 'score')->get()->keyBy('status_key');

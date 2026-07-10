@@ -229,14 +229,21 @@
 
       {{-- ── Action buttons ── --}}
       <div class="flex flex-wrap gap-3">
-        <a href="{{ route("edukasi") }}" class="btn-primary-full">
-          <span class="material-symbols-rounded text-[20px]">menu_book</span>
-          Lanjut ke Edukasi
-        </a>
-        <a href="{{ route("kalkulator") }}" class="btn-outline-green">
-          <span class="material-symbols-rounded text-[20px]">refresh</span>
-          Hitung Ulang
-        </a>
+        @if(!empty($result['isAdminView']))
+          <a href="{{ route("admin.analisis") }}" class="btn-primary-full bg-slate-800 hover:bg-slate-900 border-none">
+            <span class="material-symbols-rounded text-[20px]">arrow_back</span>
+            Kembali ke Analisis
+          </a>
+        @else
+          <a href="{{ route("edukasi") }}" class="btn-primary-full">
+            <span class="material-symbols-rounded text-[20px]">menu_book</span>
+            Lanjut ke Edukasi
+          </a>
+          <a href="{{ route("kalkulator") }}" class="btn-outline-green">
+            <span class="material-symbols-rounded text-[20px]">refresh</span>
+            Hitung Ulang
+          </a>
+        @endif
       </div>
 
     </div><!-- /left column -->
