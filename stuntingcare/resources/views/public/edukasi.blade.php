@@ -120,12 +120,14 @@
             Dashboard
           </a>
         @endif
+        @if(!Auth::user()->isAdminWilayah())
         <form action="{{ route('logout') }}" method="POST" class="inline">
           @csrf
           <button type="submit" class="btn bg-red-50 hover:bg-red-100 text-red-600 rounded-full px-4 btn-sm font-semibold border-0">
             Keluar
           </button>
         </form>
+        @endif
       @endauth
 
       <a href="{{ route('artikel.detail', 'protein-hewani-harian-untuk-pertumbuhan-optimal-anak') }}" class="btn bg-blue-600 hover:bg-blue-700 text-white border-0 rounded-full px-5 btn-sm font-semibold">

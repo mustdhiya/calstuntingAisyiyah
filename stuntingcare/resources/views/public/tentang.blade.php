@@ -67,12 +67,14 @@
               Dashboard
             </a>
           @endif
+          @if(!Auth::user()->isAdminWilayah())
           <form action="{{ route('logout') }}" method="POST" class="inline">
             @csrf
             <button type="submit" class="px-4 py-2 bg-red-50 text-red-600 text-sm font-semibold rounded-full hover:bg-red-100 transition-all">
               Keluar
             </button>
           </form>
+          @endif
         @endauth
 
         <a href="{{ route('kalkulator') }}"
@@ -114,10 +116,12 @@
           @if(Auth::user()->isAdminWilayah())
             <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-slate-700 hover:bg-slate-50 transition-colors"><span class="material-symbols-rounded text-base">dashboard</span>Dashboard Admin</a>
           @endif
+          @if(!Auth::user()->isAdminWilayah())
           <form action="{{ route('logout') }}" method="POST" class="w-full">
             @csrf
             <button type="submit" class="flex w-full items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-red-600 font-semibold hover:bg-red-50 transition-colors"><span class="material-symbols-rounded text-base">logout</span>Keluar</button>
           </form>
+          @endif
         @endauth
 
         <a href="{{ route('kalkulator') }}"

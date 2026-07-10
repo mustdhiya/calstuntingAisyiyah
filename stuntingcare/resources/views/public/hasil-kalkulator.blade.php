@@ -55,12 +55,14 @@
             Dashboard
           </a>
         @endif
+        @if(!Auth::user()->isAdminWilayah())
         <form action="{{ route('logout') }}" method="POST" class="hidden sm:inline">
           @csrf
           <button type="submit" class="btn-hero-primary bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 text-sm !py-2 !px-4 inline-flex items-center gap-1.5" style="background:#fef2f2; color:#dc2626; border:1px solid #fee2e2; box-shadow:none;">
             Keluar
           </button>
         </form>
+        @endif
       @endauth
 
       <!-- <a href="{{ route('kalkulator') }}" class="btn-primary-full text-sm !py-2.5 !px-5">

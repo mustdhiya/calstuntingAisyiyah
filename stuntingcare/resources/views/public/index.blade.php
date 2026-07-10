@@ -103,13 +103,15 @@
                 Dashboard
               </a>
             @endif
-            <form action="{{ route('logout') }}" method="POST" class="hidden sm:inline">
-              @csrf
-              <button type="submit" class="btn-hero-primary bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 text-sm !py-2.5 !px-4 inline-flex items-center gap-1.5" style="background:#fef2f2; color:#dc2626; border:1px solid #fee2e2; box-shadow:none;">
-                <span class="material-symbols-rounded text-[18px]">logout</span>
-                Keluar
-              </button>
-            </form>
+            @if(!Auth::user()->isAdminWilayah())
+              <form action="{{ route('logout') }}" method="POST" class="hidden sm:inline">
+                @csrf
+                <button type="submit" class="btn-hero-primary bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 text-sm !py-2.5 !px-4 inline-flex items-center gap-1.5" style="background:#fef2f2; color:#dc2626; border:1px solid #fee2e2; box-shadow:none;">
+                  <span class="material-symbols-rounded text-[18px]">logout</span>
+                  Keluar
+                </button>
+              </form>
+            @endif
           @endauth
 
           <a
@@ -216,12 +218,14 @@
                 <span class="material-symbols-rounded text-base text-slate-500">dashboard</span>Dashboard Admin
               </a>
             @endif
-            <form action="{{ route('logout') }}" method="POST" class="w-full">
-              @csrf
-              <button type="submit" class="flex w-full items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-red-600 hover:bg-red-50 transition-colors">
-                <span class="material-symbols-rounded text-base text-red-400">logout</span>Keluar Sistem
-              </button>
-            </form>
+            @if(!Auth::user()->isAdminWilayah())
+              <form action="{{ route('logout') }}" method="POST" class="w-full">
+                @csrf
+                <button type="submit" class="flex w-full items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-red-600 hover:bg-red-50 transition-colors">
+                  <span class="material-symbols-rounded text-base text-red-400">logout</span>Keluar Sistem
+                </button>
+              </form>
+            @endif
           @endauth
 
           <div class="px-4 pt-2 pb-3">
