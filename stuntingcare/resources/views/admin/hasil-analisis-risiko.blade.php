@@ -107,21 +107,29 @@
               </div>
 
               <!-- Skor (0-100) -->
+              @php
+                $defaultScore = 45;
+                $scoreMap = ['normal' => 10, 'rendah' => 25, 'sedang' => 45, 'tinggi' => 70, 'sangat_tinggi' => 90];
+                $initialStatus = 'sedang';
+                if (isset($dbRecommendations[$initialStatus])) {
+                    $defaultScore = $dbRecommendations[$initialStatus]->score ?? $scoreMap[$initialStatus];
+                }
+              @endphp
               <div class="form-control">
                 <label class="label">
                   <span class="label-text text-xs font-medium text-slate-700">
                     Skor risiko (0–100)
                   </span>
                   <span class="label-text-alt text-[11px] text-slate-400" id="labelSkor">
-                    Posisi saat ini: 62
+                    Posisi saat ini: {{ $defaultScore }}
                   </span>
                 </label>
-                <input id="skor" type="number" min="0" max="100"
+                <input id="skor" name="score" type="number" min="0" max="100"
                        class="input input-bordered input-sm w-full"
-                       value="62" />
+                       value="{{ $defaultScore }}" />
                 <progress id="skorProgress"
                           class="progress progress-warning w-full mt-2"
-                          value="62" max="100"></progress>
+                          value="{{ $defaultScore }}" max="100"></progress>
               </div>
 
               <!-- Faktor utama (checkbox) -->
@@ -503,7 +511,19 @@
       const hasilTimeline = document.getElementById("hasilTimeline");
       const hasilRekomendasi = document.getElementById("hasilRekomendasi");
 
-      // Fungsi untuk meng-update isian form berdasarkan status yang dipilih dari DB
+      // Penanganan penyimpanan skor lokal di sisi browser agar tidak ter-reset saat mengganti dropdown status
+      const scoreFallback = { normal: 10, rendah: 25, sedang: 45, tinggi: 70, sangat_tinggi: 90 };
+      const localScores = {};
+
+      // Inisialisasi localScores dari data DB
+      Object.keys(dbConfig).forEach(status => {
+        if (dbConfig[status] && dbConfig[status].score !== null && dbConfig[status].score !== undefined) {
+          localScores[status] = dbConfig[status].score;
+        } else {
+          localScores[status] = scoreFallback[status] || 45;
+        }
+      });
+
       function updateFormFields(status) {
         const config = dbConfig[status];
         if (config) {
@@ -516,6 +536,12 @@
           // Update catatan kustom
           document.getElementById("catatan").value = config.custom_note || "";
         }
+
+        // Tampilkan nilai skor dari localScores (agar perubahan sementara tetap terjaga)
+        const currentLocalScore = localScores[status] !== undefined ? localScores[status] : (scoreFallback[status] || 45);
+        skorInput.value = currentLocalScore;
+        skorProgress.value = currentLocalScore;
+        labelSkor.textContent = `Posisi saat ini: ${currentLocalScore}`;
       }
 
       function updatePreview() {
@@ -592,6 +618,11 @@
         if (val < 0) val = 0;
         if (val > 100) val = 100;
         skorInput.value = val;
+        
+        // Simpan perubahan input ke localScores agar tidak ter-reset saat ganti dropdown
+        const status = statusSelect.value;
+        localScores[status] = val;
+
         labelSkor.textContent = `Posisi saat ini: ${val}`;
         skorProgress.value = val;
         updatePreview();

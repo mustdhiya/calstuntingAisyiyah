@@ -79,7 +79,7 @@
       @php
         $riskCode = $result["risk_level"]["code"];
         $breadcrumbClass = match($riskCode) {
-          "rendah"       => "pill-green",
+          "rendah"       => "pill-cyan",
           "sedang"       => "pill-amber",
           "tinggi"       => "pill-orange",
           "sangat_tinggi"=> "pill-red",
@@ -118,7 +118,8 @@
             @php
               $rlCode = $result["risk_level"]["code"];
               $badgeClass = match($rlCode) {
-                "rendah"        => "badge-success text-white",
+                "normal"        => "badge-success text-white",
+                "rendah"        => "badge-info text-white",
                 "sedang"        => "badge-warning text-slate-800",
                 "tinggi", "sangat_tinggi" => "badge-error text-white",
                 default         => "badge-ghost",
@@ -141,7 +142,8 @@
           @php
             $score = (int) $result['risk_score'];
             $progressClass = match($rlCode) {
-              "rendah"        => "progress-success",
+              "normal"        => "progress-success",
+              "rendah"        => "progress-info",
               "sedang"        => "progress-warning",
               "tinggi", "sangat_tinggi" => "progress-error",
               default         => "progress-ghost",

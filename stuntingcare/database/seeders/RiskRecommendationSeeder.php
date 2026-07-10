@@ -27,7 +27,8 @@ class RiskRecommendationSeeder extends Seeder
                         'text' => 'Pastikan imunisasi lengkap dan pemantauan perkembangan dilakukan sesuai jadwal.'
                     ]
                 ],
-                'custom_note' => null
+                'custom_note' => null,
+                'score'       => 10,
             ],
             [
                 'status_key' => 'rendah',
@@ -43,7 +44,8 @@ class RiskRecommendationSeeder extends Seeder
                         'text' => 'Pantau kenaikan berat dan tinggi badan minimal setiap bulan.'
                     ]
                 ],
-                'custom_note' => null
+                'custom_note' => null,
+                'score'       => 25,
             ],
             [
                 'status_key' => 'sedang',
@@ -63,7 +65,8 @@ class RiskRecommendationSeeder extends Seeder
                         'text' => 'Segera konsultasikan ke tenaga kesehatan bila ada infeksi berulang atau nafsu makan menurun.'
                     ]
                 ],
-                'custom_note' => null
+                'custom_note' => null,
+                'score'       => 45,
             ],
             [
                 'status_key' => 'tinggi',
@@ -79,7 +82,8 @@ class RiskRecommendationSeeder extends Seeder
                         'text' => 'Pertimbangkan pemeriksaan tambahan bila ada tanda-tanda kelemahan umum atau infeksi kronis.'
                     ]
                 ],
-                'custom_note' => null
+                'custom_note' => null,
+                'score'       => 70,
             ],
             [
                 'status_key' => 'sangat_tinggi',
@@ -95,7 +99,8 @@ class RiskRecommendationSeeder extends Seeder
                         'text' => 'Pendampingan intensif kepada keluarga untuk perbaikan pola makan dan lingkungan rumah.'
                     ]
                 ],
-                'custom_note' => null
+                'custom_note' => null,
+                'score'       => 90,
             ]
         ];
 

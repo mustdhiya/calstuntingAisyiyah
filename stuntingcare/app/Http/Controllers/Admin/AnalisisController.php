@@ -157,7 +157,7 @@ class AnalisisController extends Controller
             $measurement->child_name,
             $measurement->city ?? 'samarinda',
             $measurement->birth_date,
-            $measurement->risk_level
+            null // Ubah menjadi null agar dinamis mengikuti parameter DB terbaru
         );
 
         return view('public.hasil-kalkulator', compact('result'));
@@ -175,6 +175,7 @@ class AnalisisController extends Controller
         $factors = json_decode($request->input('factors_json', '[]'), true);
         $recommendations = json_decode($request->input('recommendations_json', '[]'), true);
         $customNote = $request->input('custom_note');
+        $score = $request->input('score') !== null ? (int) $request->input('score') : null;
 
         $statusLabelMap = [
             'normal'        => 'Normal',
@@ -191,6 +192,7 @@ class AnalisisController extends Controller
                 'factors'         => $factors,
                 'recommendations' => $recommendations,
                 'custom_note'     => $customNote,
+                'score'           => $score,
             ]
         );
 

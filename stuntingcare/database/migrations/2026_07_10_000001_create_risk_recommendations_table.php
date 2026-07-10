@@ -18,6 +18,7 @@ return new class extends Migration
             $table->json('factors')->nullable();
             $table->json('recommendations')->nullable();
             $table->text('custom_note')->nullable();
+            $table->unsignedTinyInteger('score')->nullable(); // Ditambahkan langsung di sini
             $table->timestamps();
         });
     }

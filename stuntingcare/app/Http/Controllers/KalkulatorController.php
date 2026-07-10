@@ -51,7 +51,8 @@ class KalkulatorController extends Controller
         // ---------- Risk level ----------
         if ($overrideRiskLevel) {
             $risk_level = $this->classifyRiskForCode($overrideRiskLevel);
-            // Sesuaikan skor risiko ke nilai median representatif kategori jika di-override
+            // Baca skor representatif dari database jika tersedia, fallback ke default hardcoded
+            $dbConfig = RiskRecommendation::where('status_key', $overrideRiskLevel)->first();
             $scoreMap = [
                 'normal'        => 10,
                 'rendah'        => 25,
@@ -59,7 +60,9 @@ class KalkulatorController extends Controller
                 'tinggi'        => 70,
                 'sangat_tinggi' => 90,
             ];
-            $risk_score = $scoreMap[$overrideRiskLevel] ?? $risk_score;
+            $risk_score = ($dbConfig && $dbConfig->score !== null)
+                ? (float) $dbConfig->score
+                : ($scoreMap[$overrideRiskLevel] ?? $risk_score);
         } else {
             $risk_level = $this->classifyRisk($risk_score);
         }
@@ -68,8 +71,8 @@ class KalkulatorController extends Controller
         $dbConfig = RiskRecommendation::where('status_key', $risk_level['code'])->first();
 
         // 1. Tentukan Rekomendasi
+        $recommendations = [];
         if ($dbConfig && is_array($dbConfig->recommendations) && count($dbConfig->recommendations) > 0) {
-            $recommendations = [];
             foreach ($dbConfig->recommendations as $rec) {
                 $tone = $rec['tone'] ?? 'emerald';
                 $colorMap = [
@@ -104,8 +107,8 @@ class KalkulatorController extends Controller
                 ];
             }
         } else {
-            // Fallback default rekomendasi medis jika database kosong
-            $recommendations = $this->getRecommendations($status_tbu, $status_bbu, $status_bbtb, $usia, $gender, $data);
+            // Fallback default rekomendasi medis jika database kosong (mengambil rekomendasi sesuai status)
+            $recommendations = $this->getRecommendations($risk_level['code']);
         }
 
         // 2. Tentukan Faktor yang Memengaruhi
@@ -366,16 +369,31 @@ class KalkulatorController extends Controller
 
     private function classifyRisk(float $score): array
     {
-        if ($score <= 20) {
-            return ['label' => 'Normal', 'color' => 'green', 'badge' => 'badge-success', 'code' => 'normal', 'progress' => 'progress-success'];
-        } elseif ($score <= 30) {
-            return ['label' => 'Risiko Rendah', 'color' => 'green', 'badge' => 'badge-success', 'code' => 'rendah', 'progress' => 'progress-success'];
-        } elseif ($score < 60) {
-            return ['label' => 'Risiko Sedang', 'color' => 'yellow', 'badge' => 'badge-warning', 'code' => 'sedang', 'progress' => 'progress-warning'];
-        } elseif ($score < 80) {
-            return ['label' => 'Risiko Tinggi', 'color' => 'orange', 'badge' => 'badge-error', 'code' => 'tinggi', 'progress' => 'progress-error'];
+        // Ambil skor representatif dari database untuk menghitung threshold dinamis (midpoint)
+        $configs = RiskRecommendation::select('status_key', 'score')->get()->keyBy('status_key');
+
+        $sNormal       = (float) ($configs->get('normal')->score       ?? 10);
+        $sRendah       = (float) ($configs->get('rendah')->score       ?? 25);
+        $sSedang       = (float) ($configs->get('sedang')->score       ?? 45);
+        $sTinggi       = (float) ($configs->get('tinggi')->score       ?? 70);
+        $sSangatTinggi = (float) ($configs->get('sangat_tinggi')->score ?? 90);
+
+        // Midpoint antara kategori berurutan menjadi batas klasifikasi
+        $tNormal = ($sNormal + $sRendah) / 2;
+        $tRendah = ($sRendah + $sSedang) / 2;
+        $tSedang = ($sSedang + $sTinggi) / 2;
+        $tTinggi = ($sTinggi + $sSangatTinggi) / 2;
+
+        if ($score <= $tNormal) {
+            return ['label' => 'Normal',              'color' => 'green',  'badge' => 'badge-success', 'code' => 'normal',        'progress' => 'progress-success'];
+        } elseif ($score <= $tRendah) {
+            return ['label' => 'Risiko Rendah',       'color' => 'cyan',   'badge' => 'badge-info',    'code' => 'rendah',        'progress' => 'progress-info'];
+        } elseif ($score <= $tSedang) {
+            return ['label' => 'Risiko Sedang',       'color' => 'yellow', 'badge' => 'badge-warning', 'code' => 'sedang',        'progress' => 'progress-warning'];
+        } elseif ($score <= $tTinggi) {
+            return ['label' => 'Risiko Tinggi',       'color' => 'orange', 'badge' => 'badge-error',   'code' => 'tinggi',        'progress' => 'progress-error'];
         } else {
-            return ['label' => 'Risiko Sangat Tinggi', 'color' => 'red', 'badge' => 'badge-error', 'code' => 'sangat_tinggi', 'progress' => 'progress-error'];
+            return ['label' => 'Risiko Sangat Tinggi','color' => 'red',    'badge' => 'badge-error',   'code' => 'sangat_tinggi', 'progress' => 'progress-error'];
         }
     }
 
@@ -383,71 +401,123 @@ class KalkulatorController extends Controller
     {
         switch ($code) {
             case 'normal':
-                return ['label' => 'Normal', 'color' => 'green', 'badge' => 'badge-success', 'code' => 'normal', 'progress' => 'progress-success'];
+                return ['label' => 'Normal',              'color' => 'green',  'badge' => 'badge-success', 'code' => 'normal',        'progress' => 'progress-success'];
             case 'rendah':
-                return ['label' => 'Risiko Rendah', 'color' => 'green', 'badge' => 'badge-success', 'code' => 'rendah', 'progress' => 'progress-success'];
+                return ['label' => 'Risiko Rendah',       'color' => 'cyan',   'badge' => 'badge-info',    'code' => 'rendah',        'progress' => 'progress-info'];
             case 'sedang':
-                return ['label' => 'Risiko Sedang', 'color' => 'yellow', 'badge' => 'badge-warning', 'code' => 'sedang', 'progress' => 'progress-warning'];
+                return ['label' => 'Risiko Sedang',       'color' => 'yellow', 'badge' => 'badge-warning', 'code' => 'sedang',        'progress' => 'progress-warning'];
             case 'tinggi':
-                return ['label' => 'Risiko Tinggi', 'color' => 'orange', 'badge' => 'badge-error', 'code' => 'tinggi', 'progress' => 'progress-error'];
+                return ['label' => 'Risiko Tinggi',       'color' => 'orange', 'badge' => 'badge-error',   'code' => 'tinggi',        'progress' => 'progress-error'];
             case 'sangat_tinggi':
-                return ['label' => 'Risiko Sangat Tinggi', 'color' => 'red', 'badge' => 'badge-error', 'code' => 'sangat_tinggi', 'progress' => 'progress-error'];
+                return ['label' => 'Risiko Sangat Tinggi','color' => 'red',    'badge' => 'badge-error',   'code' => 'sangat_tinggi', 'progress' => 'progress-error'];
             default:
-                return ['label' => 'Normal', 'color' => 'green', 'badge' => 'badge-success', 'code' => 'normal', 'progress' => 'progress-success'];
+                return ['label' => 'Normal',              'color' => 'green',  'badge' => 'badge-success', 'code' => 'normal',        'progress' => 'progress-success'];
         }
     }
 
-    private function getRecommendations(array $status_tbu, array $status_bbu, array $status_bbtb, int $usia, string $gender, array $data): array
+    private function getRecommendations(string $riskCode): array
     {
-        $recs = [];
+        // Rekomendasi default per-status sesuai mockup desain
+        // Dipanggil hanya jika database tidak memiliki konfigurasi rekomendasi untuk status tersebut
+        switch ($riskCode) {
+            case 'normal':
+                return [
+                    [
+                        'icon'  => 'check_circle',
+                        'color' => 'text-emerald-600',
+                        'bg'    => 'bg-emerald-50',
+                        'title' => 'Rekomendasi',
+                        'desc'  => 'Pertahankan pola makan seimbang dan jadwal pemantauan rutin di Posyandu.',
+                    ],
+                    [
+                        'icon'  => 'check_circle',
+                        'color' => 'text-sky-600',
+                        'bg'    => 'bg-sky-50',
+                        'title' => 'Rekomendasi',
+                        'desc'  => 'Pastikan imunisasi lengkap dan pemantauan perkembangan dilakukan sesuai jadwal.',
+                    ],
+                ];
 
-        if (in_array($status_tbu['code'], ['stunting', 'stunting_berat'])) {
-            $recs[] = [
-                'icon'  => 'medical_services',
-                'color' => 'text-red-600',
-                'bg'    => 'bg-red-50',
-                'title' => 'Rujukan ke tenaga kesehatan',
-                'desc'  => 'Segera konsultasikan dengan dokter atau bidan puskesmas karena tinggi badan anak berada di bawah standar WHO. Penanganan dini sangat penting.',
-            ];
+            case 'rendah':
+                return [
+                    [
+                        'icon'  => 'check_circle',
+                        'color' => 'text-emerald-600',
+                        'bg'    => 'bg-emerald-50',
+                        'title' => 'Rekomendasi',
+                        'desc'  => 'Perkuat asupan protein hewani dan sayuran setiap hari.',
+                    ],
+                    [
+                        'icon'  => 'check_circle',
+                        'color' => 'text-sky-600',
+                        'bg'    => 'bg-sky-50',
+                        'title' => 'Rekomendasi',
+                        'desc'  => 'Pantau kenaikan berat dan tinggi badan minimal setiap bulan.',
+                    ],
+                ];
+
+            case 'sedang':
+                return [
+                    [
+                        'icon'  => 'check_circle',
+                        'color' => 'text-emerald-600',
+                        'bg'    => 'bg-emerald-50',
+                        'title' => 'Rekomendasi',
+                        'desc'  => 'Tinjau kembali pola makan harian, terutama frekuensi dan kualitas sumber protein hewani.',
+                    ],
+                    [
+                        'icon'  => 'check_circle',
+                        'color' => 'text-sky-600',
+                        'bg'    => 'bg-sky-50',
+                        'title' => 'Rekomendasi',
+                        'desc'  => 'Lakukan pemantauan tinggi badan dan berat badan secara rutin di Posyandu atau Puskesmas.',
+                    ],
+                    [
+                        'icon'  => 'check_circle',
+                        'color' => 'text-amber-600',
+                        'bg'    => 'bg-amber-50',
+                        'title' => 'Rekomendasi',
+                        'desc'  => 'Segera konsultasikan ke tenaga kesehatan bila ada infeksi berulang atau nafsu makan menurun.',
+                    ],
+                ];
+
+            case 'tinggi':
+                return [
+                    [
+                        'icon'  => 'check_circle',
+                        'color' => 'text-amber-600',
+                        'bg'    => 'bg-amber-50',
+                        'title' => 'Rekomendasi',
+                        'desc'  => 'Segera rujuk ke fasilitas kesehatan untuk evaluasi pertumbuhan lebih lanjut.',
+                    ],
+                    [
+                        'icon'  => 'check_circle',
+                        'color' => 'text-red-600',
+                        'bg'    => 'bg-red-50',
+                        'title' => 'Rekomendasi',
+                        'desc'  => 'Pertimbangkan pemeriksaan tambahan bila ada tanda-tanda kelemahan umum atau infeksi kronis.',
+                    ],
+                ];
+
+            case 'sangat_tinggi':
+            default:
+                return [
+                    [
+                        'icon'  => 'check_circle',
+                        'color' => 'text-red-600',
+                        'bg'    => 'bg-red-50',
+                        'title' => 'Rekomendasi',
+                        'desc'  => 'Perlu evaluasi komprehensif oleh tenaga kesehatan, termasuk pemeriksaan status gizi dan penyakit penyerta.',
+                    ],
+                    [
+                        'icon'  => 'check_circle',
+                        'color' => 'text-amber-600',
+                        'bg'    => 'bg-amber-50',
+                        'title' => 'Rekomendasi',
+                        'desc'  => 'Pendampingan intensif kepada keluarga untuk perbaikan pola makan dan lingkungan rumah.',
+                    ],
+                ];
         }
-
-        if ($usia >= 6 && $usia <= 24) {
-            $recs[] = [
-                'icon'  => 'lunch_dining',
-                'color' => 'text-emerald-600',
-                'bg'    => 'bg-emerald-50',
-                'title' => 'Optimalkan MPASI bergizi',
-                'desc'  => 'Berikan MPASI dengan protein hewani (telur, ikan, daging ayam, hati) setiap hari minimal satu kali untuk mendukung tumbuh kembang optimal.',
-            ];
-        }
-
-        if ($usia < 6) {
-            $recs[] = [
-                'icon'  => 'child_care',
-                'color' => 'text-sky-600',
-                'bg'    => 'bg-sky-50',
-                'title' => 'Lanjutkan ASI eksklusif',
-                'desc'  => 'ASI eksklusif selama 6 bulan pertama adalah perlindungan terbaik terhadap risiko stunting. Konsultasikan dengan konselor laktasi jika ada kendala.',
-            ];
-        }
-
-        $recs[] = [
-            'icon'  => 'vaccines',
-            'color' => 'text-purple-600',
-            'bg'    => 'bg-purple-50',
-            'title' => 'Pastikan imunisasi lengkap',
-            'desc'  => 'Imunisasi dasar lengkap melindungi dari infeksi penyakit yang dapat memperburuk status gizi dan pertumbuhan anak.',
-        ];
-
-        $recs[] = [
-            'icon'  => 'monitor_heart',
-            'color' => 'text-blue-600',
-            'bg'    => 'bg-blue-50',
-            'title' => 'Rutin ke Posyandu setiap bulan',
-            'desc'  => 'Pemantauan pertumbuhan rutin memungkinkan deteksi dini masalah gizi sebelum berkembang menjadi stunting permanen.',
-        ];
-
-        return $recs;
     }
 
     private function getIdealTB(string $gender, int $usia): array

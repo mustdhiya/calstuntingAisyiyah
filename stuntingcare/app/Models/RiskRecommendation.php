@@ -15,6 +15,7 @@ class RiskRecommendation extends Model
         'factors',
         'recommendations',
         'custom_note',
+        'score',
     ];
 
     /**
