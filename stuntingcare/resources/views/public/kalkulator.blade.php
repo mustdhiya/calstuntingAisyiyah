@@ -197,12 +197,14 @@
                   <span class="label-text font-semibold text-slate-700 text-sm flex items-center gap-1">
                     Usia <span class="text-red-400">*</span>
                   </span>
-                  <span class="label-text-alt text-slate-400 text-xs">0–60 bulan</span>
+                  <span class="label-text-alt text-slate-400 text-xs">Terisi otomatis dari tanggal lahir</span>
                 </label>
                 <div class="input-unit-wrap">
                   <input type="number" name="usia_bulan" id="usia_bulan" min="0" max="60"
-                         placeholder="24" value="{{ old('usia_bulan') }}"
-                         class="input input-bordered w-full focus:border-green-500 text-sm" required />
+                    placeholder="Otomatis dari tanggal lahir"
+                    value="{{ old('usia_bulan') }}"
+                    class="input input-bordered w-full focus:border-green-500 text-sm bg-slate-50"
+                    readonly required />
                   <span class="unit-badge">bln</span>
                 </div>
               </div>
@@ -468,10 +470,10 @@
 <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 
 <script>
-  // Mobile nav toggle
   const navToggle = document.getElementById('nav-toggle');
   const navMobile = document.getElementById('nav-mobile');
   const navIcon = document.getElementById('nav-icon');
+
   if (navToggle) {
     navToggle.addEventListener('click', () => {
       navMobile.classList.toggle('hidden');
@@ -479,23 +481,66 @@
     });
   }
 
-  // Auto-hitung usia dari tanggal lahir
   const tglLahirEl = document.getElementById('tgl_lahir');
-  if (tglLahirEl) {
-    tglLahirEl.addEventListener('change', function() {
-      if (!this.value) return;
-      const born = new Date(this.value);
-      const now = new Date();
-      const months = Math.floor((now - born) / (1000 * 60 * 60 * 24 * 30.44));
-      const usiaEl = document.getElementById('usia_bulan');
-      if (months >= 0 && months <= 60) {
-        usiaEl.value = months;
-        usiaEl.dispatchEvent(new Event('input'));
-      }
-    });
+  const usiaEl = document.getElementById('usia_bulan');
+
+  function hitungUsiaBulan(tanggalLahir) {
+    const born = new Date(tanggalLahir);
+    const today = new Date();
+
+    if (Number.isNaN(born.getTime())) return '';
+
+    let months =
+      (today.getFullYear() - born.getFullYear()) * 12 +
+      (today.getMonth() - born.getMonth());
+
+    if (today.getDate() < born.getDate()) {
+      months--;
+    }
+
+    if (months < 0) return '';
+    return months;
   }
 
-  // Form validation (termasuk lokasi wajib)
+  function updateUsiaDariTanggalLahir() {
+    if (!tglLahirEl || !usiaEl) return;
+
+    if (!tglLahirEl.value) {
+      usiaEl.value = '';
+      return;
+    }
+
+    const months = hitungUsiaBulan(tglLahirEl.value);
+
+    if (months === '') {
+      usiaEl.value = '';
+      return;
+    }
+
+    usiaEl.value = months;
+    usiaEl.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
+  if (tglLahirEl) {
+    tglLahirEl.addEventListener('change', updateUsiaDariTanggalLahir);
+    tglLahirEl.addEventListener('input', updateUsiaDariTanggalLahir);
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    updateUsiaDariTanggalLahir();
+
+    const lokasiSelect = document.getElementById('lokasi_kalimantan');
+    if (lokasiSelect) {
+      new Choices(lokasiSelect, {
+        searchEnabled: true,
+        searchPlaceholderValue: 'Cari kota/kabupaten di Kalimantan...',
+        shouldSort: false,
+        itemSelectText: '',
+        removeItemButton: false
+      });
+    }
+  });
+
   const form = document.getElementById('kalkulator-form');
   if (form) {
     form.addEventListener('submit', function(e) {
@@ -507,9 +552,12 @@
 
       let errors = [];
       if (!gender) errors.push('Pilih jenis kelamin anak.');
-      if (!usia) errors.push('Isi usia anak.');
-      if (!tb || tb<40||tb>130) errors.push('Tinggi badan tidak valid (40–130 cm).');
-      if (!bb || bb<1 || bb>50) errors.push('Berat badan tidak valid (1–50 kg).');
+      if (!usia) errors.push('Pilih tanggal lahir anak agar usia terisi otomatis.');
+      if (usia && (parseInt(usia, 10) < 0 || parseInt(usia, 10) > 60)) {
+        errors.push('Usia anak harus berada pada rentang 0–60 bulan.');
+      }
+      if (!tb || tb < 40 || tb > 130) errors.push('Tinggi badan tidak valid (40–130 cm).');
+      if (!bb || bb < 1 || bb > 50) errors.push('Berat badan tidak valid (1–50 kg).');
       if (!lokasi) errors.push('Pilih lokasi tempat tinggal di Kalimantan.');
 
       const lokasiErrorEl = document.getElementById('lokasi-error');
@@ -528,27 +576,15 @@
   function showToast(msg) {
     const old = document.getElementById('sc-toast');
     if (old) old.remove();
+
     const t = document.createElement('div');
     t.id = 'sc-toast';
     t.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-[999] bg-slate-800 text-white text-sm px-5 py-3 rounded-full shadow-xl flex items-center gap-2';
     t.innerHTML = `<span class="material-symbols-rounded text-yellow-400 text-base">warning</span>${msg}`;
     document.body.appendChild(t);
+
     setTimeout(() => t.remove(), 3500);
   }
-
-  // Inisialisasi Choices.js
-  document.addEventListener('DOMContentLoaded', function () {
-    const lokasiSelect = document.getElementById('lokasi_kalimantan');
-    if (lokasiSelect) {
-      const lokasiChoices = new Choices(lokasiSelect, {
-        searchEnabled: true,
-        searchPlaceholderValue: 'Cari kota/kabupaten di Kalimantan...',
-        shouldSort: false,
-        itemSelectText: '',
-        removeItemButton: false
-      });
-    }
-  });
 </script>
 </body>
 </html>

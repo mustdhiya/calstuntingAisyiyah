@@ -31,7 +31,7 @@
   </div>
   <div class="bg-white/90 backdrop-blur rounded-xl px-3 py-1.5 shadow-sm border border-slate-200">
     <p class="text-xs font-semibold text-slate-800 leading-none">Kalimantan Timur</p>
-    <p class="text-[10px] text-slate-500 leading-none mt-0.5">Peta Interaktif Wilayah</p>
+    <p class="text-[10px] text-slate-500 leading-none mt-0.5">Sebaran risiko per kabupaten/kota</p>
   </div>
 </header>
 <div id="map"></div>
@@ -56,8 +56,19 @@
   <div class="flex justify-between text-[9px] text-slate-400 mt-0.5"><span>Rendah</span><span>Tinggi</span></div>
 </div>
 <div id="map-status" class="absolute inset-0 z-40 flex items-center justify-center bg-slate-100/80">
-  <div class="flex items-center gap-2 text-slate-500 text-sm"><span class="loading loading-spinner loading-sm"></span><span id="map-status-text">Memuat peta...</span></div>
+  <div class="flex items-center gap-2 text-slate-500 text-sm">
+    <span class="loading loading-spinner loading-sm"></span>
+    <span id="map-status-text">Memuat peta...</span>
+  </div>
 </div>
+
+<script>
+  window.analisisPetaData = {{ Js::from([
+    'wilayah' => $mapWilayah,
+    'geoJsonUrl' => $geoJsonUrl,
+  ]) }};
+</script>
+
 <script src="{{ asset('js/admin/analisis-peta.js') }}"></script>
 </body>
 </html>

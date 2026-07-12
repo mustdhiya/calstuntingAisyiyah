@@ -111,9 +111,53 @@ class AnalisisController extends Controller
     }
 
     public function peta()
-    {
-        return view('admin.analisis-peta');
-    }
+{
+    $thirtyDaysAgo = now()->subDays(30);
+
+    $perKota = Measurement::where('created_at', '>=', $thirtyDaysAgo)
+        ->selectRaw('city, status_growth, count(*) as total')
+        ->groupBy('city', 'status_growth')
+        ->get()
+        ->groupBy('city')
+        ->map(function ($rows, $city) {
+            $normal = 0;
+            $risiko = 0;
+            $stunting = 0;
+            $berat = 0;
+
+            foreach ($rows as $row) {
+                if ($row->status_growth === 'Normal') {
+                    $normal += $row->total;
+                } elseif ($row->status_growth === 'Risiko') {
+                    $risiko += $row->total;
+                } elseif ($row->status_growth === 'Stunting') {
+                    $stunting += $row->total;
+                } elseif ($row->status_growth === 'Stunting Berat') {
+                    $berat += $row->total;
+                }
+            }
+
+            $total = $normal + $risiko + $stunting + $berat;
+            $nilaiRisiko = $risiko + $stunting + $berat;
+
+            return [
+                'nama' => $city,
+                'normal' => $normal,
+                'risiko' => $risiko,
+                'stunting' => $stunting,
+                'berat' => $berat,
+                'nilai' => $nilaiRisiko,
+                'total' => $total,
+                'persentase' => $total > 0 ? round(($nilaiRisiko / $total) * 100, 1) : 0,
+            ];
+        })
+        ->values();
+
+    return view('admin.analisis-peta', [
+        'mapWilayah' => $perKota,
+        'geoJsonUrl' => asset('static/maps/kalimantan-timur-kabkota.geojson'),
+    ]);
+}
 
     public function exportCsv(Request $request)
     {

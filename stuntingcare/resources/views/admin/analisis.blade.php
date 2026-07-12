@@ -24,29 +24,42 @@
         
         <!-- ====== PETA KALIMANTAN TIMUR (GEOCHART) ====== -->
         <div class="bg-white border border-slate-200 rounded-2xl p-4">
-          <div class="flex items-center justify-between mb-2">
-            <h2 class="text-sm font-semibold text-slate-900 flex items-center gap-1.5">
-              <span class="material-symbols-rounded text-sm text-slate-600">map</span>
-              Peta sebaran risiko per kabupaten/kota (Kaltim)
-            </h2>
-            <span class="text-[11px] text-slate-500">
-              Warna lebih pekat = nilai lebih tinggi
-            </span>
+          <!-- Header card -->
+          <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
+            <div>
+              <h2 class="text-sm font-semibold text-slate-900 flex items-center gap-1.5">
+                <span class="material-symbols-rounded text-sm text-slate-600">map</span>
+                Peta sebaran risiko per kabupaten/kota (Kaltim)
+              </h2>
+              <p class="text-[11px] text-slate-500 mt-1">
+                Warna lebih pekat = nilai lebih tinggi
+              </p>
+            </div>
+
+            <!-- Tombol sekarang masuk ke dalam card -->
+            <a href="{{ route('admin.analisis.peta') }}"
+              class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-full bg-emerald-600 text-white text-xs font-semibold shadow-sm hover:bg-emerald-700 transition whitespace-nowrap">
+              <span class="material-symbols-rounded text-base">map</span>
+              <span>Buka analisis peta</span>
+            </a>
           </div>
 
           <!-- Container peta -->
-          <div id="kaltim-map" class="w-full h-72 md:h-80 lg:h-96"></div>
+          <div id="kaltim-map" class="w-full h-72 md:h-80 lg:h-96 rounded-2xl overflow-hidden bg-slate-50"></div>
 
-          <div class="mt-3 flex flex-wrap gap-3 text-[11px] text-slate-500">
-            <div class="flex items-center gap-1">
-              <span class="w-4 h-3 rounded-full"
-                    style="background: linear-gradient(to right,#ecfdf3,#22c55e);"></span>
-              <span>Level risiko (rendah → tinggi)</span>
+          <!-- Footer info -->
+          <div class="mt-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-[11px] text-slate-500">
+            <div class="flex flex-wrap gap-3">
+              <div class="flex items-center gap-1">
+                <span class="w-4 h-3 rounded-full"
+                      style="background: linear-gradient(to right,#ecfdf3,#22c55e);"></span>
+                <span>Level risiko (rendah → tinggi)</span>
+              </div>
+              <span class="flex items-center gap-1">
+                <span class="material-symbols-rounded text-sm">info</span>
+                Arahkan kursor ke kabupaten/kota untuk melihat detail nilai
+              </span>
             </div>
-            <span class="flex items-center gap-1">
-              <span class="material-symbols-rounded text-sm">info</span>
-              Arahkan kursor ke kabupaten/kota untuk melihat detail nilai
-            </span>
           </div>
         </div>
 
@@ -360,12 +373,6 @@
             </div>
           @endif
         </div>
-
-     <a href="{{ route('admin.analisis.peta') }}"
-       class="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-full bg-emerald-600 text-white text-xs md:text-sm font-semibold shadow-lg hover:bg-emerald-700 transition">
-      <span class="material-symbols-rounded text-base md:text-lg">map</span>
-      <span>Peta analisis per kab/kota</span>
-    </a>
 
 @endsection
 
