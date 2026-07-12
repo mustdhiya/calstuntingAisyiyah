@@ -20,11 +20,11 @@ class DatabaseSeeder extends Seeder
         Schema::enableForeignKeyConstraints();
 
         // Run separated seeders in correct order
-        $this->call([
-            UserSeeder::class,
-            ArticleSeeder::class,
-            MeasurementSeeder::class,
-            RiskRecommendationSeeder::class,
-        ]);
+$this->call([
+    UserSeeder::class,
+    ArticleSeeder::class,
+    MeasurementSeeder::class,
+    AdminUserSeeder::class,
+]);
     }
 }

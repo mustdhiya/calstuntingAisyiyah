@@ -5,14 +5,16 @@ namespace Database\Seeders;
 use App\Models\Measurement;
 use App\Http\Controllers\KalkulatorController;
 use Illuminate\Database\Seeder;
+use Faker\Factory as Faker;
 
 class MeasurementSeeder extends Seeder
 {
-    public function run(): void
-    {
-        $genders  = ['L', 'P'];
-        $cities   = ['Samarinda', 'Balikpapan', 'Bontang', 'Kutai Kartanegara', 'Kutai Timur', 'Berau', 'Paser', 'Penajam Paser Utara', 'Kutai Barat', 'Mahakam Ulu'];
+public function run(): void
+{
+    $faker = Faker::create();
 
+    $genders  = ['L', 'P'];
+    $cities   = ['Samarinda', 'Balikpapan', 'Bontang', 'Kutai Kartanegara', 'Kutai Timur', 'Berau', 'Paser', 'Penajam Paser Utara', 'Kutai Barat', 'Mahakam Ulu'];
         // Hapus data lama agar bersih
         Measurement::truncate();
 
@@ -61,7 +63,7 @@ class MeasurementSeeder extends Seeder
             $statusGrowth = $statusGrowthMap[$result['risk_level']['code']] ?? 'Normal';
 
             Measurement::create([
-                'child_name'   => 'Anak ' . fake()->firstName($gender === 'L' ? 'male' : 'female'),
+                'child_name'   => 'Anak ' . $faker->firstName($gender === 'L' ? 'male' : 'female'),
                 'gender'       => $gender,
                 'age_months'   => $ageMonths,
                 'birth_date'   => now()->subMonths($ageMonths)->startOfMonth()->toDateString(),
