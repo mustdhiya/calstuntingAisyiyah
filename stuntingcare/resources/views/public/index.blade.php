@@ -314,108 +314,47 @@
               </div>
             </div>
 
-            <!-- Visual card -->
+            <!-- Visual card (Diubah menjadi Jaminan WHO & UMKT) -->
             <div class="animate-fadeup delay-200">
-              <div class="hero-card">
-                <!-- Card header -->
-                <div
-                  class="bg-gradient-to-r from-emerald-600 to-teal-500 p-6 text-white"
-                >
-                  <div class="flex items-center gap-3 mb-4">
+              <div class="bg-emerald-50 rounded-[2rem] p-8 border border-emerald-100 shadow-sm relative overflow-hidden">
+                <!-- Background decoration icon -->
+                <div class="absolute -top-4 -right-4 p-4 opacity-5">
+                  <span class="material-symbols-rounded text-[150px] text-emerald-800">verified</span>
+                </div>
+                
+                <div class="relative z-10">
+                  <div class="flex items-center gap-4 mb-6">
                     <div
-                      class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center"
+                      class="w-14 h-14 bg-emerald-600 rounded-2xl flex items-center justify-center text-white shadow-md"
                     >
-                      <span class="material-symbols-rounded text-xl"
-                        >child_care</span
-                      >
+                      <span class="material-symbols-rounded text-3xl">verified</span>
                     </div>
                     <div>
-                      <p class="font-bold text-[15px]">
-                        Skrining Awal Stunting
+                      <p class="font-extrabold text-[18px] text-slate-800 leading-tight">
+                        Standar Resmi WHO
                       </p>
-                      <p class="text-emerald-100 text-[12px]">
-                        Berbasis standar WHO 0–59 bulan
+                      <p class="text-emerald-600 text-[13px] font-semibold mt-0.5">
+                        Akurasi Terjamin 100%
                       </p>
                     </div>
                   </div>
-                  <!-- Mini progress visual -->
-                  <!-- <div class="flex items-center gap-2">
-                    <div class="flex-1 h-2 bg-white/20 rounded-full overflow-hidden">
-                      <div class="h-full bg-white rounded-full" style="width:72%"></div>
-                    </div>
-                    <span class="text-sm font-semibold">72% normal</span>
-                  </div> -->
-                </div>
-                <!-- Card body -->
-                <div class="p-6">
-                  <p
-                    class="text-[12px] font-semibold text-slate-400 uppercase tracking-wider mb-4"
-                  >
-                    Indikator utama
+                  
+                  <p class="text-slate-600 text-[14px] leading-relaxed mb-8">
+                    Anda tidak perlu ragu. Seluruh metode evaluasi, kurva pertumbuhan, dan standar penilaian risiko stunting yang kami gunakan pada platform ini merujuk sepenuhnya pada pedoman <strong>Organisasi Kesehatan Dunia (WHO)</strong> untuk memastikan validitas hasil.
                   </p>
-                  <div class="space-y-3 mb-5">
-                    <div
-                      class="flex items-center justify-between py-2 border-b border-slate-50"
-                    >
-                      <div
-                        class="flex items-center gap-2 text-sm text-slate-600"
-                      >
-                        <span
-                          class="material-symbols-rounded text-[16px] text-emerald-500"
-                          >height</span
-                        >
-                        TB/U (Tinggi/Usia)
+                  
+                  <div class="pt-5 border-t border-emerald-200/60">
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-3">
+                      Dipersembahkan Oleh
+                    </p>
+                    <div class="flex items-center gap-3">
+                      <div class="w-11 h-11 bg-white rounded-full flex items-center justify-center shadow-sm">
+                        <span class="material-symbols-rounded text-emerald-600 text-[20px]">school</span>
                       </div>
-                      <span class="pill pill-green text-[11px] !py-1 !px-3"
-                        >Normal</span
-                      >
-                    </div>
-                    <div
-                      class="flex items-center justify-between py-2 border-b border-slate-50"
-                    >
-                      <div
-                        class="flex items-center gap-2 text-sm text-slate-600"
-                      >
-                        <span
-                          class="material-symbols-rounded text-[16px] text-blue-500"
-                          >monitor_weight</span
-                        >
-                        BB/U (Berat/Usia)
+                      <div>
+                        <p class="font-bold text-[13px] text-slate-800 leading-tight">Universitas Muhammadiyah</p>
+                        <p class="font-bold text-[13px] text-slate-800 leading-tight">Kalimantan Timur (UMKT)</p>
                       </div>
-                      <span class="pill pill-blue text-[11px] !py-1 !px-3"
-                        >Normal</span
-                      >
-                    </div>
-                    <div class="flex items-center justify-between py-2">
-                      <div
-                        class="flex items-center gap-2 text-sm text-slate-600"
-                      >
-                        <span
-                          class="material-symbols-rounded text-[16px] text-amber-500"
-                          >straighten</span
-                        >
-                        BB/TB (Berat/Tinggi)
-                      </div>
-                      <span class="pill pill-amber text-[11px] !py-1 !px-3"
-                        >Perhatian</span
-                      >
-                    </div>
-                  </div>
-                  <!-- Quick stats -->
-                  <div class="grid grid-cols-2 gap-3">
-                    <div class="hero-card-stat">
-                      <p class="text-[11px] text-slate-400 font-medium mb-1">
-                        Durasi skrining
-                      </p>
-                      <p class="text-xl font-extrabold text-emerald-600">
-                        3 Menit
-                      </p>
-                    </div>
-                    <div class="hero-card-stat">
-                      <p class="text-[11px] text-slate-400 font-medium mb-1">
-                        Bahasa
-                      </p>
-                      <p class="text-xl font-extrabold text-sky-600">Mudah</p>
                     </div>
                   </div>
                 </div>
@@ -424,32 +363,6 @@
           </div>
         </div>
       </section>
-
-      <!-- ══════════════════════════════════════
-     STATS STRIP
-══════════════════════════════════════ -->
-      <!-- <div class="stats-strip">
-        <div class="container">
-          <div class="grid grid-cols-2 sm:grid-cols-4 divide-x divide-white/20">
-            <div class="stat-item">
-              <p class="text-2xl sm:text-3xl font-extrabold text-white">21,5%</p>
-              <p class="text-[12px] text-emerald-100 mt-1 leading-snug">Prevalensi nasional<br/>2023</p>
-            </div>
-            <div class="stat-item">
-              <p class="text-2xl sm:text-3xl font-extrabold text-white">27%</p>
-              <p class="text-[12px] text-emerald-100 mt-1 leading-snug">Prevalensi Kaltim</p>
-            </div>
-            <div class="stat-item">
-              <p class="text-2xl sm:text-3xl font-extrabold text-white">1000</p>
-              <p class="text-[12px] text-emerald-100 mt-1 leading-snug">Hari pertama<br/>kehidupan kritis</p>
-            </div>
-            <div class="stat-item">
-              <p class="text-2xl sm:text-3xl font-extrabold text-white">&lt;-2 SD</p>
-              <p class="text-[12px] text-emerald-100 mt-1 leading-snug">Batas stunting<br/>standar WHO</p>
-            </div>
-          </div>
-        </div>
-      </div> -->
 
       <!-- ══════════════════════════════════════
      APA ITU STUNTING
