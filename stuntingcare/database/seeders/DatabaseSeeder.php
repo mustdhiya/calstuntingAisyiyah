@@ -25,6 +25,7 @@ $this->call([
     ArticleSeeder::class,
     MeasurementSeeder::class,
     AdminUserSeeder::class,
+    FaqSeeder::class,
 ]);
     }
 }

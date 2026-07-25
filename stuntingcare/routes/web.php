@@ -7,7 +7,9 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\EdukasiController;
 use App\Http\Controllers\KalkulatorController;
 use App\Http\Controllers\Admin\AnalisisController;
+use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PublicController;
 
 // ── Auth Routes ──────────────────────────────────────────────
 Route::controller(AuthController::class)->group(function () {
@@ -18,17 +20,14 @@ Route::controller(AuthController::class)->group(function () {
 
 
 // ── Public Routes ──────────────────────────────────────────────
-Route::get('/', function () {
-    $latestArticles = \App\Models\Article::published()
-        ->latest('published_date')
-        ->limit(3)
-        ->get();
-    return view('public.index', compact('latestArticles'));
-})->name('home');
-Route::view('/tentang', 'public.tentang')->name('tentang');
-Route::view('/hasil', 'public.hasil')->name('hasil');
-Route::view('/faq', 'public.faq')->name('faq');
-Route::view('/kontak', 'public.kontak')->name('kontak');
+Route::controller(PublicController::class)->group(function () {
+    Route::get('/', 'index')->name('home');
+    Route::get('/faq', 'faq')->name('faq');
+
+    Route::view('/tentang', 'public.tentang')->name('tentang');
+    Route::view('/hasil', 'public.hasil')->name('hasil');
+    Route::view('/kontak', 'public.kontak')->name('kontak');
+});
 
 Route::controller(EdukasiController::class)->group(function () {
     Route::get('/edukasi', 'index')->name('edukasi');
@@ -75,5 +74,13 @@ Route::prefix('admin')->name('admin.')->middleware('admin')->group(function () {
         Route::post('/pengguna',             'store')->name('pengguna.store');
         Route::put('/pengguna/{user}',       'update')->name('pengguna.update');
         Route::delete('/pengguna/{user}',    'destroy')->name('pengguna.destroy');
+    });
+
+    // CRUD FAQ
+    Route::controller(FaqController::class)->group(function () {
+        Route::get('/crud-faq',          'index')->name('crud-faq');
+        Route::post('/crud-faq',         'store')->name('crud-faq.store');
+        Route::put('/crud-faq/{faq}',    'update')->name('crud-faq.update');
+        Route::delete('/crud-faq/{faq}', 'destroy')->name('crud-faq.destroy');
     });
 });

@@ -98,6 +98,10 @@
               <span class="material-symbols-rounded text-sm">group</span>
               Data pengguna
             </a>
+            <a href="{{ route('admin.crud-faq') }}" class="flex items-center gap-2 px-3 py-2 rounded-xl {{ request()->routeIs('admin.crud-faq') ? $activeClass : $inactiveClass }}">
+              <span class="material-symbols-rounded text-sm">quiz</span>
+              Manajemen FAQ
+            </a>
           </nav>
         </div>
 

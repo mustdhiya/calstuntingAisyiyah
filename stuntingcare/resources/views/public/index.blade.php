@@ -851,91 +851,116 @@
           </div>
 
           <div class="max-w-3xl mx-auto space-y-3">
-            <div class="faq-item">
-              <button
-                class="faq-btn"
-                onclick="toggleFaq(this)"
-                aria-expanded="true"
-              >
-                <span class="font-semibold text-[15px] text-slate-800"
-                  >Apakah hasil kalkulator merupakan diagnosis medis?</span
+            @if(isset($faqs) && count($faqs) > 0)
+              @foreach($faqs as $idx => $faqItem)
+                <div class="faq-item">
+                  <button
+                    class="faq-btn"
+                    onclick="toggleFaq(this)"
+                    aria-expanded="{{ $idx === 0 ? 'true' : 'false' }}"
+                  >
+                    <span class="font-semibold text-[15px] text-slate-800"
+                      >{{ $faqItem->question }}</span
+                    >
+                    <span
+                      class="material-symbols-rounded faq-icon {{ $idx === 0 ? 'rotate' : '' }} text-[22px]"
+                      >add</span
+                    >
+                  </button>
+                  <div class="faq-content {{ $idx === 0 ? 'open' : '' }}">
+                    <p class="text-slate-500 text-[14px] leading-relaxed">
+                      {{ $faqItem->answer }}
+                    </p>
+                  </div>
+                </div>
+              @endforeach
+            @else
+              <div class="faq-item">
+                <button
+                  class="faq-btn"
+                  onclick="toggleFaq(this)"
+                  aria-expanded="true"
                 >
-                <span
-                  class="material-symbols-rounded faq-icon rotate text-[22px]"
-                  >add</span
-                >
-              </button>
-              <div class="faq-content open">
-                <p class="text-slate-500 text-[14px] leading-relaxed">
-                  Tidak. Hasil pada website ini hanya untuk
-                  <strong>skrining awal dan edukasi</strong>. Pemeriksaan medis
-                  dan diagnosis resmi tetap harus dilakukan oleh tenaga
-                  kesehatan di fasilitas kesehatan terdekat.
-                </p>
+                  <span class="font-semibold text-[15px] text-slate-800"
+                    >Apakah hasil kalkulator merupakan diagnosis medis?</span
+                  >
+                  <span
+                    class="material-symbols-rounded faq-icon rotate text-[22px]"
+                    >add</span
+                  >
+                </button>
+                <div class="faq-content open">
+                  <p class="text-slate-500 text-[14px] leading-relaxed">
+                    Tidak. Hasil pada website ini hanya untuk
+                    <strong>skrining awal dan edukasi</strong>. Pemeriksaan medis
+                    dan diagnosis resmi tetap harus dilakukan oleh tenaga
+                    kesehatan di fasilitas kesehatan terdekat.
+                  </p>
+                </div>
               </div>
-            </div>
-            <div class="faq-item">
-              <button
-                class="faq-btn"
-                onclick="toggleFaq(this)"
-                aria-expanded="false"
-              >
-                <span class="font-semibold text-[15px] text-slate-800"
-                  >Kapan orang tua perlu membawa anak ke Puskesmas?</span
+              <div class="faq-item">
+                <button
+                  class="faq-btn"
+                  onclick="toggleFaq(this)"
+                  aria-expanded="false"
                 >
-                <span class="material-symbols-rounded faq-icon text-[22px]"
-                  >add</span
-                >
-              </button>
-              <div class="faq-content">
-                <p class="text-slate-500 text-[14px] leading-relaxed">
-                  Jika hasil skrining menunjukkan risiko sedang atau tinggi,
-                  atau anak tampak mengalami masalah makan, berat badan sulit
-                  naik, atau pertumbuhan tidak sesuai usia — segera periksakan
-                  ke fasilitas kesehatan.
-                </p>
+                  <span class="font-semibold text-[15px] text-slate-800"
+                    >Kapan orang tua perlu membawa anak ke Puskesmas?</span
+                  >
+                  <span class="material-symbols-rounded faq-icon text-[22px]"
+                    >add</span
+                  >
+                </button>
+                <div class="faq-content">
+                  <p class="text-slate-500 text-[14px] leading-relaxed">
+                    Jika hasil skrining menunjukkan risiko sedang atau tinggi,
+                    atau anak tampak mengalami masalah makan, berat badan sulit
+                    naik, atau pertumbuhan tidak sesuai usia — segera periksakan
+                    ke fasilitas kesehatan.
+                  </p>
+                </div>
               </div>
-            </div>
-            <div class="faq-item">
-              <button
-                class="faq-btn"
-                onclick="toggleFaq(this)"
-                aria-expanded="false"
-              >
-                <span class="font-semibold text-[15px] text-slate-800"
-                  >Apa penyebab utama stunting?</span
+              <div class="faq-item">
+                <button
+                  class="faq-btn"
+                  onclick="toggleFaq(this)"
+                  aria-expanded="false"
                 >
-                <span class="material-symbols-rounded faq-icon text-[22px]"
-                  >add</span
-                >
-              </button>
-              <div class="faq-content">
-                <p class="text-slate-500 text-[14px] leading-relaxed">
-                  Penyebab utama meliputi kekurangan gizi kronis, infeksi
-                  berulang, pola asuh yang kurang optimal, sanitasi lingkungan
-                  buruk, dan keterbatasan akses layanan kesehatan.
-                </p>
+                  <span class="font-semibold text-[15px] text-slate-800"
+                    >Apa penyebab utama stunting?</span
+                  >
+                  <span class="material-symbols-rounded faq-icon text-[22px]"
+                    >add</span
+                  >
+                </button>
+                <div class="faq-content">
+                  <p class="text-slate-500 text-[14px] leading-relaxed">
+                    Penyebab utama meliputi kekurangan gizi kronis, infeksi
+                    berulang, pola asuh yang kurang optimal, sanitasi lingkungan
+                    buruk, dan keterbatasan akses layanan kesehatan.
+                  </p>
+                </div>
               </div>
-            </div>
-            <div class="faq-item">
-              <button
-                class="faq-btn"
-                onclick="toggleFaq(this)"
-                aria-expanded="false"
-              >
-                <span class="font-semibold text-[15px] text-slate-800"
-                  >Apakah data anak saya disimpan?</span
+              <div class="faq-item">
+                <button
+                  class="faq-btn"
+                  onclick="toggleFaq(this)"
+                  aria-expanded="false"
                 >
-                <span class="material-symbols-rounded faq-icon text-[22px]"
-                  >add</span
-                >
-              </button>
-              <div class="faq-content">
-                <p class="text-slate-500 text-[14px] leading-relaxed">
-                  Data skrining awal disimpan secara lokal pada database sistem untuk keperluan pemetaan analisis stunting wilayah Kalimantan Timur oleh admin.
-                </p>
+                  <span class="font-semibold text-[15px] text-slate-800"
+                    >Apakah data anak saya disimpan?</span
+                  >
+                  <span class="material-symbols-rounded faq-icon text-[22px]"
+                    >add</span
+                  >
+                </button>
+                <div class="faq-content">
+                  <p class="text-slate-500 text-[14px] leading-relaxed">
+                    Data skrining awal disimpan secara lokal pada database sistem untuk keperluan pemetaan analisis stunting wilayah Kalimantan Timur oleh admin.
+                  </p>
+                </div>
               </div>
-            </div>
+            @endif
           </div>
 
           <div class="text-center mt-8">
