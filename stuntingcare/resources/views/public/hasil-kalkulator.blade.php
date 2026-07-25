@@ -44,12 +44,12 @@
       <a href="{{ route('kontak') }}" class="nav-link">Kontak</a>
     </nav>
     <div class="flex items-center gap-2">
-      @guest
+      <!-- @guest
         <a href="{{ route('login') }}" class="btn-hero-primary bg-white text-emerald-700 border border-emerald-600 hover:bg-emerald-50 text-sm !py-2 !px-4 hidden sm:inline-flex" style="background:#fff; color:#047857; border: 1.5px solid #059669; box-shadow:none;">
           <span class="material-symbols-rounded text-[18px]">login</span>
           Masuk
         </a>
-      @endguest
+      @endguest -->
 
       @auth
         <div class="hidden sm:flex items-center gap-2 text-xs text-slate-600 bg-slate-100 px-3 py-2 rounded-full font-medium">

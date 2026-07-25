@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Article;
+use App\Models\Faq;
 use App\Models\Measurement;
 use App\Models\User;
 
@@ -76,11 +77,25 @@ class DashboardController extends Controller
                 ];
             });
 
+        // Recent FAQs
+        $recentFaqs = Faq::latest()->limit(5)->get()->map(function ($item) {
+            return [
+                'type' => 'faq',
+                'title_prefix' => 'FAQ baru',
+                'bold_text' => $item->question,
+                'description' => 'Status: ' . $item->status,
+                'icon' => 'help_outline',
+                'icon_color' => 'bg-blue-50 text-blue-600',
+                'time' => $item->created_at
+            ];
+        });
+
         // Gabungkan semua aktivitas dan urutkan berdasarkan created_at descending, ambil 5 teratas
         $recentActivities = collect()
             ->merge($recentMeasurements)
             ->merge($recentArticles)
             ->merge($recentUsers)
+            ->merge($recentFaqs)
             ->sortByDesc('time')
             ->take(5);
 
