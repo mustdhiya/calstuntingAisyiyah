@@ -35,13 +35,12 @@ class AnalisisController extends Controller
 
         $measurements = $query->paginate(10)->withQueryString();
 
-        // ----- Summary stats (30 hari terakhir) -----
-        $thirtyDaysAgo = now()->subDays(30);
-        $totalAll      = Measurement::where('created_at', '>=', $thirtyDaysAgo)->count();
-        $totalNormal   = Measurement::where('status_growth', 'Normal')->where('created_at', '>=', $thirtyDaysAgo)->count();
-        $totalRisiko   = Measurement::where('status_growth', 'Risiko')->where('created_at', '>=', $thirtyDaysAgo)->count();
-        $totalStunting = Measurement::where('status_growth', 'Stunting')->where('created_at', '>=', $thirtyDaysAgo)->count();
-        $totalBerat    = Measurement::where('status_growth', 'Stunting Berat')->where('created_at', '>=', $thirtyDaysAgo)->count();
+        // ----- Summary stats -----
+        $totalAll      = Measurement::count();
+        $totalNormal   = Measurement::byStatus('Normal')->count();
+        $totalRisiko   = Measurement::byStatus('Risiko')->count();
+        $totalStunting = Measurement::byStatus('Stunting')->count();
+        $totalBerat    = Measurement::byStatus('Stunting Berat')->count();
 
         // ----- Chart: Pie komposisi status -----
         $chartStatus = [
@@ -63,34 +62,24 @@ class AnalisisController extends Controller
         $chartAge = [];
         foreach ($ageGroups as $label => [$min, $max]) {
             $chartAge[$label] = [
-                'Normal'         => Measurement::where('status_growth', 'Normal')->where('created_at', '>=', $thirtyDaysAgo)->whereBetween('age_months', [$min, $max])->count(),
-                'Risiko'         => Measurement::where('status_growth', 'Risiko')->where('created_at', '>=', $thirtyDaysAgo)->whereBetween('age_months', [$min, $max])->count(),
-                'Stunting'       => Measurement::where('status_growth', 'Stunting')->where('created_at', '>=', $thirtyDaysAgo)->whereBetween('age_months', [$min, $max])->count(),
-                'Stunting Berat' => Measurement::where('status_growth', 'Stunting Berat')->where('created_at', '>=', $thirtyDaysAgo)->whereBetween('age_months', [$min, $max])->count(),
+                'Normal'         => Measurement::byStatus('Normal')->whereBetween('age_months', [$min, $max])->count(),
+                'Risiko'         => Measurement::byStatus('Risiko')->whereBetween('age_months', [$min, $max])->count(),
+                'Stunting'       => Measurement::byStatus('Stunting')->whereBetween('age_months', [$min, $max])->count(),
+                'Stunting Berat' => Measurement::byStatus('Stunting Berat')->whereBetween('age_months', [$min, $max])->count(),
             ];
         }
 
         // ----- Per kota (peta) -----
-        $perKota = Measurement::where('created_at', '>=', $thirtyDaysAgo)
-            ->selectRaw('city, status_growth, count(*) as total')
-            ->groupBy('city', 'status_growth')
-            ->get()
-            ->groupBy('city')
-            ->map(function ($rows) {
-                $stunting = 0;
-                $normal   = 0;
-                foreach ($rows as $row) {
-                    if (in_array($row->status_growth, ['Stunting', 'Stunting Berat'])) {
-                        $stunting += $row->total;
-                    } else {
-                        $normal += $row->total;
-                    }
-                }
-                return ['stunting' => $stunting, 'normal' => $normal, 'total' => $stunting + $normal];
-            });
-
-        // Hanya nilai stunting untuk peta heatmap
-        $mapData = $perKota->map(fn($v) => $v['stunting'])->toArray();
+        $mapWilayah = $this->getMapWilayahData();
+        $perKota = [];
+        foreach ($mapWilayah as $item) {
+            $perKota[$item['nama']] = [
+                'stunting' => $item['nilai'],
+                'normal'   => $item['normal'],
+                'total'    => $item['total'],
+            ];
+        }
+        $mapData = collect($perKota)->map(fn($v) => $v['stunting'])->toArray();
 
         return view('admin.analisis', compact(
             'measurements',
@@ -111,19 +100,45 @@ class AnalisisController extends Controller
     }
 
     public function peta()
-{
-    $thirtyDaysAgo = now()->subDays(30);
+    {
+        return view('admin.analisis-peta', [
+            'mapWilayah' => $this->getMapWilayahData(),
+            'geoJsonUrl' => asset('static/maps/kalimantan-timur-kabkota.geojson'),
+        ]);
+    }
 
-    $perKota = Measurement::where('created_at', '>=', $thirtyDaysAgo)
-        ->selectRaw('city, status_growth, count(*) as total')
-        ->groupBy('city', 'status_growth')
-        ->get()
-        ->groupBy('city')
-        ->map(function ($rows, $city) {
-            $normal = 0;
-            $risiko = 0;
+    /**
+     * Mengambil data agregat wilayah Kalimantan Timur secara terpusat.
+     */
+    private function getMapWilayahData()
+    {
+        $allCities = [
+            'Paser',
+            'Kutai Kartanegara',
+            'Berau',
+            'Kutai Barat',
+            'Kutai Timur',
+            'Penajam Paser Utara',
+            'Mahakam Ulu',
+            'Balikpapan',
+            'Samarinda',
+            'Bontang',
+        ];
+
+        $dbData = Measurement::selectRaw('city, status_growth, count(*) as total')
+            ->whereNotNull('city')
+            ->groupBy('city', 'status_growth')
+            ->get()
+            ->groupBy(function ($row) {
+                return $this->normalizeCityName($row->city);
+            });
+
+        return collect($allCities)->map(function ($cityName) use ($dbData) {
+            $rows = $dbData->get($cityName, collect());
+            $normal   = 0;
+            $risiko   = 0;
             $stunting = 0;
-            $berat = 0;
+            $berat    = 0;
 
             foreach ($rows as $row) {
                 if ($row->status_growth === 'Normal') {
@@ -141,23 +156,50 @@ class AnalisisController extends Controller
             $nilaiRisiko = $risiko + $stunting + $berat;
 
             return [
-                'nama' => $city,
-                'normal' => $normal,
-                'risiko' => $risiko,
-                'stunting' => $stunting,
-                'berat' => $berat,
-                'nilai' => $nilaiRisiko,
-                'total' => $total,
+                'nama'       => $cityName,
+                'normal'     => $normal,
+                'risiko'     => $risiko,
+                'stunting'   => $stunting,
+                'berat'      => $berat,
+                'nilai'      => $nilaiRisiko,
+                'total'      => $total,
                 'persentase' => $total > 0 ? round(($nilaiRisiko / $total) * 100, 1) : 0,
             ];
-        })
-        ->values();
+        })->values();
+    }
 
-    return view('admin.analisis-peta', [
-        'mapWilayah' => $perKota,
-        'geoJsonUrl' => asset('static/maps/kalimantan-timur-kabkota.geojson'),
-    ]);
-}
+    /**
+     * Normalisasi nama kota/kabupaten agar sesuai dengan GeoJSON Kalimantan Timur.
+     */
+    private function normalizeCityName(?string $rawCity): string
+    {
+        if (empty($rawCity)) {
+            return 'Tidak diketahui';
+        }
+
+        $upper = strtoupper(trim($rawCity));
+
+        $mapping = [
+            'PASER'               => 'Paser',
+            'KUTAI KARTANEGARA'   => 'Kutai Kartanegara',
+            'BERAU'               => 'Berau',
+            'KUTAI BARAT'         => 'Kutai Barat',
+            'KUTAI TIMUR'         => 'Kutai Timur',
+            'PENAJAM PASER UTARA' => 'Penajam Paser Utara',
+            'MAHAKAM ULU'         => 'Mahakam Ulu',
+            'BALIKPAPAN'          => 'Balikpapan',
+            'SAMARINDA'           => 'Samarinda',
+            'BONTANG'             => 'Bontang',
+        ];
+
+        foreach ($mapping as $key => $standard) {
+            if (str_contains($upper, $key)) {
+                return $standard;
+            }
+        }
+
+        return ucwords(strtolower(trim($rawCity)));
+    }
 
     public function exportCsv(Request $request)
     {

@@ -29,9 +29,27 @@ class DashboardController extends Controller
         // Data per kab/kota for the map (risiko tinggi = stunted)
         $kaltimData = Measurement::stunted()
             ->whereNotNull('city')
-            ->selectRaw('city, COUNT(*) as total')
-            ->groupBy('city')
-            ->pluck('total', 'city');
+            ->get()
+            ->groupBy(function ($item) {
+                $upper = strtoupper(trim($item->city));
+                $mapping = [
+                    'PASER'               => 'Paser',
+                    'KUTAI KARTANEGARA'   => 'Kutai Kartanegara',
+                    'BERAU'               => 'Berau',
+                    'KUTAI BARAT'         => 'Kutai Barat',
+                    'KUTAI TIMUR'         => 'Kutai Timur',
+                    'PENAJAM PASER UTARA' => 'Penajam Paser Utara',
+                    'MAHAKAM ULU'         => 'Mahakam Ulu',
+                    'BALIKPAPAN'          => 'Balikpapan',
+                    'SAMARINDA'           => 'Samarinda',
+                    'BONTANG'             => 'Bontang',
+                ];
+                foreach ($mapping as $key => $std) {
+                    if (str_contains($upper, $key)) return $std;
+                }
+                return ucwords(strtolower(trim($item->city)));
+            })
+            ->map->count();
 
         // Recent measurements
         $recentMeasurements = Measurement::latest()->limit(5)->get()->map(function ($item) {
