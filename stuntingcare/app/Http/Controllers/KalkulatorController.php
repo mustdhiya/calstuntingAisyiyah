@@ -11,9 +11,23 @@ class KalkulatorController extends Controller
     /**
      * Show the calculator form.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('public.kalkulator');
+        $editMeasurement = null;
+        $sessionMeasurementId = session('last_calculator_measurement_id');
+
+        if ($request->filled('edit')) {
+            $requestedId = $request->input('edit');
+            // Hanya izinkan jika ID yang diminta di URL cocok dengan ID di session browser ini
+            if ($sessionMeasurementId && $requestedId === $sessionMeasurementId) {
+                $editMeasurement = Measurement::find($sessionMeasurementId);
+            }
+        } elseif ($sessionMeasurementId) {
+            // Pengaksesan biasa /kalkulator dari browser yang sama
+            $editMeasurement = Measurement::find($sessionMeasurementId);
+        }
+
+        return view('public.kalkulator', compact('editMeasurement'));
     }
 
     /**
@@ -209,6 +223,7 @@ class KalkulatorController extends Controller
     public function hitung(Request $request)
     {
         $data = $request->validate([
+            'measurement_id'     => 'nullable|string',
             'nama_anak'          => 'nullable|string|max:100',
             'jenis_kelamin'      => 'required|in:L,P',
             'usia_bulan'         => 'required|integer|min:0|max:60',
@@ -236,37 +251,35 @@ class KalkulatorController extends Controller
         ];
         $statusGrowth = $statusGrowthMap[$result['risk_level']['code']] ?? 'Normal';
 
-        // ---------- Simpan ke tabel measurements ----------
-        $childName = $data['nama_anak'] ?? 'Anak';
-        if ($childName !== 'Anak') {
-            Measurement::updateOrCreate(
-                ['child_name' => $childName],
-                [
-                    'gender'        => $gender,
-                    'age_months'    => $usia,
-                    'birth_date'    => $data['tanggal_lahir'] ?? null,
-                    'height'        => $tb,
-                    'weight'        => $bb,
-                    'status_growth' => $statusGrowth,
-                    'risk_level'    => $result['risk_level']['code'],
-                    'city'          => $result['city'],
-                    'asi_eksklusif' => 'Ya',
-                ]
-            );
-        } else {
-            Measurement::create([
-                'child_name'    => 'Anak',
-                'gender'        => $gender,
-                'age_months'    => $usia,
-                'birth_date'    => $data['tanggal_lahir'] ?? null,
-                'height'        => $tb,
-                'weight'        => $bb,
-                'status_growth' => $statusGrowth,
-                'risk_level'    => $result['risk_level']['code'],
-                'city'          => $result['city'],
-                'asi_eksklusif' => 'Ya',
-            ]);
+        // ---------- Simpan / Update ke tabel measurements ----------
+        $measurementData = [
+            'child_name'    => $data['nama_anak'] ?? 'Anak',
+            'gender'        => $gender,
+            'age_months'    => $usia,
+            'birth_date'    => $data['tanggal_lahir'] ?? null,
+            'height'        => $tb,
+            'weight'        => $bb,
+            'status_growth' => $statusGrowth,
+            'risk_level'    => $result['risk_level']['code'],
+            'city'          => $result['city'],
+            'asi_eksklusif' => 'Ya',
+        ];
+
+        $measurement = null;
+        if (!empty($data['measurement_id'])) {
+            $measurement = Measurement::find($data['measurement_id']);
         }
+
+        if ($measurement) {
+            $measurement->update($measurementData);
+        } else {
+            $measurement = Measurement::create($measurementData);
+        }
+
+        // Simpan ID ke Session browser pengguna ini demi proteksi privasi
+        session(['last_calculator_measurement_id' => $measurement->id]);
+
+        $result['measurement_id'] = $measurement->id;
 
         return view('public.hasil-kalkulator', compact('result'));
     }

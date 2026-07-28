@@ -129,6 +129,8 @@
   <!-- GRID layout -->
   <form id="kalkulator-form" action="{{ route('kalkulator.hitung') }}" method="POST" novalidate>
     @csrf
+    <input type="hidden" name="measurement_id" value="{{ old('measurement_id', $editMeasurement->id ?? '') }}" />
+
     <div class="grid lg:grid-cols-3 gap-6 items-start">
 
       <!-- LEFT: form -->
@@ -160,7 +162,7 @@
               <div class="relative">
                 <span class="material-symbols-rounded absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xl pointer-events-none">person</span>
                 <input type="text" name="nama_anak" placeholder="Contoh: Aulia Rahma"
-                       value="{{ old('nama_anak') }}"
+                       value="{{ old('nama_anak', $editMeasurement->child_name ?? '') }}"
                        class="input input-bordered w-full pl-10 focus:border-green-500 text-sm" />
               </div>
             </div>
@@ -172,16 +174,19 @@
                   Jenis Kelamin <span class="text-red-400">*</span>
                 </span>
               </label>
+              @php
+                $selectedGender = old('jenis_kelamin', $editMeasurement->gender ?? 'P');
+              @endphp
               <div class="grid grid-cols-2 gap-3">
                 <label class="radio-card">
-                  <input type="radio" name="jenis_kelamin" value="L" {{ old('jenis_kelamin') === 'L' ? 'checked' : '' }} />
+                  <input type="radio" name="jenis_kelamin" value="L" {{ $selectedGender === 'L' ? 'checked' : '' }} />
                   <div class="rc-box">
                     <span class="rc-icon material-symbols-rounded">boy</span>
                     <span class="rc-label">Laki-laki</span>
                   </div>
                 </label>
                 <label class="radio-card">
-                  <input type="radio" name="jenis_kelamin" value="P" {{ old('jenis_kelamin', 'P') === 'P' ? 'checked' : '' }} />
+                  <input type="radio" name="jenis_kelamin" value="P" {{ $selectedGender === 'P' ? 'checked' : '' }} />
                   <div class="rc-box">
                     <span class="rc-icon material-symbols-rounded">girl</span>
                     <span class="rc-label">Perempuan</span>
@@ -202,7 +207,7 @@
                 <div class="input-unit-wrap">
                   <input type="number" name="usia_bulan" id="usia_bulan" min="0" max="60"
                     placeholder="Otomatis dari tanggal lahir"
-                    value="{{ old('usia_bulan') }}"
+                    value="{{ old('usia_bulan', $editMeasurement->age_months ?? '') }}"
                     class="input input-bordered w-full focus:border-green-500 text-sm bg-slate-50"
                     readonly required />
                   <span class="unit-badge">bln</span>
@@ -213,7 +218,10 @@
                   <span class="label-text font-semibold text-slate-700 text-sm">Tanggal Lahir</span>
                   <span class="label-text-alt text-slate-400 text-xs">Otomatis hitung usia</span>
                 </label>
-                <input type="date" id="tgl_lahir" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}"
+                @php
+                  $tglLahirFormatted = isset($editMeasurement->birth_date) ? \Carbon\Carbon::parse($editMeasurement->birth_date)->format('Y-m-d') : '';
+                @endphp
+                <input type="date" id="tgl_lahir" name="tanggal_lahir" value="{{ old('tanggal_lahir', $tglLahirFormatted) }}"
                        class="input input-bordered w-full focus:border-green-500 text-sm" />
               </div>
             </div>
@@ -228,7 +236,7 @@
                 </label>
                 <div class="input-unit-wrap">
                   <input type="number" name="tinggi_badan" min="40" max="130" step="0.1"
-                         placeholder="80.0" value="{{ old('tinggi_badan', '80') }}"
+                         placeholder="80.0" value="{{ old('tinggi_badan', $editMeasurement->height ?? '80') }}"
                          class="input input-bordered w-full focus:border-green-500 text-sm" required />
                   <span class="unit-badge">cm</span>
                 </div>
@@ -247,7 +255,7 @@
                 </label>
                 <div class="input-unit-wrap">
                   <input type="number" name="berat_badan" min="1" max="50" step="0.1"
-                         placeholder="9.2" value="{{ old('berat_badan', '9.2') }}"
+                         placeholder="9.2" value="{{ old('berat_badan', $editMeasurement->weight ?? '9.2') }}"
                          class="input input-bordered w-full focus:border-green-500 text-sm" required />
                   <span class="unit-badge">kg</span>
                 </div>
@@ -283,6 +291,9 @@
                 <span class="label-text-alt text-slate-400 text-xs">Misal: Kota Samarinda</span>
               </label>
 
+              @php
+                $selectedCity = old('lokasi_kalimantan', isset($editMeasurement->city) ? strtolower(str_replace(' ', '_', $editMeasurement->city)) : '');
+              @endphp
               <!-- Dropdown Choice.js -->
               <select id="lokasi_kalimantan" name="lokasi_kalimantan"
                       class="select select-bordered w-full text-sm"
@@ -290,17 +301,17 @@
                 <option value="">Pilih lokasi...</option>
 
                 <!-- Kalimantan Timur -->
-                <option value="samarinda" {{ old('lokasi_kalimantan') === 'samarinda' ? 'selected' : '' }}>Kota Samarinda (Kalimantan Timur)</option>
-                <option value="balikpapan" {{ old('lokasi_kalimantan') === 'balikpapan' ? 'selected' : '' }}>Kota Balikpapan (Kalimantan Timur)</option>
-                <option value="bontang" {{ old('lokasi_kalimantan') === 'bontang' ? 'selected' : '' }}>Kota Bontang (Kalimantan Timur)</option>
-                <option value="kutai_kartanegara" {{ old('lokasi_kalimantan') === 'kutai_kartanegara' ? 'selected' : '' }}>Kab. Kutai Kartanegara (Kalimantan Timur)</option>
-                <option value="kutai_timur" {{ old('lokasi_kalimantan') === 'kutai_timur' ? 'selected' : '' }}>Kab. Kutai Timur (Kalimantan Timur)</option>
-                <option value="berau" {{ old('lokasi_kalimantan') === 'berau' ? 'selected' : '' }}>Kab. Berau (Kalimantan Timur)</option>
+                <option value="samarinda" {{ $selectedCity === 'samarinda' ? 'selected' : '' }}>Kota Samarinda (Kalimantan Timur)</option>
+                <option value="balikpapan" {{ $selectedCity === 'balikpapan' ? 'selected' : '' }}>Kota Balikpapan (Kalimantan Timur)</option>
+                <option value="bontang" {{ $selectedCity === 'bontang' ? 'selected' : '' }}>Kota Bontang (Kalimantan Timur)</option>
+                <option value="kutai_kartanegara" {{ $selectedCity === 'kutai_kartanegara' ? 'selected' : '' }}>Kab. Kutai Kartanegara (Kalimantan Timur)</option>
+                <option value="kutai_timur" {{ $selectedCity === 'kutai_timur' ? 'selected' : '' }}>Kab. Kutai Timur (Kalimantan Timur)</option>
+                <option value="berau" {{ $selectedCity === 'berau' ? 'selected' : '' }}>Kab. Berau (Kalimantan Timur)</option>
 
                 <!-- contoh lain Kalimantan -->
-                <option value="banjarmasin" {{ old('lokasi_kalimantan') === 'banjarmasin' ? 'selected' : '' }}>Kota Banjarmasin (Kalimantan Selatan)</option>
-                <option value="pontianak" {{ old('lokasi_kalimantan') === 'pontianak' ? 'selected' : '' }}>Kota Pontianak (Kalimantan Barat)</option>
-                <option value="tarakan" {{ old('lokasi_kalimantan') === 'tarakan' ? 'selected' : '' }}>Kota Tarakan (Kalimantan Utara)</option>
+                <option value="banjarmasin" {{ $selectedCity === 'banjarmasin' ? 'selected' : '' }}>Kota Banjarmasin (Kalimantan Selatan)</option>
+                <option value="pontianak" {{ $selectedCity === 'pontianak' ? 'selected' : '' }}>Kota Pontianak (Kalimantan Barat)</option>
+                <option value="tarakan" {{ $selectedCity === 'tarakan' ? 'selected' : '' }}>Kota Tarakan (Kalimantan Utara)</option>
               </select>
 
               <span id="lokasi-error" class="mt-1 text-xs text-red-500 hidden">
