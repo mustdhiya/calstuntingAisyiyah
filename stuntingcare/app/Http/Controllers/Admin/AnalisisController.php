@@ -180,17 +180,43 @@ class AnalisisController extends Controller
         $upper = strtoupper(trim($rawCity));
 
         $mapping = [
-            'PASER'               => 'Paser',
-            'KUTAI KARTANEGARA'   => 'Kutai Kartanegara',
-            'BERAU'               => 'Berau',
-            'KUTAI BARAT'         => 'Kutai Barat',
-            'KUTAI TIMUR'         => 'Kutai Timur',
-            'PENAJAM PASER UTARA' => 'Penajam Paser Utara',
-            'MAHAKAM ULU'         => 'Mahakam Ulu',
-            'BALIKPAPAN'          => 'Balikpapan',
-            'SAMARINDA'           => 'Samarinda',
-            'BONTANG'             => 'Bontang',
+            'PENAJAM PASER UTARA'         => 'Penajam Paser Utara',
+            'KABUPATEN PENAJAM PASER UTARA' => 'Penajam Paser Utara',
+            'KAB. PENAJAM PASER UTARA'   => 'Penajam Paser Utara',
+            'PPU'                         => 'Penajam Paser Utara',
+            'KUTAI KARTANEGARA'           => 'Kutai Kartanegara',
+            'KABUPATEN KUTAI KARTANEGARA' => 'Kutai Kartanegara',
+            'KAB. KUTAI KARTANEGARA'      => 'Kutai Kartanegara',
+            'KUKAR'                       => 'Kutai Kartanegara',
+            'KUTAI BARAT'                 => 'Kutai Barat',
+            'KABUPATEN KUTAI BARAT'       => 'Kutai Barat',
+            'KAB. KUTAI BARAT'            => 'Kutai Barat',
+            'KUBAR'                       => 'Kutai Barat',
+            'KUTAI TIMUR'                 => 'Kutai Timur',
+            'KABUPATEN KUTAI TIMUR'       => 'Kutai Timur',
+            'KAB. KUTAI TIMUR'            => 'Kutai Timur',
+            'KUTIM'                       => 'Kutai Timur',
+            'MAHAKAM ULU'                 => 'Mahakam Ulu',
+            'KABUPATEN MAHAKAM ULU'       => 'Mahakam Ulu',
+            'KAB. MAHAKAM ULU'            => 'Mahakam Ulu',
+            'MAHULU'                      => 'Mahakam Ulu',
+            'PASER'                       => 'Paser',
+            'KABUPATEN PASER'             => 'Paser',
+            'KAB. PASER'                  => 'Paser',
+            'BERAU'                       => 'Berau',
+            'KABUPATEN BERAU'             => 'Berau',
+            'KAB. BERAU'                  => 'Berau',
+            'BALIKPAPAN'                  => 'Balikpapan',
+            'KOTA BALIKPAPAN'             => 'Balikpapan',
+            'SAMARINDA'                   => 'Samarinda',
+            'KOTA SAMARINDA'              => 'Samarinda',
+            'BONTANG'                     => 'Bontang',
+            'KOTA BONTANG'                => 'Bontang',
         ];
+
+        if (isset($mapping[$upper])) {
+            return $mapping[$upper];
+        }
 
         foreach ($mapping as $key => $standard) {
             if (str_contains($upper, $key)) {

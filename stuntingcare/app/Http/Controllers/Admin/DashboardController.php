@@ -33,17 +33,21 @@ class DashboardController extends Controller
             ->groupBy(function ($item) {
                 $upper = strtoupper(trim($item->city));
                 $mapping = [
-                    'PASER'               => 'Paser',
-                    'KUTAI KARTANEGARA'   => 'Kutai Kartanegara',
-                    'BERAU'               => 'Berau',
-                    'KUTAI BARAT'         => 'Kutai Barat',
-                    'KUTAI TIMUR'         => 'Kutai Timur',
-                    'PENAJAM PASER UTARA' => 'Penajam Paser Utara',
-                    'MAHAKAM ULU'         => 'Mahakam Ulu',
-                    'BALIKPAPAN'          => 'Balikpapan',
-                    'SAMARINDA'           => 'Samarinda',
-                    'BONTANG'             => 'Bontang',
+                    'PENAJAM PASER UTARA'         => 'Penajam Paser Utara',
+                    'KABUPATEN PENAJAM PASER UTARA' => 'Penajam Paser Utara',
+                    'KAB. PENAJAM PASER UTARA'   => 'Penajam Paser Utara',
+                    'PPU'                         => 'Penajam Paser Utara',
+                    'KUTAI KARTANEGARA'           => 'Kutai Kartanegara',
+                    'KUTAI BARAT'                 => 'Kutai Barat',
+                    'KUTAI TIMUR'                 => 'Kutai Timur',
+                    'MAHAKAM ULU'                 => 'Mahakam Ulu',
+                    'PASER'                       => 'Paser',
+                    'BERAU'                       => 'Berau',
+                    'BALIKPAPAN'                  => 'Balikpapan',
+                    'SAMARINDA'                   => 'Samarinda',
+                    'BONTANG'                     => 'Bontang',
                 ];
+                if (isset($mapping[$upper])) return $mapping[$upper];
                 foreach ($mapping as $key => $std) {
                     if (str_contains($upper, $key)) return $std;
                 }
