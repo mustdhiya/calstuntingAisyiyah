@@ -16,15 +16,13 @@ class KalkulatorController extends Controller
         $editMeasurement = null;
         $sessionMeasurementId = session('last_calculator_measurement_id');
 
+        // HANYA isi data lama jika pengguna mengeklik tombol "Hitung Ulang" (?edit=ID)
+        // dan ID tersebut cocok dengan session penginput di browser ini
         if ($request->filled('edit')) {
             $requestedId = $request->input('edit');
-            // Hanya izinkan jika ID yang diminta di URL cocok dengan ID di session browser ini
             if ($sessionMeasurementId && $requestedId === $sessionMeasurementId) {
                 $editMeasurement = Measurement::find($sessionMeasurementId);
             }
-        } elseif ($sessionMeasurementId) {
-            // Pengaksesan biasa /kalkulator dari browser yang sama
-            $editMeasurement = Measurement::find($sessionMeasurementId);
         }
 
         return view('public.kalkulator', compact('editMeasurement'));

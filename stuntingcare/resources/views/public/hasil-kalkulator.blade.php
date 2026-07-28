@@ -248,7 +248,7 @@
             <span class="material-symbols-rounded text-[20px]">menu_book</span>
             Lanjut ke Edukasi
           </a>
-          <a href="{{ route("kalkulator") }}" class="btn-outline-green">
+          <a href="{{ route('kalkulator', !empty($result['measurement_id']) ? ['edit' => $result['measurement_id']] : []) }}" class="btn-outline-green">
             <span class="material-symbols-rounded text-[20px]">refresh</span>
             Hitung Ulang
           </a>
