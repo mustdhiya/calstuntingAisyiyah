@@ -31,16 +31,16 @@ const deskripsi = {
 };
 
 const aliases = {
-  "KABUPATEN PASER":"Paser","PASER":"Paser",
-  "KABUPATEN KUTAI KARTANEGARA":"Kutai Kartanegara","KUTAI KARTANEGARA":"Kutai Kartanegara",
-  "KABUPATEN BERAU":"Berau","BERAU":"Berau",
-  "KABUPATEN KUTAI BARAT":"Kutai Barat","KUTAI BARAT":"Kutai Barat",
-  "KABUPATEN KUTAI TIMUR":"Kutai Timur","KUTAI TIMUR":"Kutai Timur",
-  "KABUPATEN PENAJAM PASER UTARA":"Penajam Paser Utara","PENAJAM PASER UTARA":"Penajam Paser Utara",
-  "KABUPATEN MAHAKAM ULU":"Mahakam Ulu","MAHAKAM ULU":"Mahakam Ulu",
-  "KOTA BALIKPAPAN":"Balikpapan","BALIKPAPAN":"Balikpapan",
-  "KOTA SAMARINDA":"Samarinda","SAMARINDA":"Samarinda",
-  "KOTA BONTANG":"Bontang","BONTANG":"Bontang"
+  "PASER": "Paser", "KABUPATEN PASER": "Paser", "KAB. PASER": "Paser",
+  "KUTAI KARTANEGARA": "Kutai Kartanegara", "KABUPATEN KUTAI KARTANEGARA": "Kutai Kartanegara", "KAB. KUTAI KARTANEGARA": "Kutai Kartanegara", "KUKAR": "Kutai Kartanegara",
+  "BERAU": "Berau", "KABUPATEN BERAU": "Berau", "KAB. BERAU": "Berau",
+  "KUTAI BARAT": "Kutai Barat", "KABUPATEN KUTAI BARAT": "Kutai Barat", "KAB. KUTAI BARAT": "Kutai Barat", "KUBAR": "Kutai Barat",
+  "KUTAI TIMUR": "Kutai Timur", "KABUPATEN KUTAI TIMUR": "Kutai Timur", "KAB. KUTAI TIMUR": "Kutai Timur", "KUTIM": "Kutai Timur",
+  "PENAJAM PASER UTARA": "Penajam Paser Utara", "KABUPATEN PENAJAM PASER UTARA": "Penajam Paser Utara", "KAB. PENAJAM PASER UTARA": "Penajam Paser Utara", "PPU": "Penajam Paser Utara",
+  "MAHAKAM ULU": "Mahakam Ulu", "KABUPATEN MAHAKAM ULU": "Mahakam Ulu", "KAB. MAHAKAM ULU": "Mahakam Ulu", "MAHULU": "Mahakam Ulu",
+  "BALIKPAPAN": "Balikpapan", "KOTA BALIKPAPAN": "Balikpapan",
+  "SAMARINDA": "Samarinda", "KOTA SAMARINDA": "Samarinda",
+  "BONTANG": "Bontang", "KOTA BONTANG": "Bontang"
 };
 
 const sorted = [...wilayah].sort((a, b) => b.nilai - a.nilai);
@@ -65,7 +65,16 @@ function getStatus(nilai) {
 }
 
 function findWilayah(nama) {
-  return wilayah.find(w => w.nama === nama);
+  if (!nama) return null;
+  const rawStr = String(nama).trim();
+  const cleanKey = rawStr.toUpperCase();
+  const matchedName = aliases[cleanKey] || rawStr;
+
+  return wilayah.find(w => 
+    w.nama === matchedName || 
+    w.nama.toUpperCase() === cleanKey || 
+    w.nama.toLowerCase() === rawStr.toLowerCase()
+  );
 }
 
 function normalizeGeoName(props = {}) {
@@ -83,6 +92,12 @@ function normalizeGeoName(props = {}) {
   for (const val of cands) {
     const key = String(val).trim().toUpperCase();
     if (aliases[key]) return aliases[key];
+  }
+
+  for (const val of cands) {
+    const key = String(val).trim().toLowerCase();
+    const found = wilayah.find(w => w.nama.toLowerCase() === key);
+    if (found) return found.nama;
   }
 
   return cands[0] || 'Tidak diketahui';
@@ -105,12 +120,19 @@ const panelBadge = document.getElementById('panel-status-badge');
 const panelProgress = document.getElementById('panel-progress');
 
 function renderMap(geoJson) {
+  if (geoJson && Array.isArray(geoJson.features)) {
+    geoJson.features.forEach((f) => {
+      if (!f.properties) f.properties = {};
+      f.properties.name = normalizeGeoName(f.properties);
+    });
+  }
+
   echarts.registerMap('kalimantan-timur', geoJson);
 
   const existingNames = new Set();
 
   const seriesData = geoJson.features.map((f) => {
-    const displayName = normalizeGeoName(f.properties || {});
+    const displayName = f.properties.name;
     existingNames.add(displayName);
     const data = findWilayah(displayName);
 
