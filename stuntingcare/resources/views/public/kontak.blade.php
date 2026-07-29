@@ -148,68 +148,6 @@
       </div>
     </section>
 
-    <!-- Quick Contact -->
-    <section class="grid sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8 md:mb-10">
-      <a href="mailto:info@sicegahstunting.id" class="card bg-white border border-slate-200 rounded-3xl soft-card hover:border-emerald-200 transition">
-        <div class="card-body p-5">
-          <div class="w-12 h-12 rounded-2xl bg-cyan-50 text-cyan-700 flex items-center justify-center mb-3">
-            <span class="material-symbols-rounded">mail</span>
-          </div>
-          <h3 class="font-bold">Email</h3>
-          <p class="text-sm text-slate-600">info@sicegahstunting.id</p>
-          <span class="text-sm font-semibold text-emerald-700 mt-2">Kirim email</span>
-        </div>
-      </a>
-
-      <a href="tel:+62541555123" class="card bg-white border border-slate-200 rounded-3xl soft-card hover:border-emerald-200 transition">
-        <div class="card-body p-5">
-          <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center mb-3">
-            <span class="material-symbols-rounded">call</span>
-          </div>
-          <h3 class="font-bold">Telepon</h3>
-          <p class="text-sm text-slate-600">(0541) 555123</p>
-          <span class="text-sm font-semibold text-emerald-700 mt-2">Hubungi sekarang</span>
-        </div>
-      </a>
-
-      <div class="card bg-white border border-slate-200 rounded-3xl soft-card">
-        <div class="card-body p-6 md:p-7">
-          <div class="flex items-center justify-between gap-4 mb-4">
-            <div>
-              <h2 class="card-title text-xl">Lokasi institusi</h2>
-              <p class="text-sm text-slate-500">Universitas Muhammadiyah Kalimantan Timur</p>
-            </div>
-            <a href="https://maps.google.com/?q=Jl.+Ir.+H.+Juanda+No.15,+Sidodadi,+Samarinda+Ulu,+Kota+Samarinda,+Kalimantan+Timur+75124" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline rounded-full">
-              Buka Peta
-            </a>
-          </div>
-
-          <div class="rounded-[2rem] h-72 overflow-hidden border border-slate-200">
-            <iframe
-              src="https://maps.google.com/maps?q=Jl.+Ir.+H.+Juanda+No.15,+Sidodadi,+Samarinda+Ulu,+Kota+Samarinda,+Kalimantan+Timur+75124&z=16&output=embed"
-              width="100%"
-              height="100%"
-              style="border:0;"
-              allowfullscreen=""
-              loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade"
-              aria-label="Peta lokasi Universitas Muhammadiyah Kalimantan Timur">
-            </iframe>
-          </div>
-        </div>
-      </div>
-
-      <div class="card bg-white border border-slate-200 rounded-3xl soft-card">
-        <div class="card-body p-5">
-          <div class="w-12 h-12 rounded-2xl bg-violet-50 text-violet-700 flex items-center justify-center mb-3">
-            <span class="material-symbols-rounded">support_agent</span>
-          </div>
-          <h3 class="font-bold">Layanan</h3>
-          <p class="text-sm text-slate-600">Senin–Jumat, 08.00–16.00 WITA</p>
-          <span class="text-sm text-slate-500 mt-2">Estimasi respons 1–2 hari kerja</span>
-        </div>
-      </div>
-    </section>
 
     <!-- Main Content -->
     <section class="grid xl:grid-cols-[.95fr_1.05fr] gap-6 items-start">
@@ -239,14 +177,14 @@
                 <span class="material-symbols-rounded text-cyan-700 mt-0.5">mail</span>
                 <div>
                   <div class="font-semibold text-slate-800">Email</div>
-                  <a href="mailto:info@sicegahstunting.id" class="text-slate-600 hover:text-emerald-700 transition">info@sicegahstunting.id</a>
+                  <a href="mailto:baua@umkt.ac.id" class="text-slate-600 hover:text-emerald-700 transition">baua@umkt.ac.id</a>
                 </div>
               </div>
               <div class="flex items-start gap-3">
                 <span class="material-symbols-rounded text-amber-700 mt-0.5">call</span>
                 <div>
                   <div class="font-semibold text-slate-800">Telepon</div>
-                  <a href="tel:+62541555123" class="text-slate-600 hover:text-emerald-700 transition">(0541) 555123</a>
+                  <a href="tel:+6281254888102" class="text-slate-600 hover:text-emerald-700 transition">(628) 1254888102</a>
                 </div>
               </div>
               <div class="flex items-start gap-3">
