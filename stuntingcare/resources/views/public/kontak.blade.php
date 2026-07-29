@@ -270,18 +270,24 @@
             <div class="flex items-center justify-between gap-4 mb-4">
               <div>
                 <h2 class="card-title text-xl">Lokasi institusi</h2>
-                <p class="text-sm text-slate-500">Integrasi peta dapat ditambahkan pada tahap production</p>
+                <p class="text-sm text-slate-500">Universitas Muhammadiyah Kalimantan Timur Samarinda</p>
               </div>
-              <a href="https://maps.google.com" target="_blank" rel="noopener" class="btn btn-sm btn-outline rounded-full">Buka Peta</a>
+              <a href="https://www.google.com/maps/place/Universitas+Muhammadiyah+Kalimantan+Timur+Samarinda/@-0.4763155,117.1382401,15z/data=!4m6!3m5!1s0x2df67f21b115fd67:0x108077d433712165!8m2!3d-0.4749719!4d117.1388952!16s%2Fg%2F11g9q5lqg_" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline rounded-full">
+                Buka Peta
+              </a>
             </div>
 
-            <div class="rounded-[2rem] h-72 bg-slate-100 border border-dashed border-slate-300 flex items-center justify-center text-center p-6">
-              <div>
-                <span class="material-symbols-rounded text-6xl text-slate-400">map</span>
-                <p class="mt-3 text-slate-500 max-w-sm">
-                  Area ini dapat diganti dengan embed Google Maps agar pengguna langsung melihat lokasi dan petunjuk arah.
-                </p>
-              </div>
+            <div class="rounded-[2rem] h-72 overflow-hidden border border-slate-200">
+              <iframe
+                src="https://maps.google.com/maps?q=-0.4749719,117.1388952&z=16&output=embed"
+                width="100%"
+                height="100%"
+                style="border:0;"
+                allowfullscreen=""
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                aria-label="Peta lokasi Universitas Muhammadiyah Kalimantan Timur Samarinda">
+              </iframe>
             </div>
           </div>
         </div>
