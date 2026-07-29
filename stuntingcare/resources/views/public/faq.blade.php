@@ -20,6 +20,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="{{ asset('css/user/global.css') }}" />
   <link rel="stylesheet" href="{{ asset('css/user/faq.css') }}" />
+    <link rel="icon" type="image/x-icon" href="{{ asset('img/logo.png') }}" />
+
 </head>
 <body class="bg-slate-50 text-slate-800">
   <header class="navbar bg-white border-b border-slate-200 sticky top-0 z-50 px-4 lg:px-8">

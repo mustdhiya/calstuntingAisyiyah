@@ -20,6 +20,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="{{ asset('css/user/global.css') }}" />
   <link rel="stylesheet" href="{{ asset('css/user/hasil-kalkulator.css') }}" />
+
 </head>
 <body>
 
@@ -322,7 +323,7 @@
           </div>
         </div>
         <p class="text-slate-400 text-[13px] leading-relaxed">
-          Platform edukasi dan analisis risiko stunting untuk kader dan masyarakat Aisyiyah Kalimantan Timur.
+          Platform edukasi dan analisis risiko stunting untuk kader dan masyarakat Universitas Muhammadiyah Kalimantan Timur.
         </p>
       </div>
       <div>
@@ -342,11 +343,11 @@
           <li><a href="{{ route("faq") }}" class="text-slate-400 text-[13px] hover:text-white transition-colors">FAQ</a></li>
           <li><a href="{{ route("kontak") }}" class="text-slate-400 text-[13px] hover:text-white transition-colors">Kontak</a></li>
         </ul>
-        <p class="text-slate-400 text-[13px] mt-4">Pengurus Wilayah Aisyiyah Kalimantan Timur</p>
+        <p class="text-slate-400 text-[13px] mt-4"> Universitas Muhammadiyah Kalimantan Timur</p>
       </div>
     </div>
     <p class="text-slate-500 text-[12px] text-center mt-6">
-      &copy; {{ date("Y") }} SiCegah Stunting - Aisyiyah Kalimantan Timur. Dikembangkan untuk penelitian dan pengabdian masyarakat.
+      &copy; {{ date("Y") }} SiCegah Stunting - Universitas Muhammadiyah Kalimantan Timur. Dikembangkan untuk penelitian dan pengabdian masyarakat.
     </p>
   </div>
 </footer>

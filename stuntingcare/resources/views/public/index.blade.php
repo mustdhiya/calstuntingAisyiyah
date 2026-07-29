@@ -8,16 +8,12 @@
     </title>
     <meta
       name="description"
-      content="SiCegah Stunting adalah platform edukasi dan kalkulator risiko stunting untuk masyarakat, ibu, dan kader kesehatan Aisyiyah Kalimantan Timur."
+      content="SiCegah Stunting adalah platform edukasi dan kalkulator risiko stunting untuk masyarakat, ibu, dan kader kesehatan Universitas Muhammadiyah Kalimantan Timur."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-    rel="icon"
-    type="image/svg+xml"
-    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='8' y='8' width='48' height='48' rx='14' fill='%2316a34a'/%3E%3Cpath d='M32 18c-1.7 0-3.3.7-4.5 1.9l-2.1 2.1-2.1-2.1A6.36 6.36 0 0 0 18.8 18c-3.5 0-6.3 2.8-6.3 6.3 0 2 .9 3.9 2.4 5.1L32 45l17.1-15.6a6.26 6.26 0 0 0 2.1-4.7c0-3.5-2.8-6.3-6.3-6.3-1.7 0-3.3.7-4.5 1.9l-2.1 2.1-2.1-2.1A6.36 6.36 0 0 0 32 18Z' fill='white'/%3E%3Cpath d='M29 24h6v6h6v6h-6v6h-6v-6h-6v-6h6z' fill='%2316a34a'/%3E%3C/svg%3E"
-    sizes="any"
-  />
+      <link rel="icon" type="image/x-icon" href="{{ asset('img/logo.png') }}" />
+
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
@@ -34,6 +30,8 @@
 
     <!-- tailwind.config -->
     <script src="{{ asset('js/user/home-config.js') }}"></script>
+
+     
 
     <!-- css -->
     <link rel="stylesheet" href="{{ asset('css/user/global.css') }}" />
@@ -60,11 +58,9 @@
           aria-label="SiCegah Stunting Beranda"
         >
           <div
-            class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-sm flex-shrink-0"
+            class="w-10 h-10 rounded-xl bg-white-600 text-white flex items-center justify-center shadow-sm flex-shrink-0 p-1.5"
           >
-            <span class="material-symbols-rounded text-xl"
-              >health_and_safety</span
-            >
+            <img src="{{ asset('img/logo.png') }}" alt="stunting" class="w-full h-full object-contain">
           </div>
           <div class="leading-tight">
             <div class="font-bold text-[15px] text-emerald-700 leading-none">
@@ -262,7 +258,7 @@
                 <span class="material-symbols-rounded text-[14px]"
                   >campaign</span
                 >
-                Aisyiyah Kalimantan Timur
+                Universitas Muhammadiyah Kalimantan Timur
               </span>
               <h1
                 class="text-[36px] sm:text-[44px] font-extrabold leading-[1.15] text-slate-900 mb-5"
@@ -1003,7 +999,7 @@
             <p class="text-slate-400 text-[14px] leading-relaxed max-w-sm mb-5">
               Platform edukasi dan analisis risiko stunting untuk kader dan
               masyarakat. Dikembangkan untuk mendukung program penelitian dan
-              pengabdian masyarakat Aisyiyah Kaltim.
+              pengabdian masyarakat Universitas Muhammadiyah Kaltim.
             </p>
             <div class="flex gap-2">
               <span class="pill pill-green text-[11px]">
@@ -1102,7 +1098,7 @@
                   class="material-symbols-rounded text-[16px] text-slate-500 mt-0.5 flex-shrink-0"
                   >business</span
                 >
-                Pengurus Wilayah Aisyiyah<br />Kalimantan Timur
+                 Aisyiyah<br />Kalimantan Timur
               </li>
               <li class="flex items-center gap-2 text-[14px] text-slate-400">
                 <span
@@ -1143,7 +1139,7 @@
           class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-3"
         >
           <p class="text-slate-500 text-[13px]">
-            © {{ date('Y') }} SiCegah Stunting — Aisyiyah Kaltim. Seluruh hak cipta
+            © {{ date('Y') }} SiCegah Stunting — Universitas Muhammadiyah Kaltim. Seluruh hak cipta
             dilindungi.
           </p>
           <p class="text-slate-600 text-[12px] flex items-center gap-1.5">

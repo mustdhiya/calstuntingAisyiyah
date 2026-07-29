@@ -246,7 +246,7 @@ class ArticleSeeder extends Seeder
             if ($index < 5) {
                 $authorName = 'Tim Kesehatan Gizi Aisyiyah';
             } elseif ($index < 10) {
-                $authorName = 'Bidan Desa Aisyiyah Kaltim';
+                $authorName = 'Bidan Desa Universitas Muhammadiyah Kaltim';
             } else {
                 $authorName = 'Kader Penggerak SiCegah';
             }

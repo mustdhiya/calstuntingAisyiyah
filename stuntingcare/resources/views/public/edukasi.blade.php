@@ -82,6 +82,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="{{ asset('css/user/global.css') }}" />
   <link rel="stylesheet" href="{{ asset('css/user/edukasi.css') }}" />
+  
 </head>
 <body class="bg-slate-50 text-slate-800">
 

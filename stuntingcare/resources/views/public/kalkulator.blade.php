@@ -12,12 +12,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
 
-  <link
-    rel="icon"
-    type="image/svg+xml"
-    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='8' y='8' width='48' height='48' rx='14' fill='%2316a34a'/%3E%3Cpath d='M32 18c-1.7 0-3.3.7-4.5 1.9l-2.1 2.1-2.1-2.1A6.36 6.36 0 0 0 18.8 18c-3.5 0-6.3 2.8-6.3 6.3 0 2 .9 3.9 2.4 5.1L32 45l17.1-15.6a6.26 6.26 0 0 0 2.1-4.7c0-3.5-2.8-6.3-6.3-6.3-1.7 0-3.3.7-4.5 1.9l-2.1 2.1-2.1-2.1A6.36 6.36 0 0 0 32 18Z' fill='white'/%3E%3Cpath d='M29 24h6v6h6v6h-6v6h-6v-6h-6v-6h6z' fill='%2316a34a'/%3E%3C/svg%3E"
-    sizes="any"
-  />
+    <link rel="icon" type="image/x-icon" href="{{ asset('img/logo.png') }}" />
+
   <!-- DaisyUI + Tailwind -->
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
@@ -446,7 +442,7 @@
           <span class="font-extrabold text-white text-sm">SiCegah Stunting</span>
         </div>
         <p class="text-xs leading-relaxed text-slate-500">
-          Platform edukasi dan skrining awal stunting untuk penelitian dan pengabdian masyarakat Aisyiyah Kalimantan Timur.
+          Platform edukasi dan skrining awal stunting untuk penelitian dan pengabdian masyarakat Universitas Muhammadiyah Kalimantan Timur.
         </p>
       </div>
       <div>
@@ -465,7 +461,7 @@
       </div>
     </div>
     <div class="border-t border-slate-800 pt-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-600">
-      <span>© 2025 SiCegah Stunting — Aisyiyah Kaltim</span>
+      <span>© 2025 SiCegah Stunting — Universitas Muhammadiyah Kaltim</span>
       <span class="flex items-center gap-1">
         <span class="material-symbols-rounded text-xs">verified</span>
         Menggunakan standar WHO &amp; Kemenkes RI

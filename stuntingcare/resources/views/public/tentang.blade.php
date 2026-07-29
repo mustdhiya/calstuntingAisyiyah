@@ -4,16 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tentang Program — SiCegah Stunting</title>
-  <meta name="description" content="Tentang program SiCegah Stunting: latar belakang, tujuan, sasaran, peran Aisyiyah Kalimantan Timur, dan tim pengembang." />
+  <meta name="description" content="Tentang program SiCegah Stunting: latar belakang, tujuan, sasaran, peran Universitas Muhammadiyah Kalimantan Timur, dan tim pengembang." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    rel="icon"
-    type="image/svg+xml"
-    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='8' y='8' width='48' height='48' rx='14' fill='%2316a34a'/%3E%3Cpath d='M32 18c-1.7 0-3.3.7-4.5 1.9l-2.1 2.1-2.1-2.1A6.36 6.36 0 0 0 18.8 18c-3.5 0-6.3 2.8-6.3 6.3 0 2 .9 3.9 2.4 5.1L32 45l17.1-15.6a6.26 6.26 0 0 0 2.1-4.7c0-3.5-2.8-6.3-6.3-6.3-1.7 0-3.3.7-4.5 1.9l-2.1 2.1-2.1-2.1A6.36 6.36 0 0 0 32 18Z' fill='white'/%3E%3Cpath d='M29 24h6v6h6v6h-6v6h-6v-6h-6v-6h6z' fill='%2316a34a'/%3E%3C/svg%3E"
-    sizes="any"
-  />
+    <link rel="icon" type="image/x-icon" href="{{ asset('img/logo.png') }}" />
+
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
@@ -40,7 +36,7 @@
         </div>
         <div class="leading-tight">
           <div class="font-bold text-brand-700 text-sm sm:text-base">SiCegah Stunting</div>
-          <div class="text-[10px] text-slate-400 hidden sm:block">Aisyiyah Kalimantan Timur</div>
+          <div class="text-[10px] text-slate-400 hidden sm:block">Universitas Muhammadiyah Kalimantan Timur</div>
         </div>
       </a>
 
@@ -261,7 +257,7 @@
             </li>
             <li class="flex items-start gap-2.5 text-sm text-slate-500">
               <span class="material-symbols-rounded text-brand-500 text-base shrink-0 mt-0.5">check_circle</span>
-              Mendukung program kerja Aisyiyah Kalimantan Timur di bidang kesehatan
+              Mendukung program kerja Universitas Muhammadiyah Kalimantan Timur di bidang kesehatan
             </li>
           </ul>
         </div>
@@ -308,9 +304,9 @@
           <div class="w-11 h-11 rounded-2xl bg-white/20 flex items-center justify-center mb-5">
             <span class="material-symbols-rounded text-white text-2xl">volunteer_activism</span>
           </div>
-          <h3 class="font-bold text-lg mb-3">Peran Aisyiyah Kaltim</h3>
+          <h3 class="font-bold text-lg mb-3">Peran Universitas Muhammadiyah Kaltim</h3>
           <p class="text-brand-100 text-sm leading-relaxed mb-4">
-            Aisyiyah Kalimantan Timur berperan sebagai penggerak utama kampanye edukasi kesehatan berbasis komunitas, pendampingan kader posyandu, dan komunikasi publik literasi gizi melalui platform digital ini.
+            Universitas Muhammadiyah Kalimantan Timur berperan sebagai penggerak utama kampanye edukasi kesehatan berbasis komunitas, pendampingan kader posyandu, dan komunikasi publik literasi gizi melalui platform digital ini.
           </p>
           <div class="flex flex-wrap gap-2">
             <span class="bg-white/15 text-white text-xs font-medium px-3 py-1 rounded-full">Kampanye Edukasi</span>
@@ -529,7 +525,7 @@
             </div>
             <div>
               <p class="font-bold text-white text-sm">SiCegah Stunting</p>
-              <p class="text-xs text-slate-500">Aisyiyah Kalimantan Timur</p>
+              <p class="text-xs text-slate-500">Universitas Muhammadiyah Kalimantan Timur</p>
             </div>
           </div>
           <p class="text-sm text-slate-400 leading-relaxed">
@@ -565,7 +561,7 @@
 
       <!-- Bottom bar -->
       <div class="border-t border-slate-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-        <p class="text-xs text-slate-500">© 2025 SiCegah Stunting — Pengurus Wilayah Aisyiyah Kalimantan Timur</p>
+        <p class="text-xs text-slate-500">© 2025 SiCegah Stunting —  Universitas Muhammadiyah Kalimantan Timur</p>
         <p class="text-xs text-slate-500 flex items-center gap-1">
           <span class="material-symbols-rounded text-xs">favorite</span>
           Untuk kesehatan anak Indonesia
