@@ -38,13 +38,17 @@
   <nav class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
     <!-- Logo -->
     <a href="{{ url('/') }}" class="flex items-center gap-2.5 select-none">
-      <div class="w-9 h-9 rounded-xl bg-green-600 flex items-center justify-center shadow-sm">
-        <span class="material-symbols-rounded text-white text-xl">health_and_safety</span>
-      </div>
-      <div class="leading-tight">
-        <div class="font-extrabold text-green-700 text-sm">SiCegah Stunting</div>
-        <div class="text-xs text-slate-400 font-normal">Edukasi &amp; Skrining Awal</div>
-      </div>
+        <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm border border-slate-200 overflow-hidden">
+            <img
+                src="{{ asset('img/logo.png') }}"
+                alt="Logo SiCegah Stunting"
+                class="w-8 h-8 object-contain"
+            >
+        </div>
+        <div class="leading-tight">
+            <div class="font-extrabold text-green-700 text-sm">SiCegah Stunting</div>
+            <div class="text-xs text-slate-400 font-normal">Edukasi &amp; Skrining Awal</div>
+        </div>
     </a>
 
     <!-- Desktop nav -->

@@ -32,15 +32,21 @@
     <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
 
       <!-- Logo -->
-      <a href="{{ route('home') }}" class="flex items-center gap-2.5 shrink-0">
-        <div class="w-9 h-9 rounded-xl bg-brand-600 flex items-center justify-center shadow-sm">
-          <span class="material-symbols-rounded text-white text-xl">health_and_safety</span>
+      <a href="{{ route('home') }}" class="flex items-center gap-3 shrink-0">
+        <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm border border-slate-200 p-1.5">
+          <img 
+            src="{{ asset('img/logo.png') }}" 
+            alt="Logo SiCegah Stunting"
+            class="w-full h-full object-contain rounded-lg"
+          >
         </div>
+
         <div class="leading-tight">
           <div class="font-bold text-brand-700 text-sm sm:text-base">SiCegah Stunting</div>
           <div class="text-[10px] text-slate-400 hidden sm:block">Universitas Muhammadiyah Kalimantan Timur</div>
         </div>
       </a>
+
 
       <!-- Desktop nav -->
       <nav class="hidden lg:flex items-center gap-0.5">

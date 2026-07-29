@@ -90,15 +90,15 @@
   <header class="navbar bg-white border-b border-slate-200 sticky top-0 z-50 px-4 lg:px-8">
     <div class="navbar-start">
       <a href="{{ route('home') }}" class="flex items-center gap-3">
-        <div class="w-11 h-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center">
-          <span class="material-symbols-rounded">health_and_safety</span>
-        </div>
-        <div>
-          <div class="font-extrabold text-emerald-700">SiCegah Stunting</div>
-          <div class="text-xs text-slate-500">Edukasi dan Skrining Awal</div>
-        </div>
+          <div class="w-11 h-11 rounded-2xl bg-white shadow-sm border border-slate-200 flex items-center justify-center overflow-hidden">
+              <img src="{{ asset('img/logo.png') }}" alt="Logo SiCegah Stunting" class="w-9 h-9 object-contain">
+          </div>
+          <div>
+              <div class="font-extrabold text-emerald-700">SiCegah Stunting</div>
+              <div class="text-xs text-slate-500">Edukasi dan Skrining Awal</div>
+          </div>
       </a>
-    </div>
+  </div>
     <div class="navbar-center hidden lg:flex">
       <ul class="menu menu-horizontal gap-1 font-medium">
         <li><a href="{{ route('home') }}">Beranda</a></li>

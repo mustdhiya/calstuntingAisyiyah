@@ -24,11 +24,15 @@
 
     <!-- Logo & branding -->
     <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-emerald-600 text-white mb-4 shadow-lg">
-        <span class="material-symbols-rounded text-3xl">health_and_safety</span>
-      </div>
-      <h1 class="text-[26px] font-extrabold text-slate-900 leading-tight">SiCegah Stunting</h1>
-      <p class="text-slate-500 text-[13px] mt-1">Panel Admin — Universitas Muhammadiyah Kalimantan Timur</p>
+        <div class="inline-flex items-center justify-center w-24 h-24 rounded-2xl bg-white mb-4 shadow-lg border border-slate-200 p-2">
+            <img
+                src="{{ asset('img/logo.png') }}"
+                alt="Logo SiCegah Stunting"
+                class="max-w-full max-h-full object-contain rounded-xl"
+            >
+        </div>
+        <h1 class="text-[26px] font-extrabold text-slate-900 leading-tight">SiCegah Stunting</h1>
+        <p class="text-slate-500 text-[13px] mt-1">Panel Admin — Universitas Muhammadiyah Kalimantan Timur</p>
     </div>
 
     <!-- Card -->

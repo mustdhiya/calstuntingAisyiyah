@@ -28,8 +28,12 @@
   <header class="navbar bg-white border-b border-slate-200 sticky top-0 z-50 px-4 lg:px-8">
     <div class="navbar-start">
       <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3">
-        <div class="w-11 h-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center">
-          <span class="material-symbols-rounded">admin_panel_settings</span>
+        <div class="w-11 h-11 rounded-2xl bg-white shadow-sm border border-slate-200 flex items-center justify-center overflow-hidden">
+          <img
+            src="{{ asset('img/logo.png') }}"
+            alt="Logo SiCegah"
+            class="w-8 h-8 object-contain"
+          >
         </div>
         <div>
           <div class="font-extrabold text-emerald-700 text-sm">Admin SiCegah</div>

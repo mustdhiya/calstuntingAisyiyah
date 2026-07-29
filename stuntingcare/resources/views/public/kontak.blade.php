@@ -28,15 +28,15 @@
     <div class="navbar max-w-7xl mx-auto px-4 lg:px-8 min-h-18">
       <div class="navbar-start">
         <a href="{{ route('home') }}" class="flex items-center gap-3">
-          <div class="w-11 h-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-sm">
-            <span class="material-symbols-rounded">health_and_safety</span>
-          </div>
-          <div>
-            <div class="font-extrabold text-emerald-700 leading-tight">SiCegah Stunting</div>
-            <div class="text-xs text-slate-500">Edukasi dan Skrining Awal</div>
-          </div>
+            <div class="w-11 h-11 rounded-2xl bg-white shadow-sm border border-slate-200 flex items-center justify-center overflow-hidden">
+                <img src="{{ asset('img/logo.png') }}" alt="Logo SiCegah Stunting" class="w-9 h-9 object-contain">
+            </div>
+            <div>
+                <div class="font-extrabold text-emerald-700">SiCegah Stunting</div>
+                <div class="text-xs text-slate-500">Edukasi dan Skrining Awal</div>
+            </div>
         </a>
-      </div>
+    </div>
 
       <div class="navbar-center hidden lg:flex">
         <ul class="menu menu-horizontal gap-1 px-1">

@@ -28,13 +28,19 @@
 <header class="navbar-custom sticky top-0 z-50">
   <div class="max-w-6xl mx-auto px-4 lg:px-8 h-full flex items-center justify-between gap-4">
     <a href="{{ route('home') }}" class="flex items-center gap-3 flex-shrink-0">
-      <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center">
-        <span class="material-symbols-rounded text-xl">health_and_safety</span>
-      </div>
-      <div class="leading-tight">
-        <div class="font-bold text-[15px] text-emerald-700 leading-none">SiCegah Stunting</div>
-        <div class="text-[11px] text-slate-400 mt-0.5">Edukasi &amp; Skrining Awal</div>
-      </div>
+        <div class="w-10 h-10 rounded-xl bg-white shadow-sm border border-slate-200 flex items-center justify-center overflow-hidden">
+            <img
+                src="{{ asset('img/logo.png') }}"
+                alt="Logo SiCegah Stunting"
+                class="w-8 h-8 object-contain"
+            >
+        </div>
+
+        <div class="leading-tight">
+            <div class="font-bold text-[15px] text-emerald-700 leading-none">SiCegah Stunting</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">Edukasi &amp; Skrining Awal</div>
+        </div>
+    </a>
     </a>
     <nav class="hidden lg:flex items-center gap-1">
       <a href="{{ route('home') }}" class="nav-link">Beranda</a>
