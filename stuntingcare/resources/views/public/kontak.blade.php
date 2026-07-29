@@ -172,16 +172,32 @@
         </div>
       </a>
 
-      <a href="https://maps.google.com" target="_blank" rel="noopener" class="card bg-white border border-slate-200 rounded-3xl soft-card hover:border-emerald-200 transition">
-        <div class="card-body p-5">
-          <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-3">
-            <span class="material-symbols-rounded">location_on</span>
+      <div class="card bg-white border border-slate-200 rounded-3xl soft-card">
+        <div class="card-body p-6 md:p-7">
+          <div class="flex items-center justify-between gap-4 mb-4">
+            <div>
+              <h2 class="card-title text-xl">Lokasi institusi</h2>
+              <p class="text-sm text-slate-500">Universitas Muhammadiyah Kalimantan Timur</p>
+            </div>
+            <!-- Link tombol diperbarui ke koordinat pencarian UMKT -->
+            <a href="https://maps.google.com/maps?q=Universitas+Muhammadiyah+Kalimantan+Timur" target="_blank" rel="noopener" class="btn btn-sm btn-outline rounded-full">Buka Peta</a>
           </div>
-          <h3 class="font-bold">Lokasi</h3>
-          <p class="text-sm text-slate-600">Samarinda, Kalimantan Timur</p>
-          <span class="text-sm font-semibold text-emerald-700 mt-2">Buka peta</span>
+
+          <!-- Hapus class flex, bg-slate-100, dll, lalu ganti dengan overflow-hidden agar iframe mengikuti border-radius -->
+          <div class="rounded-[2rem] h-72 overflow-hidden border border-slate-200">
+            <iframe 
+              width="100%" 
+              height="100%" 
+              frameborder="0" 
+              style="border:0;" 
+              allowfullscreen="" 
+              aria-hidden="false" 
+              tabindex="0" 
+              src="https://maps.google.com/maps?q=Universitas%20Muhammadiyah%20Kalimantan%20Timur&t=&z=15&ie=UTF8&iwloc=&output=embed">
+            </iframe>
+          </div>
         </div>
-      </a>
+      </div>
 
       <div class="card bg-white border border-slate-200 rounded-3xl soft-card">
         <div class="card-body p-5">
