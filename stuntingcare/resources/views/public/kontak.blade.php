@@ -179,21 +179,21 @@
               <h2 class="card-title text-xl">Lokasi institusi</h2>
               <p class="text-sm text-slate-500">Universitas Muhammadiyah Kalimantan Timur</p>
             </div>
-            <!-- Link tombol diperbarui ke koordinat pencarian UMKT -->
-            <a href="https://maps.google.com/maps?q=Universitas+Muhammadiyah+Kalimantan+Timur" target="_blank" rel="noopener" class="btn btn-sm btn-outline rounded-full">Buka Peta</a>
+            <a href="https://maps.google.com/?q=Jl.+Ir.+H.+Juanda+No.15,+Sidodadi,+Samarinda+Ulu,+Kota+Samarinda,+Kalimantan+Timur+75124" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline rounded-full">
+              Buka Peta
+            </a>
           </div>
 
-          <!-- Hapus class flex, bg-slate-100, dll, lalu ganti dengan overflow-hidden agar iframe mengikuti border-radius -->
           <div class="rounded-[2rem] h-72 overflow-hidden border border-slate-200">
-            <iframe 
-              width="100%" 
-              height="100%" 
-              frameborder="0" 
-              style="border:0;" 
-              allowfullscreen="" 
-              aria-hidden="false" 
-              tabindex="0" 
-              src="https://maps.google.com/maps?q=Universitas%20Muhammadiyah%20Kalimantan%20Timur&t=&z=15&ie=UTF8&iwloc=&output=embed">
+            <iframe
+              src="https://maps.google.com/maps?q=Jl.+Ir.+H.+Juanda+No.15,+Sidodadi,+Samarinda+Ulu,+Kota+Samarinda,+Kalimantan+Timur+75124&z=16&output=embed"
+              width="100%"
+              height="100%"
+              style="border:0;"
+              allowfullscreen=""
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              aria-label="Peta lokasi Universitas Muhammadiyah Kalimantan Timur">
             </iframe>
           </div>
         </div>
