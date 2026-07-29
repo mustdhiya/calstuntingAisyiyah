@@ -20,7 +20,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="{{ asset('css/user/global.css') }}" />
   <link rel="stylesheet" href="{{ asset('css/user/faq.css') }}" />
-    <link rel="icon" type="image/x-icon" href="{{ asset('img/logo.png') }}" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('img/logo.png?v=2') }}">
+<link rel="shortcut icon" href="{{ asset('favicon.ico?v=2') }}">
+<link rel="apple-touch-icon" href="{{ asset('img/logo.png?v=2') }}">
 
 </head>
 <body class="bg-slate-50 text-slate-800">

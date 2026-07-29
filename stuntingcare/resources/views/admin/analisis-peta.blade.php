@@ -9,7 +9,9 @@
 <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
-  <link rel="icon" type="image/x-icon" href="{{ asset('img/logo.png') }}" />
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('img/logo.png?v=2') }}">
+<link rel="shortcut icon" href="{{ asset('favicon.ico?v=2') }}">
+<link rel="apple-touch-icon" href="{{ asset('img/logo.png?v=2') }}">
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

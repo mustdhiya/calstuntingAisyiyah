@@ -47,7 +47,9 @@
   <title>{{ $article->title }} — SiCegah Stunting</title>
   <meta name="description" content="{{ $article->summary ?? 'Detail artikel edukasi tentang pencegahan stunting.' }}" />
 
-    <link rel="icon" type="image/x-icon" href="{{ asset('img/logo.png') }}" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('img/logo.png?v=2') }}">
+<link rel="shortcut icon" href="{{ asset('favicon.ico?v=2') }}">
+<link rel="apple-touch-icon" href="{{ asset('img/logo.png?v=2') }}">
 
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
