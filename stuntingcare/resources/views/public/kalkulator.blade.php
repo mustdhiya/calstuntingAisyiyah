@@ -199,6 +199,18 @@
 
             <!-- Usia + Tanggal lahir -->
             <div class="grid sm:grid-cols-2 gap-4">
+              
+              <div class="form-control">
+                <label class="label pb-1.5">
+                  <span class="label-text font-semibold text-slate-700 text-sm">Tanggal Lahir</span>
+                  <span class="label-text-alt text-slate-400 text-xs">Otomatis hitung usia</span>
+                </label>
+                @php
+                  $tglLahirFormatted = isset($editMeasurement->birth_date) ? \Carbon\Carbon::parse($editMeasurement->birth_date)->format('Y-m-d') : '';
+                @endphp
+                <input type="date" id="tgl_lahir" name="tanggal_lahir" value="{{ old('tanggal_lahir', $tglLahirFormatted) }}"
+                       class="input input-bordered w-full focus:border-green-500 text-sm" />
+              </div>
               <div class="form-control">
                 <label class="label pb-1.5">
                   <span class="label-text font-semibold text-slate-700 text-sm flex items-center gap-1">
@@ -214,17 +226,6 @@
                     readonly required />
                   <span class="unit-badge">bln</span>
                 </div>
-              </div>
-              <div class="form-control">
-                <label class="label pb-1.5">
-                  <span class="label-text font-semibold text-slate-700 text-sm">Tanggal Lahir</span>
-                  <span class="label-text-alt text-slate-400 text-xs">Otomatis hitung usia</span>
-                </label>
-                @php
-                  $tglLahirFormatted = isset($editMeasurement->birth_date) ? \Carbon\Carbon::parse($editMeasurement->birth_date)->format('Y-m-d') : '';
-                @endphp
-                <input type="date" id="tgl_lahir" name="tanggal_lahir" value="{{ old('tanggal_lahir', $tglLahirFormatted) }}"
-                       class="input input-bordered w-full focus:border-green-500 text-sm" />
               </div>
             </div>
 
