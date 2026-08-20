@@ -377,57 +377,6 @@
           </ul>
         </div>
 
-        <!-- Indikator WHO -->
-        <div class="info-card bg-blue-50 border border-blue-100">
-          <div class="flex items-center gap-2 mb-3">
-            <span class="material-symbols-rounded text-blue-500">monitoring</span>
-            <h3 class="font-bold text-blue-800 text-sm">Indikator WHO</h3>
-          </div>
-          <div class="space-y-2.5 text-xs text-blue-900">
-            <div class="flex items-start gap-2">
-              <span class="font-bold text-blue-600 shrink-0 mt-0.5 w-12">TB/U</span>
-              <span>Tinggi Badan per Usia — indikator utama stunting</span>
-            </div>
-            <div class="flex items-start gap-2">
-              <span class="font-bold text-blue-600 shrink-0 mt-0.5 w-12">BB/U</span>
-              <span>Berat Badan per Usia — indikator berat badan</span>
-            </div>
-            <div class="flex items-start gap-2">
-              <span class="font-bold text-blue-600 shrink-0 mt-0.5 w-12">BB/TB</span>
-              <span>Berat per Tinggi — indikator wasting</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Status legend -->
-        <div class="info-card bg-white border border-slate-100 shadow-sm">
-          <div class="flex items-center gap-2 mb-3">
-            <span class="material-symbols-rounded text-slate-500">legend_toggle</span>
-            <h3 class="font-bold text-slate-700 text-sm">Kategori Hasil</h3>
-          </div>
-          <div class="space-y-2 text-xs">
-            <div class="flex items-center gap-2.5">
-              <span class="w-2.5 h-2.5 rounded-full bg-green-500 shrink-0"></span>
-              <span class="font-semibold text-green-700">Normal</span>
-              <span class="text-slate-500">TB/U &ge; -2 SD</span>
-            </div>
-            <div class="flex items-center gap-2.5">
-              <span class="w-2.5 h-2.5 rounded-full bg-yellow-400 shrink-0"></span>
-              <span class="font-semibold text-yellow-700">Risiko</span>
-              <span class="text-slate-500">-3 SD s/d -2 SD</span>
-            </div>
-            <div class="flex items-center gap-2.5">
-              <span class="w-2.5 h-2.5 rounded-full bg-orange-500 shrink-0"></span>
-              <span class="font-semibold text-orange-700">Stunting</span>
-              <span class="text-slate-500">&lt; -2 SD</span>
-            </div>
-            <div class="flex items-center gap-2.5">
-              <span class="w-2.5 h-2.5 rounded-full bg-red-600 shrink-0"></span>
-              <span class="font-semibold text-red-700">Stunting Berat</span>
-              <span class="text-slate-500">&lt; -3 SD</span>
-            </div>
-          </div>
-        </div>
 
       </aside><!-- /sidebar -->
 
