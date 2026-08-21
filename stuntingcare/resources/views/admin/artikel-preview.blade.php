@@ -136,8 +136,8 @@
 
         <!-- Featured Image (Real Image or Fallback) -->
         <figure class="rounded-3xl overflow-hidden border border-slate-200 h-80 relative">
-          @if($article->image)
-            <img src="{{ Str::startsWith($article->image, 'http') ? $article->image : asset('storage/' . $article->image) }}" alt="{{ $article->title }}" class="object-cover w-full h-full" />
+          @if($article->image_url)
+            <img src="{{ $article->image_url }}" alt="{{ $article->title }}" class="object-cover w-full h-full" />
           @else
             <div class="w-full h-full {{ $theme['bg'] }} flex items-center justify-center">
               <span class="material-symbols-rounded text-[84px] {{ $theme['text'] }}">{{ $theme['icon'] }}</span>

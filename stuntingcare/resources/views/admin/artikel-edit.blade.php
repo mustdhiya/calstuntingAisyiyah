@@ -165,8 +165,8 @@
                 </label>
                 <div class="flex flex-col md:flex-row gap-4 items-start md:items-center">
                   <div class="w-24 h-24 rounded-xl overflow-hidden border border-slate-200 shrink-0 bg-slate-100 flex items-center justify-center relative" id="preview-container">
-                    @if($article?->image)
-                      <img id="preview-img" src="{{ Str::startsWith($article->image, 'http') ? $article->image : asset('storage/' . $article->image) }}" alt="Preview" class="object-cover w-full h-full" />
+                    @if($article?->image_url)
+                      <img id="preview-img" src="{{ $article->image_url }}" alt="Preview" class="object-cover w-full h-full" />
                     @else
                       <span id="preview-placeholder" class="text-xs text-slate-400 font-medium">No Image</span>
                       <img id="preview-img" class="object-cover w-full h-full hidden" alt="Preview" />
