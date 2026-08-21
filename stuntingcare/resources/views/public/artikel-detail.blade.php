@@ -2,29 +2,36 @@
   if (!function_exists('markdownToHtml')) {
       function markdownToHtml($text) {
           if (!$text) return '';
-          // Simple Markdown parser
-          $html = e($text);
-          $html = preg_replace('/^### (.*)$/m', '<h3>$1</h3>', $html);
-          $html = preg_replace('/^## (.*)$/m', '<h2>$1</h2>', $html);
-          $html = preg_replace('/^# (.*)$/m', '<h1>$1</h1>', $html);
-          $html = preg_replace('/\*\*(.+?)\*\*/', '<strong>$1</strong>', $html);
-          $html = preg_replace('/`([^`]+)`/', '<code>$1</code>', $html);
-          $html = preg_replace('/^\s*-\s+(.*)$/m', '<li>$1</li>', $html);
-
-          // Wrap adjacent li elements in ul
-          $html = preg_replace('/(<li>.*?<\/li>)/s', '<ul>$1</ul>', $html);
           
-          // Paragraphs
+          // Escape HTML bawaan agar aman
+          $html = e($text);
+          
+          // 1. Headings (###, ##, #)
+          $html = preg_replace('/^### (.*)$/m', '<h3 class="text-lg font-bold text-slate-800 mt-4 mb-2">$1</h3>', $html);
+          $html = preg_replace('/^## (.*)$/m', '<h2 class="text-xl font-bold text-slate-900 mt-6 mb-3 border-b pb-1">$1</h2>', $html);
+          $html = preg_replace('/^# (.*)$/m', '<h1 class="text-2xl font-extrabold text-slate-900 mt-6 mb-4">$1</h1>', $html);
+          
+          // 2. Bold & Italic (*, **)
+          $html = preg_replace('/\*\*(.*?)\*\*/s', '<strong>$1</strong>', $html);
+          $html = preg_replace('/\*([^\*]+)\*/s', '<em>$1</em>', $html);
+          
+          // 3. Blockquotes (>)
+          $html = preg_replace('/^&gt;\s?(.*)$/m', '<blockquote class="border-l-4 border-emerald-500 pl-4 py-2 italic bg-emerald-50/50 rounded-r my-3">$1</blockquote>', $html);
+          
+          // 4. Bullet Points (* atau -)
+          $html = preg_replace('/^\s*[\*\-]\s+(.*)$/m', '<li class="ml-4 list-disc">$1</li>', $html);
+          
+          // 5. Wrap Paragraf
           $lines = explode("\n\n", $html);
           foreach ($lines as &$line) {
               $line = trim($line);
               if (empty($line)) continue;
-              if (strpos($line, '<h') === 0 || strpos($line, '<ul>') === 0 || strpos($line, '<li>') === 0) {
-                  continue;
+              // Jika bukan tag HTML khusus, bungkus <p>
+              if (!preg_match('/^<(h[1-6]|ul|ol|li|blockquote|div)/i', $line)) {
+                  $line = '<p class="mb-3 leading-relaxed">' . nl2br($line) . '</p>';
               }
-              $line = '<p>' . nl2br($line) . '</p>';
           }
-          return implode("\n\n", $lines);
+          return implode("\n", $lines);
       }
   }
 
@@ -200,16 +207,8 @@
               <span class="material-symbols-rounded text-base text-slate-500">bookmark</span>
               Referensi Artikel
             </h2>
-            <div class="text-xs text-slate-600 space-y-1 mt-2 leading-relaxed whitespace-pre-line">
-              @php
-                $safeReferences = e($article->references);
-                $linkedReferences = preg_replace(
-                    '#(https?://[^\s<>]+)#i',
-                    '<a href="$1" target="_blank" class="text-emerald-600 hover:underline break-all">$1</a>',
-                    $safeReferences
-                );
-              @endphp
-              {!! $linkedReferences !!}
+            <div class="text-xs text-slate-600 mt-2 leading-relaxed">
+              {!! markdownToHtml($article->references) !!}
             </div>
           </div>
         </div>
