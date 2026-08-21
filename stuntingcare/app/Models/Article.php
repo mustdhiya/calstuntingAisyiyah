@@ -85,4 +85,20 @@ class Article extends Model
     {
         return $query->where('status', $status);
     }
+
+    /**
+     * Accessor untuk mendapatkan URL lengkap gambar artikel.
+     */
+    public function getImageUrlAttribute(): ?string
+    {
+        if (empty($this->image)) {
+            return null;
+        }
+
+        if (Str::startsWith($this->image, ['http://', 'https://', 'data:'])) {
+            return $this->image;
+        }
+
+        return asset('storage/' . ltrim($this->image, '/'));
+    }
 }

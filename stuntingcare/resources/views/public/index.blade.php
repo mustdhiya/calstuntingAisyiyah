@@ -787,8 +787,8 @@
               @endphp
               <article class="article-card flex flex-col justify-between h-full bg-white border border-slate-100 rounded-[2rem] overflow-hidden shadow-sm hover:shadow-md transition-all">
                 <div class="article-thumb h-48 overflow-hidden relative">
-                  @if($article->image)
-                    <img src="{{ Str::startsWith($article->image, 'http') ? $article->image : asset('storage/' . $article->image) }}" alt="{{ $article->title }}" class="object-cover w-full h-full transition-transform duration-300 hover:scale-105" />
+                  @if($article->image_url)
+                    <img src="{{ $article->image_url }}" alt="{{ $article->title }}" class="object-cover w-full h-full transition-transform duration-300 hover:scale-105" />
                   @else
                     <div class="w-full h-full {{ $theme['bg'] }} flex items-center justify-center">
                       <span class="material-symbols-rounded text-[56px] {{ $theme['iconColor'] }}">{{ $theme['icon'] }}</span>

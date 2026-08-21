@@ -183,8 +183,8 @@
           @endphp
           <article class="card bg-white shadow-sm border border-slate-200 rounded-[2rem] overflow-hidden flex flex-col justify-between h-full">
             <figure class="h-48 overflow-hidden relative">
-              @if($article->image)
-                <img src="{{ $article->image }}" alt="{{ $article->title }}" class="object-cover w-full h-full transition-transform duration-300 hover:scale-105" />
+              @if($article->image_url)
+                <img src="{{ $article->image_url }}" alt="{{ $article->title }}" class="object-cover w-full h-full transition-transform duration-300 hover:scale-105" />
               @else
                 <div class="w-full h-full {{ $theme['bg'] }} flex items-center justify-center">
                   <span class="material-symbols-rounded text-6xl {{ $theme['iconColor'] }}">{{ $icon }}</span>

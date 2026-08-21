@@ -121,6 +121,10 @@ class ArticleController extends Controller
         $data['slug']             = $data['slug'] ?? Str::slug($data['title']);
 
         if ($request->hasFile('image')) {
+            // Hapus file gambar lama di storage jika bukan URL eksternal
+            if ($article->image && !Str::startsWith($article->image, ['http://', 'https://'])) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($article->image);
+            }
             $data['image'] = $this->processAndStoreImage($request->file('image'));
         }
 
@@ -169,6 +173,11 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article)
     {
+        // Hapus file gambar fisik dari storage jika ada
+        if ($article->image && !Str::startsWith($article->image, ['http://', 'https://'])) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($article->image);
+        }
+
         $article->delete();
         return redirect()->route('admin.artikel.list')->with('success', 'Artikel berhasil dihapus.');
     }
